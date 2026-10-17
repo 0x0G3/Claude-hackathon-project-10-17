@@ -1,0 +1,37 @@
+# Organizers' source repo and challenge-1 packets: never commit
+_audit_src/
+**/packets/
+*.pdf
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*service-account*.json
+*serviceAccount*.json
+*-firebase-adminsdk-*.json
+*.pem
+*.key
+
+# Dependencies and build output
+node_modules/
+.next/
+out/
+build/
+dist/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+
+# Platform
+.vercel/
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+# OS / editor
+.DS_Store
+*.log
+.idea/
+.vscode/

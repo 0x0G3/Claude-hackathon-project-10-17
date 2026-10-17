@@ -1,0 +1,28 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // DENY ALL client-side direct access by default.
+    // All read/write operations must traverse verified Next.js server route handlers
+    // backed by the Firebase Admin SDK.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Explicit server-bypass protection:
+    // Even if client SDK is connected with an authenticated user, require verified coordinator role.
+    match /demoCases/{caseId} {
+      allow read: if request.auth != null && request.auth.token.email.matches('.*@(ihh-hackathon\\.local|illuminationhealth\\.org)');
+      allow write: if false; // Only server Admin SDK can mutate
+    }
+
+    match /caseActivities/{activityId} {
+      allow read: if request.auth != null && request.auth.token.email.matches('.*@(ihh-hackathon\\.local|illuminationhealth\\.org)');
+      allow write: if false; // Only server Admin SDK can mutate
+    }
+
+    match /resourceOverrides/{overrideId} {
+      allow read: if true; // Public read-only for verified status
+      allow write: if false; // Mutated exclusively via server Admin SDK
+    }
+  }
+}
