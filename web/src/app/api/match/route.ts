@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { MatchRequestSchema } from '@/schemas';
-import { matchClientToResources } from '@/lib/matching/engine';
-import { getClientScenarioById, getClientScenarios } from '@/lib/resources/loader';
-import { ClientProfile } from '@/types';
+import { matchProfile } from '@/lib/matching/engine';
+import { getScenarioProfile, getScenarioProfiles } from '@/lib/resources/loader';
+import { IntakeProfile } from '@/types';
 
-
+/** Matcher only (plain code, no Claude). Useful for checking rules without running a whole session. */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -21,29 +21,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { clientId, profile } = parseResult.data;
+    const { scenarioId, profile } = parseResult.data;
+    const target: IntakeProfile | undefined = profile ?? (scenarioId ? getScenarioProfile(scenarioId) : undefined);
 
-    let targetProfile: ClientProfile | undefined = profile;
-
-    if (!targetProfile && clientId) {
-      targetProfile = getClientScenarioById(clientId);
-    }
-
-    if (!targetProfile) {
+    if (!target) {
       return NextResponse.json(
         {
           success: false,
-          error: `Client profile for ID '${clientId}' not found in fictional scenarios dataset. Available IDs: ${getClientScenarios().map(s => s.id).join(', ')}`,
+          error: `Scenario '${scenarioId}' not found. Available IDs: ${getScenarioProfiles().map(s => s.id).join(', ')}`,
         },
         { status: 404 }
       );
     }
 
-    const matchResult = matchClientToResources(targetProfile);
-
     return NextResponse.json({
       success: true,
-      data: matchResult,
+      data: matchProfile(target),
     });
   } catch (error) {
     console.error('Error executing matching engine:', error);

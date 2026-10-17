@@ -1,204 +1,333 @@
 import {
-  ClientProfile,
-  MatchResult,
-  MatchedResourceItem,
-  ExcludedResourceItem,
-  UnknownEligibilityItem,
-  EvidenceReference,
+  AgeBand,
+  CheckResult,
+  Condition,
+  DirectoryEntry,
+  EligibilityRules,
+  FitStatus,
+  IntakeProfile,
+  MatchItem,
+  MatchOutput,
+  NeedMatches,
+  ProgramLookup,
+  Requirement,
+  Tri,
 } from '@/types';
-import { getAllResources } from '@/lib/resources/loader';
+import { getDirectory, getTags } from '@/lib/resources/loader';
+import { either } from '@/lib/tri';
 
-export function matchClientToResources(client: ClientProfile): MatchResult {
-  const allResources = getAllResources();
-  const matched: MatchedResourceItem[] = [];
-  const excluded: ExcludedResourceItem[] = [];
-  const unknown: UnknownEligibilityItem[] = [];
-  const barriers: string[] = [];
-  const staffActions: string[] = [];
+/**
+ * Eligibility matcher (architecture 4.5). Plain code over the directory: every rule returns
+ * meets / does_not_meet / unknown. Claude explains these results later; it never decides them.
+ */
 
-  const clientNeeds = (client.needs || []).map(n => n.toLowerCase());
-  const clientConstraints = (client.constraints || []).map(c => c.toLowerCase());
-  const clientText = `${client.client} ${client.in_their_words} ${client.constraints.join(' ')}`.toLowerCase();
+const AGE_RANGES: Record<Exclude<AgeBand, 'unknown'>, [number, number]> = {
+  under_18: [0, 17],
+  '18_21': [18, 21],
+  '22_24': [22, 24],
+  '25_59': [25, 59],
+  '60_61': [60, 61],
+  '62_plus': [62, 120],
+};
 
-  const isRayC01 = client.id.toUpperCase() === 'C01';
-  const hasNoId = clientConstraints.some(c => c.includes('no id') || c.includes('lost his id') || c.includes('lost her id')) || client.has_id === false;
-  const usesMobilityDevice = clientConstraints.some(c => c.includes('walker') || c.includes('wheelchair') || c.includes('accessible')) || client.requires_accessibility;
-  const basicPhoneOnly = clientConstraints.some(c => c.includes('basic phone') || c.includes('no computer') || c.includes('calls and texts only'));
-  const isIndividualMale = client.client.toLowerCase().includes('ray') || client.client.toLowerCase().includes('male') || client.client.toLowerCase().includes(', 62');
+const AGE_LABEL: Record<AgeBand, string> = {
+  under_18: 'under 18',
+  '18_21': '18–21',
+  '22_24': '22–24',
+  '25_59': '25–59',
+  '60_61': '60–61',
+  '62_plus': '62+',
+  unknown: 'unknown',
+};
 
-  // Identify Access Barriers
-  if (hasNoId) {
-    barriers.push('Lack of official government photo ID may impede direct intake for programs requiring identity verification.');
+function ageCheck(band: AgeBand, min: number | null, max: number | null): CheckResult['outcome'] {
+  if (band === 'unknown') return 'unknown';
+  const [lo, hi] = AGE_RANGES[band];
+  const ruleLo = min ?? 0;
+  const ruleHi = max ?? 200;
+  if (lo >= ruleLo && hi <= ruleHi) return 'meets';
+  if (hi < ruleLo || lo > ruleHi) return 'does_not_meet';
+  return 'unknown';
+}
+
+function triCheck(value: Tri): CheckResult['outcome'] {
+  return value === 'yes' ? 'meets' : value === 'no' ? 'does_not_meet' : 'unknown';
+}
+
+function sameCity(a: string, b: string): boolean {
+  return a.trim().toLowerCase() === b.trim().toLowerCase();
+}
+
+function requirementCheck(rule: string, req: Requirement | undefined, has: Tri, label: string): CheckResult | null {
+  if (req === undefined || req === false) return null;
+  if (req === true) {
+    return {
+      rule,
+      outcome: triCheck(has),
+      detail: has === 'yes' ? `Needs ${label}; client has it.` : has === 'no' ? `Needs ${label}; client does not have it yet.` : `Needs ${label}; ask whether the client has it.`,
+    };
   }
-  if (usesMobilityDevice) {
-    barriers.push('Mobility device (walker) requires ADA accessibility and guaranteed lower bunk placement.');
+  // The source is silent on a blocker that matters.
+  return has === 'yes'
+    ? { rule, outcome: 'meets', detail: `Not stated whether ${label} is needed; client has it anyway.` }
+    : { rule, outcome: 'unknown', detail: `Not stated whether ${label} is needed. Ask when you call.` };
+}
+
+function conditionCheck(c: Condition, p: IntakeProfile): CheckResult['outcome'] {
+  if (c.kind === 'age') return ageCheck(p.age_band, c.min, c.max);
+  if (c.kind === 'disability') return triCheck(p.disability);
+  return triCheck(p.veteran);
+}
+
+function describeCondition(c: Condition): string {
+  if (c.kind === 'age') {
+    if (c.min !== null && c.max === null) return `age ${c.min}+`;
+    if (c.min === null && c.max !== null) return `age ${c.max} or under`;
+    return `age ${c.min}–${c.max}`;
   }
-  if (basicPhoneOnly) {
-    barriers.push('Basic phone (calls/texts only) precludes digital portals, app check-ins, or web intake forms.');
+  return c.kind === 'disability' ? 'a disability' : 'veteran';
+}
+
+export function evaluateRules(rules: EligibilityRules, p: IntakeProfile): CheckResult[] {
+  const checks: CheckResult[] = [];
+  const tags = getTags();
+
+  if (rules.age_min !== undefined || rules.age_max !== undefined) {
+    const min = rules.age_min ?? null;
+    const max = rules.age_max ?? null;
+    const outcome = ageCheck(p.age_band, min, max);
+    const range = max === null ? `${min}+` : `${min ?? 0}–${max}`;
+    checks.push({ rule: 'age', outcome, detail: `Ages ${range}; client is ${AGE_LABEL[p.age_band]}.` });
   }
-  if (clientText.includes('recuperative care')) {
-    barriers.push('Discharge timeline constraint: leaving recuperative care within days requires coordinated CES emergency placement.');
-  }
 
-  for (const resource of allResources) {
-    const resName = resource.name.toLowerCase();
-    const resCat = resource.category.toLowerCase();
-    const resTags = resource.tags.map(t => t.toLowerCase());
-    const resPop = resource.population.map(p => p.toLowerCase());
-    const resDesc = resource.description.toLowerCase();
-    const resElig = (resource.eligibility || '').toLowerCase();
-
-    const exclusionReasons: string[] = [];
-
-    // Check Subpopulation Exclusions
-    if (resPop.includes('families with children') || resTags.includes('families-only') || resTags.includes('family-shelter')) {
-      if (isIndividualMale) {
-        exclusionReasons.push('Exclusively serves families with minor children; client is an individual adult.');
-      }
-    }
-
-    if (resPop.includes('women only') || resTags.includes('women-only') || resDesc.includes('women and their children')) {
-      if (isIndividualMale) {
-        exclusionReasons.push('Exclusively serves women; client is an adult male.');
-      }
-    }
-
-    if (resPop.includes('veterans only') || resTags.includes('veterans-only') || resName.includes('veteran')) {
-      if (!clientText.includes('veteran')) {
-        exclusionReasons.push('Restricted to military veterans; client profile does not document veteran status.');
-      }
-    }
-
-    if (resPop.includes('youth 18-24') || resTags.includes('tayu') || resTags.includes('youth')) {
-      if (client.client.includes('62') || client.client.includes('54') || client.client.includes('67')) {
-        exclusionReasons.push('Age restriction: serves transition-age youth (18–24); client is a senior or older adult.');
-      }
-    }
-
-    if (resTags.includes('domestic-violence') || resPop.includes('survivors of domestic violence')) {
-      if (!clientText.includes('domestic violence') && !clientText.includes('danger') && !clientText.includes('abuse')) {
-        exclusionReasons.push('Specialized domestic violence facility; client presenting need is recuperative care medical exit.');
-      }
-    }
-
-    if (exclusionReasons.length > 0) {
-      excluded.push({
-        resource_id: resource.id,
-        resource_name: resource.name,
-        exclusion_reasons: exclusionReasons,
-      });
-      continue;
-    }
-
-    // Match against client needs
-    const matchReasons: string[] = [];
-    let score = 0;
-
-    const matchesShelter = clientNeeds.includes('shelter') && (resCat === 'shelter' || resCat === 'housing-navigation' || resTags.includes('shelter') || resTags.includes('coordinated-entry'));
-    const matchesId = clientNeeds.includes('id-documents') && (resCat === 'id-documents' || resTags.includes('id-documents') || resTags.includes('vital-records') || resDesc.includes('id') || resDesc.includes('identification'));
-    const matchesMicro = (clientNeeds.includes('microenterprise') || clientNeeds.includes('microloans')) && (resCat === 'microenterprise' || resTags.includes('microloan') || resTags.includes('small-business'));
-    const matchesTravel = (clientNeeds.includes('family-reunification-travel') || clientNeeds.includes('travel')) && (resCat === 'family-reunification-travel' || resTags.includes('reunification') || resTags.includes('bus-ticket'));
-    const matchesWork = clientNeeds.includes('employment') && (resCat === 'employment' || resTags.includes('job-training') || resTags.includes('workforce'));
-
-    if (matchesShelter) {
-      matchReasons.push('Directly provides emergency shelter or coordinated housing navigation entry.');
-      score += 40;
-    }
-    if (matchesId) {
-      matchReasons.push('Offers assistance with identity documents, birth certificates, or DMV vouchers.');
-      score += 35;
-    }
-    if (matchesMicro) {
-      matchReasons.push('Offers microloans or microenterprise development grants/support.');
-      score += 40;
-    }
-    if (matchesTravel) {
-      matchReasons.push('Provides family reunification travel assistance or transit booking.');
-      score += 40;
-    }
-    if (matchesWork) {
-      matchReasons.push('Provides job placement, workforce re-entry, or interview clothing.');
-      score += 35;
-    }
-
-    // Check Geographic Fit (e.g. Santa Ana for Ray)
-    if (client.client.includes('Santa Ana') || client.city?.toLowerCase() === 'santa ana') {
-      if (resource.city?.toLowerCase() === 'santa ana') {
-        matchReasons.push('Located within client prior municipality (Santa Ana).');
-        score += 20;
-      } else if (!resource.city || resource.city === 'Countywide') {
-        matchReasons.push('Countywide jurisdiction covering Santa Ana residents.');
-        score += 10;
-      }
-    }
-
-    // Check 211 / CES Gateways
-    if (resource.id === '211-orange-county' || resource.id === 'oc-coordinated-entry-system') {
-      matchReasons.push('Official front door for Orange County housing assessment and shelter bed reservations.');
-      score += 25;
-    }
-
-    if (matchReasons.length > 0 && score >= 35) {
-      // Evaluate Unknown Eligibility Factors
-      if (hasNoId && (resElig.includes('id') || resDesc.includes('id required'))) {
-        unknown.push({
-          resource_id: resource.id,
-          resource_name: resource.name,
-          question: 'Does program permit 30-day grace period for ID replacement for post-recuperative care patients?',
-          reason: 'Client lost state identification; program materials mention ID verification.',
-        });
-      }
-
-      if (usesMobilityDevice && (resCat === 'shelter' || resTags.includes('shelter'))) {
-        unknown.push({
-          resource_id: resource.id,
-          resource_name: resource.name,
-          question: 'Are ground-floor beds or lower bunks currently available with ADA walker clearance?',
-          reason: 'Client uses a walker and cannot safely climb to an upper bunk bed.',
-        });
-      }
-
-      matched.push({
-        resource,
-        match_reasons: matchReasons,
-        confidence: score >= 60 ? 'high' : 'medium',
-        confidence_score: score,
+  if (rules.requires_city_ties?.length) {
+    const cities = rules.requires_city_ties;
+    const detail = rules.ties_detail ? ` (${rules.ties_detail})` : '';
+    if (p.city_ties.some(t => cities.some(c => sameCity(c, t)))) {
+      checks.push({ rule: 'city ties', outcome: 'meets', detail: `Needs ties to ${cities.join(' / ')}${detail}; ties recorded.` });
+    } else if (p.city_ties.length === 0) {
+      checks.push({ rule: 'city ties', outcome: 'unknown', detail: `Needs ties to ${cities.join(' / ')}${detail}. Ask about ties.` });
+    } else {
+      checks.push({
+        rule: 'city ties',
+        outcome: 'does_not_meet',
+        detail: `Needs ties to ${cities.join(' / ')}${detail}; recorded ties are ${p.city_ties.join(', ')}.`,
       });
     }
   }
 
-  // Sort matched resources by score descending
-  matched.sort((a, b) => b.confidence_score - a.confidence_score);
+  if (rules.spa) {
+    const spa = tags.spa[rules.spa];
+    const name = rules.spa === 'central' ? 'Central' : 'North';
+    if (!p.city) {
+      checks.push({ rule: 'service area', outcome: 'unknown', detail: `Serves the ${name} SPA only. Ask which city the client was last in.` });
+    } else if (spa.cities.some(c => sameCity(c, p.city!))) {
+      checks.push({ rule: 'service area', outcome: 'meets', detail: `Serves the ${name} SPA; ${p.city} is in it.` });
+    } else {
+      checks.push({ rule: 'service area', outcome: 'does_not_meet', detail: `Serves the ${name} SPA only; ${p.city} is not listed in it.` });
+    }
+  }
 
-  // Generate Evidence References
-  const evidenceReferences: EvidenceReference[] = matched.slice(0, 5).map(m => ({
-    resource_id: m.resource.id,
-    resource_name: m.resource.name,
-    source_url: m.resource.source_url,
-    source_quote: m.resource.source_quote,
-    verified_date: m.resource.verified_date,
-  }));
+  if (rules.households?.length) {
+    const allowed = rules.households;
+    checks.push({
+      rule: 'household',
+      outcome: p.household === 'unknown' ? 'unknown' : allowed.includes(p.household) ? 'meets' : 'does_not_meet',
+      detail: `Serves: ${allowed.join(', ').replace(/_/g, ' ')}; client household is ${p.household.replace(/_/g, ' ')}.`,
+    });
+  }
 
-  // Generate Staff Action Recommendations
-  if (isRayC01) {
-    staffActions.push('Contact IHH Recuperative Care discharge planner immediately to request an expedited CalAIM Community Supports Housing Transition referral.');
-    staffActions.push('Dial 2-1-1 OC with Ray to initiate Coordinated Entry System (CES) individual queue intake and request a Shelter Bed Reservation System (SBRS) hold.');
-    staffActions.push('Coordinate with Santa Ana outreach or legal aid for California DMV fee waiver (form DL 932) to replace lost photo ID.');
-    staffActions.push('Confirm with destination shelter that lower-bunk ADA accommodation is confirmed in writing prior to Friday discharge.');
-  } else {
-    staffActions.push('Review matched resources with client in a one-on-one session.');
-    staffActions.push('Verify intake requirements and current operating capacity directly with provider.');
-    staffActions.push('Document client consent before sharing contact information with partner agencies.');
+  if (rules.requires_veteran) {
+    checks.push({ rule: 'veteran', outcome: triCheck(p.veteran), detail: `Veterans only; client veteran status is ${p.veteran}.` });
+  }
+  if (rules.requires_medi_cal) {
+    checks.push({ rule: 'Medi-Cal', outcome: triCheck(p.medi_cal), detail: `Medi-Cal members only; client Medi-Cal is ${p.medi_cal}.` });
+  }
+  if (rules.requires_adl_independent) {
+    const outcome = triCheck(p.adl_independent);
+    checks.push({
+      rule: 'daily living',
+      outcome,
+      detail:
+        outcome === 'unknown'
+          ? `Must meet all Activities of Daily Living${p.mobility_device ? '; client uses a mobility device, so confirm' : ''}. Ask.`
+          : `Must meet all Activities of Daily Living; client: ${p.adl_independent}.`,
+    });
+  }
+  if (rules.requires_host_confirmed) {
+    const host = p.travel?.host_confirmed ?? 'unknown';
+    checks.push({ rule: 'host at destination', outcome: triCheck(host), detail: `Needs family or a safe adult who agrees to take the client in; confirmed: ${host}.` });
+  }
+
+  const reqs = [
+    requirementCheck('CA ID', rules.requires_ca_id, p.has.ca_id, 'a California ID'),
+    requirementCheck('bank account', rules.requires_bank_account, p.has.bank_account, 'a bank account'),
+    requirementCheck('phone or email', rules.requires_phone_or_email, either(p.has.phone, p.has.email), 'an active phone or email'),
+    requirementCheck('permanent residence', rules.requires_permanent_residence, p.has.permanent_residence, 'a permanent residence'),
+  ];
+  checks.push(...reqs.filter((c): c is CheckResult => c !== null));
+
+  if (rules.qualifies_if_any?.length) {
+    const outcomes = rules.qualifies_if_any.map(c => conditionCheck(c, p));
+    const outcome = outcomes.includes('meets') ? 'meets' : outcomes.every(o => o === 'does_not_meet') ? 'does_not_meet' : 'unknown';
+    checks.push({
+      rule: 'qualifying group',
+      outcome,
+      detail: `Qualifies with any of: ${rules.qualifies_if_any.map(describeCondition).join(', ')}.`,
+    });
+  }
+
+  for (const req of rules.other_requirements ?? []) {
+    checks.push({ rule: 'other requirement', outcome: 'unknown', detail: `${req}. Ask when you call.` });
+  }
+
+  if (rules.gender_wording_conflict) {
+    checks.push({
+      rule: 'who is served',
+      outcome: 'unknown',
+      detail: 'The source says "women" in one place and "individuals" in another. Confirm who is served when you call.',
+    });
+  }
+
+  return checks;
+}
+
+function toConfidence(value: string | null): 'high' | 'medium' | 'low' {
+  return value === 'high' || value === 'medium' ? value : 'low';
+}
+
+function statusFor(checks: CheckResult[], entry: DirectoryEntry): FitStatus {
+  if (checks.some(c => c.outcome === 'does_not_meet')) return 'not_a_fit';
+  const unknowns = checks.filter(c => c.outcome === 'unknown').length;
+  // A low-confidence listing is never the main door.
+  if (unknowns === 0 && toConfidence(entry.confidence) !== 'low') return 'likely_fit';
+  return 'maybe';
+}
+
+export function matchEntry(entry: DirectoryEntry, profile: IntakeProfile): MatchItem {
+  const checks: CheckResult[] = entry.rules ? evaluateRules(entry.rules, profile) : [];
+  if (!entry.rules) {
+    checks.push({ rule: 'eligibility', outcome: 'unknown', detail: 'Eligibility is not structured for this listing yet. Read the source wording and ask when you call.' });
+  }
+  const latest = entry.latest_verification;
+  if (latest && (latest.outcome === 'closed' || latest.outcome === 'number_wrong')) {
+    checks.push({
+      rule: 'staff report',
+      outcome: latest.outcome === 'closed' ? 'does_not_meet' : 'unknown',
+      detail: `Staff reported "${latest.outcome.replace('_', ' ')}" on ${latest.date}${latest.note ? `: ${latest.note}` : ''}.`,
+    });
+  }
+  return {
+    resource_id: entry.id,
+    name: entry.name,
+    status: statusFor(checks, entry),
+    checks,
+    unknown_count: checks.filter(c => c.outcome === 'unknown').length,
+    confidence: toConfidence(entry.confidence),
+    verified_date: entry.verified_date,
+    warnings: entry.warnings,
+    ladder_step: entry.rules?.ladder_step ?? null,
+  };
+}
+
+const STATUS_RANK: Record<FitStatus, number> = { likely_fit: 0, maybe: 1, not_a_fit: 2 };
+const CONFIDENCE_RANK = { high: 0, medium: 1, low: 2 } as const;
+
+/** Rank by fit, then confidence, then fewer unknowns. Loans follow the ladder: advising before lenders. */
+function rank(items: MatchItem[], need: string): MatchItem[] {
+  return items
+    .map((item, index) => ({ item, index }))
+    .sort((a, b) => {
+      const s = STATUS_RANK[a.item.status] - STATUS_RANK[b.item.status];
+      if (s !== 0) return s;
+      if (need === 'loan') {
+        const l = (a.item.ladder_step ?? 9) - (b.item.ladder_step ?? 9);
+        if (l !== 0) return l;
+      }
+      const c = CONFIDENCE_RANK[a.item.confidence] - CONFIDENCE_RANK[b.item.confidence];
+      if (c !== 0) return c;
+      const u = a.item.unknown_count - b.item.unknown_count;
+      return u !== 0 ? u : a.index - b.index;
+    })
+    .map(x => x.item);
+}
+
+function noSureDoor(items: MatchItem[]): boolean {
+  return !items.some(i => i.status !== 'not_a_fit' && i.confidence === 'high');
+}
+
+function entriesForOtherNeed(category: string, directory: DirectoryEntry[]): DirectoryEntry[] {
+  const extras = getTags().other_need_extras[category]?.resource_ids ?? [];
+  return directory.filter(e => e.category === category || extras.includes(e.id));
+}
+
+const STOPWORDS = new Set(['a', 'an', 'the', 'place', 'that', 'helps', 'help', 'with', 'for', 'of', 'program', 'there', 'is', 'and', 'to', 'in', 'on', 'someone']);
+
+/** Scenario C12: "a place that helps with deposits". Possible matches only, with the caveat. */
+export function lookupProgram(query: string, directory: DirectoryEntry[]): ProgramLookup {
+  const terms = query
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .filter(t => t.length > 2 && !STOPWORDS.has(t))
+    .map(t => t.replace(/(ies)$/, 'y').replace(/s$/, ''));
+
+  const matches = directory
+    .map(e => {
+      const fields: [string, string][] = [
+        ['name', e.name],
+        ['services', e.services.join(' | ')],
+        ['description', e.description],
+        ['tags', e.tags.join(' ')],
+      ];
+      const matched_on = fields.filter(([, text]) => terms.some(t => text.toLowerCase().includes(t))).map(([f]) => f);
+      return { entry: e, matched_on };
+    })
+    .filter(m => m.matched_on.length > 0)
+    .map(m => ({
+      resource_id: m.entry.id,
+      name: m.entry.name,
+      matched_on: m.matched_on,
+      confidence: toConfidence(m.entry.confidence),
+      verified_date: m.entry.verified_date,
+    }));
+
+  return {
+    query,
+    matches,
+    caveat:
+      matches.length > 0
+        ? "These are possible matches from the directory. We can't confirm any of them is the program the client heard about."
+        : 'No listing in the directory matches that description. That does not mean the program does not exist.',
+  };
+}
+
+export function matchProfile(profile: IntakeProfile, now: Date = new Date()): MatchOutput {
+  const directory = getDirectory(now);
+  const needs: NeedMatches[] = [];
+
+  for (const need of profile.questions) {
+    const items = directory.filter(e => e.rules?.needs.includes(need)).map(e => matchEntry(e, profile));
+    const ranked = rank(items, need);
+    needs.push({ need, items: ranked, no_sure_door: noSureDoor(ranked) });
+  }
+
+  for (const category of profile.other_needs) {
+    const items = entriesForOtherNeed(category, directory).map(e => matchEntry(e, profile));
+    if (items.length === 0) continue;
+    const ranked = rank(items, category);
+    needs.push({ need: category, items: ranked, no_sure_door: noSureDoor(ranked) });
   }
 
   return {
-    client_id: client.id,
-    client_summary: `${client.client} — ${client.title}`,
-    matched_resources: matched,
-    excluded_resources: excluded,
-    unknown_eligibility: unknown,
-    access_barriers: barriers,
-    evidence_references: evidenceReferences,
-    suggested_staff_actions: staffActions,
+    needs,
+    program_lookup: profile.heard_of ? lookupProgram(profile.heard_of, directory) : null,
   };
+}
+
+/** Resource ids the Planner may cite: anything the matcher did not rule out. */
+export function citableIds(matches: MatchOutput): string[] {
+  const ids = new Set<string>();
+  for (const n of matches.needs) for (const i of n.items) if (i.status !== 'not_a_fit') ids.add(i.resource_id);
+  for (const m of matches.program_lookup?.matches ?? []) ids.add(m.resource_id);
+  return [...ids];
 }

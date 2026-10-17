@@ -1,0 +1,31 @@
+{
+  "about": "Hand-tagged facts the loader applies on top of the seed (architecture 4.3). SPA city lists are copied verbatim from the notes of the listed source records.",
+  "stale_after_days": 30,
+  "confidential_location": ["wiseplace"],
+  "conflict": [
+    "yale-navigation-center",
+    "bridges-at-kraemer-place",
+    "costa-mesa-bridge-shelter",
+    "buena-park-navigation-center",
+    "hub-resource-center-orange",
+    "va-crrc-santa-ana",
+    "nami-oc-warmline"
+  ],
+  "spa": {
+    "central": {
+      "source_resource_id": "yale-navigation-center",
+      "cities": ["Costa Mesa", "Fountain Valley", "Garden Grove", "Huntington Beach", "Midway City", "Newport Beach", "Santa Ana", "Seal Beach", "Tustin", "Westminster"]
+    },
+    "north": {
+      "source_resource_id": "bridges-at-kraemer-place",
+      "cities": ["Anaheim", "Brea", "Buena Park", "Cypress", "Fullerton", "La Habra", "La Palma", "Los Alamitos", "Orange", "Placentia", "Rossmoor", "Stanton", "Villa Park", "Yorba Linda"]
+    }
+  },
+  "other_need_extras": {
+    "transportation": {
+      "resource_ids": ["oc-general-relief"],
+      "basis_resource_id": "octa-reduced-fares",
+      "basis": "Separately, the County says bus passes are available to General Relief applicants for eligibility appointments."
+    }
+  }
+}

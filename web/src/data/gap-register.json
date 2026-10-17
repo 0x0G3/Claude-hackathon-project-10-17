@@ -1,0 +1,101 @@
+{
+  "about": "What the directory cannot answer (architecture 4.7), so the tool says so instead of guessing. IHH internal slots stay unknown until IHH staff describe their process; record their wording and the date. Do not invent one.",
+  "gaps": [
+    {
+      "id": "ihh-travel-home",
+      "kind": "ihh_internal_slot",
+      "needs": ["travel"],
+      "text": "IHH internal option for travel home (staff to fill in). How IHH handles this today is unknown.",
+      "filled_by": null,
+      "filled_date": null
+    },
+    {
+      "id": "ihh-small-loans",
+      "kind": "ihh_internal_slot",
+      "needs": ["loan"],
+      "text": "IHH internal option for small loans or cash assistance (staff to fill in). Unknown.",
+      "filled_by": null,
+      "filled_date": null
+    },
+    {
+      "id": "ihh-affidavit-signer",
+      "kind": "ihh_internal_slot",
+      "needs": ["id-documents"],
+      "text": "Whether IHH staff can sign the Affidavit of Homeless Status for a free birth certificate: unknown, ask IHH.",
+      "filled_by": null,
+      "filled_date": null
+    },
+    {
+      "id": "no-adult-reunification-program",
+      "kind": "gap",
+      "needs": ["travel"],
+      "text": "No public adult reunification-travel program with intake was found countywide.",
+      "filled_by": null,
+      "filled_date": null
+    },
+    {
+      "id": "211-taxonomy",
+      "kind": "gap",
+      "needs": ["loan", "travel"],
+      "text": "211OC has no taxonomy term for microloans or family reunification travel.",
+      "filled_by": null,
+      "filled_date": null
+    },
+    {
+      "id": "unbanked-lenders",
+      "kind": "gap",
+      "needs": ["loan"],
+      "text": "No lender in the directory serves people without a bank account or housing. Every lender listed has a barrier a client leaving care is likely to hit.",
+      "filled_by": null,
+      "filled_date": null
+    },
+    {
+      "id": "bank-account-help",
+      "kind": "gap",
+      "needs": ["loan"],
+      "text": "The directory has no program that helps open a bank account.",
+      "filled_by": null,
+      "filled_date": null
+    },
+    {
+      "id": "bed-availability",
+      "kind": "gap",
+      "needs": ["sleep"],
+      "text": "Real-time shelter bed availability is not public. Almost all shelters are referral-only, so the answer is usually the path in, not a bed.",
+      "filled_by": null,
+      "filled_date": null
+    },
+    {
+      "id": "low-income-fare",
+      "kind": "gap",
+      "needs": ["transportation"],
+      "text": "No income-based (low-income) bus fare was found on OCTA's fare pages.",
+      "filled_by": null,
+      "filled_date": null
+    },
+    {
+      "id": "birth-certificate-out-of-state",
+      "kind": "gap",
+      "needs": ["id-documents"],
+      "text": "Birth certificates for people born outside California: that state's process is not in the directory. Unknown.",
+      "filled_by": null,
+      "filled_date": null
+    },
+    {
+      "id": "mail-outside-orange",
+      "kind": "gap",
+      "needs": ["id-documents", "benefits"],
+      "text": "Mail services outside the City of Orange are not covered in the directory.",
+      "filled_by": null,
+      "filled_date": null
+    },
+    {
+      "id": "dv-hotline",
+      "kind": "gap",
+      "needs": ["safety"],
+      "text": "The directory has no domestic violence hotline yet. Staff give one from IHH's own list.",
+      "filled_by": null,
+      "filled_date": null
+    }
+  ]
+}

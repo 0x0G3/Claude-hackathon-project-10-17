@@ -43,11 +43,9 @@ describe('Resource Catalog and Data Parsing', () => {
     const resources = getAllResources();
     const confidentialPrograms = resources.filter(r => r.is_confidential_address);
 
-    expect(confidentialPrograms.length).toBeGreaterThan(0);
+    expect(confidentialPrograms.map(p => p.id)).toContain('wiseplace');
     for (const p of confidentialPrograms) {
-      if (p.address) {
-        expect(p.address).toContain('Confidential Location');
-      }
+      expect(p.address).toBeNull();
     }
   });
 

@@ -1,0 +1,231 @@
+{
+  "about": "Structured eligibility for the entries that serve the four questions (architecture 4.3). Every rule is based on a verbatim quote from the same record's eligibility or notes text, listed in basis. A rule the source does not state is left out; a blocker the source is silent on is \"unknown\". Drafted by Claude from the seed; every entry stays \"draft\" until a person reviews it.",
+  "rules": [
+    {
+      "resource_id": "oc-coordinated-entry-system",
+      "needs": ["sleep"],
+      "basis": ["People at risk of or experiencing homelessness in Orange County."],
+      "review": { "status": "draft", "by": null, "date": null }
+    },
+    {
+      "resource_id": "family-coordinated-entry",
+      "needs": ["sleep"],
+      "households": ["with_children", "pregnant"],
+      "basis": ["Households with a child under 18, a pregnant person, and/or working on being reunited with minor children (County CES wording)."],
+      "review": { "status": "draft", "by": null, "date": null }
+    },
+    {
+      "resource_id": "yale-navigation-center",
+      "needs": ["sleep"],
+      "age_min": 18,
+      "spa": "central",
+      "households": ["alone", "couple"],
+      "basis": ["Adult individuals and couples experiencing homelessness in the Central Service Planning Area.", "Entry by referral only"],
+      "review": { "status": "draft", "by": null, "date": null }
+    },
+    {
+      "resource_id": "bridges-at-kraemer-place",
+      "needs": ["sleep"],
+      "age_min": 18,
+      "spa": "north",
+      "households": ["alone"],
+      "basis": ["Adult individuals experiencing homelessness in the North Service Planning Area."],
+      "review": { "status": "draft", "by": null, "date": null }
+    },
+    {
+      "resource_id": "costa-mesa-bridge-shelter",
+      "needs": ["sleep"],
+      "requires_city_ties": ["Costa Mesa"],
+      "ties_detail": "Lived or worked in Costa Mesa for the preceding 36 months, or attends school in the city",
+      "basis": ["a household member who has lived or worked in Costa Mesa for the preceding 36 months, or who attends school in the city"],
+      "review": { "status": "draft", "by": null, "date": null }
+    },
+    {
+      "resource_id": "huntington-beach-navigation-center",
+      "needs": ["sleep"],
+      "requires_city_ties": ["Huntington Beach"],
+      "ties_detail": "Significant and verifiable ties to Huntington Beach",
+      "requires_adl_independent": true,
+      "basis": ["with significant and verifiable ties to the city", "must be able to meet all Activities of Daily Living"],
+      "review": { "status": "draft", "by": null, "date": null }
+    },
+    {
+      "resource_id": "buena-park-navigation-center",
+      "needs": ["sleep"],
+      "age_min": 18,
+      "spa": "north",
+      "basis": ["Beds are designated for North SPA cities only", "18 years and older"],
+      "review": { "status": "draft", "by": null, "date": null }
+    },
+    {
+      "resource_id": "central-cities-navigation-center",
+      "needs": ["sleep"],
+      "age_min": 18,
+      "households": ["alone", "couple", "pregnant"],
+      "requires_city_ties": ["Garden Grove", "Fountain Valley", "Westminster"],
+      "ties_detail": "Beds are split among Garden Grove, Fountain Valley and Westminster; referral comes through those cities",
+      "basis": ["18+, no children.", "Beds are split among Garden Grove (50), Fountain Valley (13) and Westminster (22)."],
+      "review": { "status": "draft", "by": null, "date": null }
+    },
+    {
+      "resource_id": "wiseplace",
+      "needs": ["sleep"],
+      "households": ["alone"],
+      "gender_wording_conflict": true,
+      "basis": ["Unaccompanied women / individuals experiencing homelessness.", "Financial assistance has separate eligibility; the form asks about ties to the City of Santa Ana."],
+      "review": { "status": "draft", "by": null, "date": null }
+    },
+    {
+      "resource_id": "oc-outreach-and-engagement",
+      "needs": ["sleep"],
+      "basis": ["Individuals experiencing unsheltered homelessness in Orange County."],
+      "review": { "status": "draft", "by": null, "date": null }
+    },
+    {
+      "resource_id": "caloptima-health-calaim",
+      "needs": ["sleep"],
+      "requires_medi_cal": true,
+      "basis": ["CalOptima Health Medi-Cal members who meet each service's eligibility criteria."],
+      "review": { "status": "draft", "by": null, "date": null }
+    },
+    {
+      "resource_id": "va-crrc-santa-ana",
+      "needs": ["sleep"],
+      "requires_veteran": true,
+      "basis": ["Veterans experiencing homelessness or at risk of becoming homeless.", "A referral is not required."],
+      "review": { "status": "draft", "by": null, "date": null }
+    },
+    {
+      "resource_id": "oc-workforce-solutions",
+      "needs": ["work"],
+      "basis": ["Program-specific eligibility is not stated on the page."],
+      "review": { "status": "draft", "by": null, "date": null }
+    },
+    {
+      "resource_id": "santa-ana-work-center-resume-help",
+      "needs": ["work"],
+      "basis": [],
+      "review": { "status": "draft", "by": null, "date": null }
+    },
+    {
+      "resource_id": "chrysalis-orange-county",
+      "needs": ["work"],
+      "requires_phone_or_email": true,
+      "basis": ["the only program requirement is being willing and able to work.", "An active phone number or email address is needed to keep in contact with the Employment Specialist."],
+      "review": { "status": "draft", "by": null, "date": null }
+    },
+    {
+      "resource_id": "working-wardrobes-rebuilding-careers",
+      "needs": ["work"],
+      "basis": ["Anyone facing self-described barriers to gainful employment", "Interview clothing is for clients who are enrolled, actively engaged and have an upcoming job interview."],
+      "review": { "status": "draft", "by": null, "date": null }
+    },
+    {
+      "resource_id": "ocie-sbdc",
+      "needs": ["loan"],
+      "ladder_step": 1,
+      "requires_ca_id": "unknown",
+      "basis": ["Not designed for people experiencing homelessness; ask what address, ID or business registration is needed."],
+      "review": { "status": "draft", "by": null, "date": null }
+    },
+    {
+      "resource_id": "oc-workforce-solutions-business-accelerator",
+      "needs": ["loan"],
+      "ladder_step": 1,
+      "basis": [],
+      "review": { "status": "draft", "by": null, "date": null }
+    },
+    {
+      "resource_id": "accessity-small-business-loans",
+      "needs": ["loan"],
+      "ladder_step": 2,
+      "age_min": 18,
+      "requires_bank_account": "unknown",
+      "other_requirements": ["Business must be a legal entity", "Current on all personal financial obligations"],
+      "basis": ["be at least 18 years of age", "business must be a legal entity", "Must be current on all personal financial obligations"],
+      "review": { "status": "draft", "by": null, "date": null }
+    },
+    {
+      "resource_id": "jfla-zero-interest-loans",
+      "needs": ["loan"],
+      "ladder_step": 2,
+      "age_min": 18,
+      "requires_permanent_residence": true,
+      "requires_ca_id": true,
+      "requires_bank_account": "unknown",
+      "other_requirements": ["Proof of income", "Two qualified guarantors for personal loans"],
+      "basis": ["All applicants must be over 18, have a permanent residence in Los Angeles, Ventura, Orange, or Santa Barbara County, have proof of income and a valid CA state ID.", "Personal loans require two qualified guarantors/co-signers."],
+      "review": { "status": "draft", "by": null, "date": null }
+    },
+    {
+      "resource_id": "cdc-small-business-finance-sba-microloans",
+      "needs": ["loan"],
+      "ladder_step": 2,
+      "requires_bank_account": "unknown",
+      "other_requirements": ["$10,000 minimum loan"],
+      "basis": ["A $10,000 minimum is large for a first micro-business."],
+      "review": { "status": "draft", "by": null, "date": null }
+    },
+    {
+      "resource_id": "public-law-center",
+      "needs": ["loan"],
+      "ladder_step": 3,
+      "basis": ["Low-income residents of Orange County."],
+      "review": { "status": "draft", "by": null, "date": null }
+    },
+    {
+      "resource_id": "costa-mesa-reconnection-program",
+      "needs": ["travel"],
+      "requires_host_confirmed": true,
+      "basis": ["Homeless individuals/families who have friends or family in their original community willing to offer permanent housing options."],
+      "review": { "status": "draft", "by": null, "date": null }
+    },
+    {
+      "resource_id": "newport-beach-family-reunification-travel",
+      "needs": ["travel"],
+      "basis": [],
+      "review": { "status": "draft", "by": null, "date": null }
+    },
+    {
+      "resource_id": "home-free-national-runaway-safeline",
+      "needs": ["travel"],
+      "age_min": 12,
+      "age_max": 21,
+      "requires_host_confirmed": true,
+      "basis": ["Youth ages 12 to 21", "ready to reunite with family or a safe adult who agrees to help"],
+      "review": { "status": "draft", "by": null, "date": null }
+    },
+    {
+      "resource_id": "community-legal-aid-socal",
+      "needs": [],
+      "basis": ["Low-income individuals."],
+      "review": { "status": "draft", "by": null, "date": null }
+    },
+    {
+      "resource_id": "octa-reduced-fares",
+      "needs": [],
+      "qualifies_if_any": [
+        { "kind": "age", "min": 60, "max": null },
+        { "kind": "disability" },
+        { "kind": "age", "min": null, "max": 18 }
+      ],
+      "other_requirements": ["Proof of age or disability (for example a DMV ID or Medicare card)"],
+      "basis": ["Seniors 60 years and older; persons with disabilities; college students enrolled in 9 or more units a semester; youth 18 and under."],
+      "review": { "status": "draft", "by": null, "date": null }
+    },
+    {
+      "resource_id": "oc-general-relief",
+      "needs": [],
+      "requires_ca_id": true,
+      "basis": ["identification for all adults who apply"],
+      "review": { "status": "draft", "by": null, "date": null }
+    },
+    {
+      "resource_id": "oc-veterans-service-office",
+      "needs": [],
+      "requires_veteran": true,
+      "basis": ["Veterans, their dependents, and survivors."],
+      "review": { "status": "draft", "by": null, "date": null }
+    }
+  ]
+}

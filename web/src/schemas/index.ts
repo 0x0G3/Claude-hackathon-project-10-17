@@ -27,41 +27,151 @@ export const ResourceSchema = z.object({
   is_confidential_address: z.boolean().optional(),
 });
 
-export const ClientProfileSchema = z.object({
-  id: z.string().min(1),
-  title: z.string().min(1),
-  client: z.string().min(1),
-  in_their_words: z.string(),
-  needs: z.array(z.string()).min(1),
-  constraints: z.array(z.string()),
-  city: z.string().optional(),
-  has_id: z.boolean().optional(),
-  requires_accessibility: z.boolean().optional(),
+// ---------------------------------------------------------------------------
+// Intake
+// ---------------------------------------------------------------------------
+
+const Tri = z.enum(['yes', 'no', 'unknown']);
+export const NeedEnum = z.enum(['sleep', 'work', 'loan', 'travel']);
+
+export const IntakeProfileSchema = z.object({
+  id: z.string().min(1).max(40),
+  questions: z.array(NeedEnum),
+  other_needs: z.array(z.string().max(40)).max(10),
+  age_band: z.enum(['under_18', '18_21', '22_24', '25_59', '60_61', '62_plus', 'unknown']),
+  city: z.string().max(60).nullable(),
+  city_ties: z.array(z.string().max(60)).max(10),
+  household: z.enum(['alone', 'couple', 'with_children', 'pregnant', 'unknown']),
+  gender: z.enum(['woman', 'man', 'nonbinary', 'not_shared']),
+  adl_independent: Tri,
+  mobility_device: z.boolean(),
+  disability: Tri,
+  medi_cal: Tri,
+  veteran: Tri,
+  has: z.object({
+    ca_id: Tri,
+    birth_certificate: Tri,
+    phone: Tri,
+    email: Tri,
+    bank_account: Tri,
+    mailing_address: Tri,
+    permanent_residence: Tri,
+  }),
+  born_in_california: Tri,
+  language: z.string().min(2).max(10),
+  reads_well: z.boolean(),
+  phone_ok: z.boolean(),
+  travel: z.object({ destination: z.string().max(80).nullable(), host_confirmed: Tri }).nullable(),
+  safety: z.object({ feels_unsafe: z.boolean(), crisis: z.boolean() }),
+  heard_of: z.string().max(120).nullable(),
+  client_words: z.string().max(1000),
 });
 
-export const MatchRequestSchema = z.object({
-  clientId: z.string().optional(),
-  profile: ClientProfileSchema.optional(),
-}).refine(data => data.clientId || data.profile, {
-  message: "Either clientId or profile must be provided",
-});
-
-export const EvidenceReferenceSchema = z.object({
-  resource_id: z.string(),
-  resource_name: z.string(),
-  source_url: z.string().nullable(),
-  source_quote: z.string().nullable(),
-  verified_date: z.string().nullable(),
-});
-
-export const ActionPlanRequestSchema = z.object({
-  clientId: z.string().min(1),
-  clientSummary: z.string().min(1),
-  matchedResourceIds: z.array(z.string()).min(1),
-  needs: z.array(z.string()),
-  constraints: z.array(z.string()),
+export const SessionRequestSchema = z.object({
+  profile: IntakeProfileSchema,
+  /** Off by default so the demo runs without an API key; the rules engine is the safe fallback. */
   useAi: z.boolean().optional().default(false),
 });
+
+export const MatchRequestSchema = z
+  .object({
+    scenarioId: z.string().optional(),
+    profile: IntakeProfileSchema.optional(),
+  })
+  .refine(data => data.scenarioId || data.profile, {
+    message: 'Either scenarioId or profile must be provided',
+  });
+
+// ---------------------------------------------------------------------------
+// Verification overlay ("I called")
+// ---------------------------------------------------------------------------
+
+export const VerificationInputSchema = z.object({
+  resource_id: z.string().min(1),
+  outcome: z.enum(['confirmed', 'closed', 'number_wrong', 'changed']),
+  note: z.string().max(500).default(''),
+});
+
+// ---------------------------------------------------------------------------
+// Claude outputs. Kept to plain types so they translate to structured-output JSON schema.
+// ---------------------------------------------------------------------------
+
+export const PlanOutputSchema = z.object({
+  questions: z.array(
+    z.object({
+      question: z.string().describe('One of sleep, work, loan, travel, prerequisites, or an extra category'),
+      steps: z.array(
+        z.object({
+          order: z.number().int(),
+          resource_id: z.string().describe('Must be one of the resource ids you were given'),
+          why_this: z.string().describe('Plain-language reason based only on the check results'),
+          what_to_do_today: z.string(),
+          facts_used: z.array(
+            z.object({
+              field: z.string().describe('Record field the value is copied from: phone, address, hours, website, name, how_to_access or notes'),
+              value: z.string().describe('Copied verbatim from that field'),
+            })
+          ),
+          unknowns_to_ask: z.array(z.string()),
+          warnings: z.array(z.string()),
+        })
+      ),
+      gaps: z.array(z.string()),
+    })
+  ),
+  ordering_notes: z.array(z.string()),
+});
+
+const PlanLineSchema = z.object({
+  when: z.enum(['today', 'this_week']),
+  resource_id: z.string().nullable(),
+  text: z.string(),
+});
+
+export const ClientPlanSchema = z.object({
+  language: z.string(),
+  lines: z.array(PlanLineSchema),
+  english_lines: z.array(PlanLineSchema),
+});
+
+export const ExtractionSchema = z.object({
+  fields: z.array(
+    z.object({
+      field: z.enum(['name', 'phone', 'address', 'hours', 'eligibility', 'website']),
+      value: z.string().describe('The value as the page states it, or "unknown"'),
+      quote: z.string().describe('Exact text copied from the page that states the value'),
+    })
+  ),
+  needs: z.array(z.enum(['sleep', 'work', 'loan', 'travel', 'other'])),
+  flags: z.array(
+    z.object({
+      kind: z.enum(['closure', 'operator_change', 'conflicting_number', 'hijacked_domain', 'other']),
+      quote: z.string(),
+      note: z.string(),
+    })
+  ),
+});
+
+export const RecheckRequestSchema = z.object({
+  resource_id: z.string().min(1),
+  useAi: z.boolean().optional().default(false),
+});
+
+export const RecheckApprovalSchema = z.object({
+  resource_id: z.string().min(1),
+  approved: z.array(
+    z.object({
+      field: z.string(),
+      current: z.string().nullable(),
+      proposed: z.string(),
+      quote: z.string(),
+    })
+  ),
+});
+
+// ---------------------------------------------------------------------------
+// Case management scaffold (Firestore; unchanged)
+// ---------------------------------------------------------------------------
 
 export const CaseStatusEnum = z.enum([
   'intake',

@@ -29,10 +29,14 @@ export async function GET() {
       },
     },
     capabilities: [
-      'deterministic-c01-matching',
-      'oc-resource-catalog',
+      'safety-gate',
+      'prerequisite-check',
+      'structured-eligibility-matcher',
+      'planner-and-writer',
+      'fact-checker',
+      'verification-overlay',
+      'listing-recheck',
       'confidential-address-masking',
-      'action-plan-generation',
       'case-management-scaffold',
     ],
   });
