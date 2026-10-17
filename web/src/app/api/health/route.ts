@@ -24,7 +24,7 @@ export async function GET() {
       },
       claude_ai: {
         configured: anthropicReady,
-        model: 'claude-3-5-sonnet-20241022',
+        model: 'claude-sonnet-5-5',
         fallback: 'deterministic-rules-engine',
       },
     },

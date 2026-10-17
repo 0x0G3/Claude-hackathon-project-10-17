@@ -112,15 +112,24 @@ Respond with a JSON object matching this schema:
   "unverified_requirements": ["unverified point 1"]
 }`;
 
-    const message = await anthropic.messages.create({
-      model: 'claude-3-5-sonnet-20241022',
-      max_tokens: 1024,
+    const message = await anthropic.beta.messages.create({
+      model: 'claude-sonnet-5-5',
+      max_tokens: 16000, // thinking counts toward max_tokens, so leave room beyond the JSON reply
+      output_config: { effort: 'medium' },
+      betas: ['server-side-fallback-2026-07-01'],
+      fallbacks: 'default',
       system: 'You are an ethical healthcare and shelter case manager. You output only valid JSON without markdown fences.',
       messages: [{ role: 'user', content: prompt }],
     });
 
-    const contentBlock = message.content[0];
-    if (contentBlock && contentBlock.type === 'text') {
+    if (message.stop_reason === 'refusal') {
+      console.warn('Claude declined the request; falling back to deterministic plan:', message.stop_details);
+      return generateDeterministicActionPlan(params);
+    }
+
+    // Responses can start with thinking blocks, so find the text block by type
+    const contentBlock = message.content.find(block => block.type === 'text');
+    if (contentBlock) {
       const rawText = contentBlock.text.trim();
       const cleaned = rawText.replace(/^```json\s*/i, '').replace(/\s*```$/, '');
       const parsed = JSON.parse(cleaned);
