@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Desktop framework</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&amp;family=Playfair+Display:wght@700;900&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#122640}a:hover{color:#1a2187}
+</style>
+</helmet>
+<div style="width: 1280px; height: 800px; box-sizing: border-box; background: #ffffff; color: #122640; font-family: Archivo, system-ui, sans-serif; display: flex; flex-direction: column;">
+  <div style="background: #122640; color: #ffffff; padding: 20px 48px; display: flex; align-items: center; gap: 20px;">
+    <img src="/_blob/f19eb12f87a9b6bc202ac10f5bad41fb" alt="Illumination Health + Home" style="height: 24px; width: auto;">
+    <span style="border-left: 1px solid #ffffff; padding-left: 20px; font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Next Door · desktop framework · draft Oct 17</span>
+  </div>
+  <div style="padding: 32px 48px 36px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 30px; flex-grow: 1;">
+
+    <div style="grid-column: span 6; display: flex; flex-direction: column; gap: 12px;">
+      <p style="margin: 0; font-size: 13px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: #33373d;">Who it’s for</p>
+      <h1 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 36px; line-height: 1.15;">No smartphone? Same plan, on a shared computer.</h1>
+      <p style="margin: 0; font-size: 16px; line-height: 1.65; color: #33373d;">The IHH lobby computer, a library desk, a case manager’s screen turned around. Mouse and keyboard, often a stranger used it last. The plan leaves on paper.</p>
+    </div>
+
+    <div style="grid-column: span 6; display: flex; flex-direction: column; gap: 12px;">
+      <p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; border-bottom: 2px solid #122640; padding-bottom: 8px;">What changes from the phone</p>
+      <div style="display: grid; grid-template-columns: 150px minmax(0, 1fr); column-gap: 14px; row-gap: 9px; font-size: 14.5px; line-height: 1.45;">
+        <b>Fewer screens</b><span>Language and “say it your way” share one screen. Plan and “take it with you” share another.</span>
+        <b>Two columns</b><span>Task on the left, help on the right, each with one left edge. Nothing centers but button labels. Stacks under 1024 px.</span>
+        <b>Print first</b><span>The main action on the plan is PRINT MY PLAN. A text goes only to a number they give staff.</span>
+        <b>Bigger type</b><span>Body 20 px, questions 40 px. People sit farther from a monitor.</span>
+        <b>Keyboard works</b><span>Tab through every control. Enter makes the plan. Esc is Quick exit on a safety screen.</span>
+      </div>
+    </div>
+
+    <div style="grid-column: span 12; background: #122640; color: #ffffff; padding: 22px 26px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px;">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <b style="font-family: 'Playfair Display', Georgia, serif; font-size: 20px; color: #facc0a;">Start over, always</b>
+        <span style="font-size: 14px; line-height: 1.5;">A button in the top bar on every screen. It clears the words, the taps and the plan.</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <b style="font-family: 'Playfair Display', Georgia, serif; font-size: 20px; color: #facc0a;">Clears itself</b>
+        <span style="font-size: 14px; line-height: 1.5;">After 3 quiet minutes, a 30-second warning, then everything is wiped.</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <b style="font-family: 'Playfair Display', Georgia, serif; font-size: 20px; color: #facc0a;">Leaves no trace</b>
+        <span style="font-size: 14px; line-height: 1.5;">No sign-in, no saved history, no autofill. Nothing is stored on the computer.</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <b style="font-family: 'Playfair Display', Georgia, serif; font-size: 20px; color: #facc0a;">Safety is stricter</b>
+        <span style="font-size: 14px; line-height: 1.5;">Someone may be standing behind them. No printout on a safety path, and Quick exit is one key.</span>
+      </div>
+    </div>
+
+    <div style="grid-column: span 7; display: flex; flex-direction: column; gap: 10px;">
+      <p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; border-bottom: 2px solid #122640; padding-bottom: 8px;">Screen anatomy · 1280 × 800</p>
+      <div style="display: flex; gap: 32px; align-items: flex-start;">
+        <div style="width: 260px; flex-shrink: 0; border: 2px solid #122640; display: flex; flex-direction: column;">
+          <div style="background: #facc0a; height: 12px;"></div>
+          <div style="background: #122640; height: 22px; display: flex; justify-content: flex-end; align-items: center; padding: 0 6px;"><span style="width: 40px; height: 10px; border: 1px solid #ffffff;"></span></div>
+          <div style="display: flex; gap: 8px; padding: 10px; height: 118px; box-sizing: border-box;">
+            <div style="flex: 3; display: flex; flex-direction: column; gap: 6px;"><div style="height: 12px; width: 80%; background: #122640;"></div><div style="flex-grow: 1; border: 1px dashed #122640;"></div><div style="height: 18px; width: 60%; background: #facc0a;"></div></div>
+            <div style="flex: 2; background: #ede5de;"></div>
+          </div>
+        </div>
+        <ol style="margin: 0; padding-left: 0; list-style-position: outside; font-size: 14px; line-height: 1.5; display: flex; flex-direction: column; gap: 6px;">
+          <li><b>Help strip</b> with 9-1-1 and 2-1-1, as on the phone.</li>
+          <li><b>Top bar:</b> logo on the left; language and START OVER on the right. Back sits above the question.</li>
+          <li><b>Task column:</b> one question, the input, one yellow action.</li>
+          <li><b>Help column</b> in sand: how it works, why a door fits, what we never ask.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div style="grid-column: span 5; display: flex; flex-direction: column; gap: 10px;">
+      <p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; border-bottom: 2px solid #122640; padding-bottom: 8px;">Same as the phone</p>
+      <ul style="margin: 0; padding-left: 0; list-style-position: outside; font-size: 14.5px; line-height: 1.55; display: flex; flex-direction: column; gap: 5px;">
+        <li>Safety check runs before any search.</li>
+        <li>Every fact shows its check date and source.</li>
+        <li>“Likely a fit”, never “you qualify”.</li>
+        <li>A care manager approves before anything prints.</li>
+        <li>Colors, type and square corners from the IHH system.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,925 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<title>Next Door Planner</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Playfair+Display:wght@700;900&display=swap">
+<style>
+/* Layout: IHH brand shell (yellow help bar, navy header with view tabs), then one view at a time.
+   Staff views are dense dashboards on white/sand; client views are phone frames in big plain type.
+   Single light theme by choice: the IHH system is light-only. Square corners, no shadows, no gradients. */
+:root{
+  color-scheme:light;
+  --yellow:#facc0a; --indigo:#1a2187; --navy:#122640; --sand:#ede5de; --white:#ffffff; --charcoal:#33373d;
+  --bg:var(--white); --bg-soft:var(--sand); --text:var(--navy); --text-muted:var(--charcoal);
+  --font-display:"IvyPresto Display","ivypresto-display","Playfair Display",Georgia,serif;
+  --font-quote:"Playfair Display",Georgia,serif;
+  --font-sans:Archivo,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --gutter:20px; --content-max:1200px; --section-y:48px;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--font-sans);font-size:15px;line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--navy)}
+.wrap{max-width:var(--content-max);margin:0 auto;padding-left:max(var(--gutter),env(safe-area-inset-left,0px));padding-right:max(var(--gutter),env(safe-area-inset-right,0px))}
+a{color:var(--navy)}
+:focus-visible{outline:2px solid var(--navy);outline-offset:2px}
+.dark :focus-visible,.dark:focus-visible{outline-color:var(--yellow)}
+h1,h2,h3{text-wrap:balance}
+.eyebrow{font:500 12.5px/1.25 var(--font-sans);letter-spacing:1px;text-transform:uppercase;margin:0;color:var(--text-muted)}
+.h-display{font:700 clamp(30px,4vw,44px)/1.15 var(--font-display);margin:0}
+.h2{font:700 clamp(26px,3vw,34px)/1.2 var(--font-display);margin:0}
+.h3{font:700 22px/1.25 var(--font-display);margin:0}
+.sub{color:var(--text-muted);margin:0;max-width:68ch}
+.num{font-variant-numeric:lining-nums tabular-nums}
+
+/* ---- utility bar + header ---- */
+.utility{background:var(--yellow);color:var(--navy);font:500 13px/1.4 var(--font-sans)}
+.utility .wrap{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 18px;padding-block:8px;text-align:center}
+.utility b{font-weight:700}
+.utility .proto{font-weight:600;text-transform:uppercase;letter-spacing:1px;font-size:11.5px}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--navy);color:var(--white)}
+header.top .wrap{display:flex;flex-wrap:wrap;align-items:stretch;gap:0 28px;min-height:64px}
+.brand{display:flex;align-items:center;gap:14px;padding-block:12px}
+.brand img{height:22px;width:auto;display:block}
+.brand span{font:600 12px/1 var(--font-sans);letter-spacing:1px;text-transform:uppercase;border-left:1px solid var(--white);padding-left:14px;white-space:nowrap}
+.tabs{flex:1;display:flex;align-items:stretch;gap:22px;overflow-x:auto;min-width:0;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabgroup{display:flex;align-items:stretch;gap:18px}
+.tabgroup + .tabgroup{border-left:1px solid rgba(255,255,255,.35);padding-left:22px}
+.tabgroup small{align-self:center;font:500 10.5px/1 var(--font-sans);letter-spacing:1px;text-transform:uppercase;color:var(--yellow)}
+.tabs button{font:600 12px/1 var(--font-sans);letter-spacing:.5px;text-transform:uppercase;color:var(--white);background:none;border:0;border-bottom:2px solid transparent;padding:0 0 2px;cursor:pointer;white-space:nowrap}
+.tabs button[aria-selected="true"],.tabs button:hover{border-bottom-color:var(--yellow)}
+.tabs button:focus-visible{outline:2px solid var(--yellow);outline-offset:4px}
+.gethelp{display:flex;align-items:center;font:500 14px/1 var(--font-sans);text-transform:uppercase;background:var(--yellow);color:var(--navy);padding-inline:22px;border:0;cursor:pointer;margin-right:calc(-1 * max(var(--gutter),env(safe-area-inset-right,0px)))}
+@media (max-width:900px){
+  header.top .wrap{gap:0}
+  .brand{flex:1}
+  .gethelp{order:2}
+  .tabs{order:3;flex-basis:100%;padding-block:4px 12px}
+  .tabs button{padding-block:8px}
+}
+
+/* ---- intro ---- */
+.intro{background:var(--sand)}
+.intro .wrap{padding-block:36px 32px;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:24px 48px;align-items:start}
+.intro p.lead{font-size:16px;line-height:1.8;margin:14px 0 0;max-width:60ch}
+.index{margin:0;padding:0;list-style:none;display:grid;border-top:2px solid var(--navy)}
+.index li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;padding:9px 0;border-bottom:1px solid var(--navy)}
+.index button{font:700 15px/1.3 var(--font-sans);color:var(--navy);background:none;border:0;padding:0;text-align:left;cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+.index span{font-size:13px;color:var(--text-muted)}
+.index em{font:600 11px/1.6 var(--font-sans);font-style:normal;letter-spacing:1px;text-transform:uppercase;color:var(--navy);grid-row:1/3;grid-column:2;align-self:center}
+.tryrow{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.try{font:600 13px/1.2 var(--font-sans);padding:10px 14px;border:1px solid var(--navy);background:var(--white);color:var(--navy);cursor:pointer;text-align:left}
+.try:hover{background:var(--navy);color:var(--white)}
+.try small{display:block;font-weight:500;font-size:11.5px;letter-spacing:.5px;text-transform:uppercase;opacity:.8;margin-top:2px}
+@media (max-width:860px){.intro .wrap{grid-template-columns:1fr}}
+
+/* ---- view frame ---- */
+main .view{padding-block:32px 56px}
+.viewhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:12px 24px;margin-bottom:22px}
+.viewhead > div{display:grid;gap:6px;min-width:0}
+.who{font:600 11px/1 var(--font-sans);letter-spacing:1px;text-transform:uppercase;background:var(--navy);color:var(--white);padding:6px 9px;display:inline-block;justify-self:start}
+.who.client{background:var(--yellow);color:var(--navy)}
+.who.lead{background:var(--indigo)}
+
+/* ---- buttons, chips, confidence ---- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font:500 14px/1 var(--font-sans);text-transform:uppercase;padding:12px 28px;border:1px solid var(--navy);background:var(--white);color:var(--navy);cursor:pointer;white-space:nowrap}
+.btn:hover{background:var(--navy);color:var(--white)}
+.btn.primary{background:var(--yellow);border-color:var(--yellow);color:var(--navy)}
+.btn.primary:hover{background:var(--navy);border-color:var(--navy);color:var(--yellow)}
+.btn.thick{border-width:2px}
+.btn.big{font-size:16px;padding:18px 28px;width:100%}
+.btns{display:flex;flex-wrap:wrap;gap:10px}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{display:inline-flex;align-items:center;gap:6px;font:600 10.5px/1 var(--font-sans);letter-spacing:.8px;text-transform:uppercase;padding:5px 7px;border:1px solid var(--navy);background:var(--white);color:var(--navy);white-space:nowrap}
+.chip.navy{background:var(--navy);color:var(--white)}
+.chip.yellow{background:var(--yellow);border-color:var(--yellow)}
+.chip.indigo{background:var(--indigo);border-color:var(--indigo);color:var(--white)}
+.chip.sand{background:var(--sand);border-color:var(--sand)}
+.chip.dashed{border-style:dashed}
+.conf{display:inline-flex;align-items:center;gap:7px;font:600 12px/1.3 var(--font-sans);color:var(--navy)}
+.conf i{width:11px;height:11px;border:1.5px solid var(--navy);flex:none;position:relative;background:var(--white)}
+.conf.high i{background:var(--navy)}
+.conf.medium i::after{content:"";position:absolute;inset:0 50% 0 0;background:var(--navy)}
+.conf.low i{border-style:dashed}
+.unk{font-style:italic;color:var(--text-muted);border-bottom:1px dashed var(--navy)}
+.toast{font-size:13px;font-weight:600;min-height:1.4em}
+
+/* ---- stat band (dark) ---- */
+.stats{background:var(--navy);color:var(--white);display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));margin-bottom:28px}
+.stat{padding:20px 24px;display:grid;gap:4px;align-content:start;border-right:1px solid rgba(255,255,255,.25)}
+.stat:last-child{border-right:0}
+.stat b{font:700 46px/1.05 var(--font-display);color:var(--yellow);font-variant-numeric:lining-nums tabular-nums}
+.stat span{font:600 13px/1.3 var(--font-sans);text-transform:uppercase;letter-spacing:.8px}
+.stat small{font-size:13px;line-height:1.45;opacity:.9}
+
+/* ---- today: load + board ---- */
+.load{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin:10px 0 28px}
+.cm{background:var(--sand);padding:12px 14px;display:grid;gap:7px}
+.cm .row{display:flex;justify-content:space-between;gap:8px;font-size:14px}
+.meter{height:8px;background:var(--white)}
+.meter i{display:block;height:100%;background:var(--navy)}
+.meter.hot i{background:var(--yellow);border:1px solid var(--navy)}
+.boardscroll{overflow-x:auto;padding-bottom:6px}
+.board{display:grid;grid-template-columns:repeat(5,minmax(210px,1fr));gap:10px;min-width:1080px}
+.col{background:var(--sand);padding:10px;display:flex;flex-direction:column;gap:8px}
+.col h3{display:flex;justify-content:space-between;margin:2px 2px 4px;font:600 11.5px/1.2 var(--font-sans);letter-spacing:1px;text-transform:uppercase}
+.card{background:var(--white);border:1px solid var(--white);padding:11px 12px;display:grid;gap:7px;text-align:left;font:inherit;color:inherit;cursor:pointer;width:100%}
+.card:hover{border-color:var(--navy)}
+.card .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.card .name{font:700 17px/1.2 var(--font-display)}
+.days{font:600 12px/1 var(--font-sans);white-space:nowrap}
+.days.soon{background:var(--yellow);padding:4px 6px}
+.card .title{font-size:13px;color:var(--text-muted);line-height:1.4}
+.owner{font-size:12px;color:var(--text-muted)}
+
+/* ---- review ---- */
+.casebar{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin-bottom:18px}
+select{font:500 14px var(--font-sans);padding:9px 10px;border:1px solid var(--navy);background:var(--white);color:var(--navy);max-width:100%;border-radius:0}
+.panes{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.3fr) minmax(0,1.15fr);gap:18px;align-items:start}
+@media (max-width:1080px){.panes{grid-template-columns:1fr}}
+.pane{min-width:0;display:grid;gap:14px;align-content:start}
+.voice{background:var(--sand);padding:22px 20px;display:grid;gap:12px}
+.voice .q{font:900 22px/1.4 var(--font-quote);margin:0}
+.voice .c{margin:0;font-size:14px;color:var(--text-muted)}
+ul.plain{margin:0;padding-left:18px;display:grid;gap:3px;font-size:14px}
+.checks{display:grid;border-top:2px solid var(--navy)}
+.checks div{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;padding:9px 0;border-bottom:1px solid var(--navy);font-size:14px;line-height:1.45}
+.checks b{font:600 11px/1.6 var(--font-sans);letter-spacing:1px;text-transform:uppercase;padding:2px 6px;align-self:start}
+.checks .ok b{border:1px solid var(--navy)}
+.checks .stop b{background:var(--navy);color:var(--white)}
+.checks .warn b{background:var(--yellow)}
+.need{display:grid;gap:8px}
+.need h4{margin:0;display:flex;flex-wrap:wrap;align-items:center;gap:8px;font:700 18px/1.3 var(--font-display)}
+.res{border:1px solid var(--navy);padding:12px 14px;display:grid;gap:8px;background:var(--white)}
+.res.picked{outline:3px solid var(--yellow);outline-offset:-1px}
+.res .rt{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 10px;align-items:baseline}
+.res .rn{font-weight:700}
+dl.kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:3px 12px;margin:0;font-size:13px;line-height:1.45}
+dl.kv dt{color:var(--text-muted)}
+dl.kv dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.src{font-size:12px;color:var(--text-muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center}
+.pickrow{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600}
+.pickrow input{accent-color:var(--navy);width:16px;height:16px}
+.empty{padding:14px;border:1px dashed var(--navy);font-size:14px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;padding:10px 12px;background:var(--sand)}
+textarea{width:100%;min-height:130px;font:14px/1.5 var(--font-sans);padding:10px;border:1px solid var(--navy);background:var(--white);color:var(--navy);resize:vertical;border-radius:0}
+details.more summary{cursor:pointer;font:600 12px/1.4 var(--font-sans);letter-spacing:1px;text-transform:uppercase}
+.approve{background:var(--sand);padding:16px;display:grid;gap:12px}
+
+/* ---- plan card (shared by client, review, printout) ---- */
+.plancard{background:var(--white);border:2px solid var(--navy);display:grid;color:var(--navy)}
+.pc-head{background:var(--yellow);padding:18px 18px 16px;display:grid;gap:6px}
+.pc-head .eyebrow{color:var(--navy)}
+.pc-head h3{font:700 26px/1.15 var(--font-display);margin:0}
+.pc-body{padding:16px 18px 18px;display:grid;gap:16px}
+.pc-step{display:grid;grid-template-columns:30px minmax(0,1fr);gap:4px 12px}
+.pc-step .n{font:700 24px/1 var(--font-display)}
+.pc-step h4{margin:0;font:600 12px/1.5 var(--font-sans);letter-spacing:1px;text-transform:uppercase}
+.pc-step p{margin:0;font-size:17px;line-height:1.5}
+.pc-step ul{margin:2px 0 0;padding-left:18px;font-size:16px;line-height:1.5}
+.phone-big{font:700 26px/1.2 var(--font-sans);letter-spacing:.5px;user-select:all;font-variant-numeric:tabular-nums}
+.say{font-size:16px;line-height:1.55;background:var(--sand);padding:10px 12px;margin:0}
+.pc-foot{border-top:1px solid var(--navy);padding:12px 18px;display:grid;gap:6px;font-size:13px}
+.pc-after{border-top:1px solid var(--navy);padding:14px 18px;display:grid;gap:10px}
+.pc-after h5{margin:0;font:600 12px/1.4 var(--font-sans);letter-spacing:1px;text-transform:uppercase}
+.pc-after .door{display:grid;gap:2px;font-size:15px}
+.pc-en{background:var(--sand);padding:12px 18px;font-size:13px;line-height:1.5;display:grid;gap:4px}
+.pc-en b{font:600 11px/1.4 var(--font-sans);letter-spacing:1px;text-transform:uppercase}
+.plancard details summary{cursor:pointer;font:600 12px/1.4 var(--font-sans);letter-spacing:1px;text-transform:uppercase;padding:12px 18px;border-top:1px solid var(--navy)}
+.plancard details .alt{padding:0 18px 14px;display:grid;gap:10px;font-size:15px}
+
+/* ---- client: phones ---- */
+.clientgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,380px));gap:28px;justify-content:start;align-items:start}
+.phone{width:100%;max-width:380px;border:2px solid var(--navy);background:var(--white);display:grid;align-content:start}
+.phone .bar{background:var(--navy);color:var(--white);display:flex;justify-content:space-between;align-items:center;padding:10px 14px}
+.phone .bar img{height:16px;width:auto;display:block}
+.phone .bar span{font:600 11px/1 var(--font-sans);letter-spacing:1px;text-transform:uppercase}
+.phone .help{background:var(--yellow);font:500 13px/1.4 var(--font-sans);padding:7px 14px}
+.phone .scr{padding:18px 16px 22px;display:grid;gap:16px;min-height:560px;align-content:start}
+.phone-label{font:600 11px/1 var(--font-sans);letter-spacing:1px;text-transform:uppercase;margin:0 0 8px;color:var(--text-muted)}
+.bigq{font:700 28px/1.2 var(--font-display);margin:0}
+.client-ta{font-size:18px;line-height:1.5;min-height:120px}
+.taps{display:flex;flex-wrap:wrap;gap:8px}
+.tap{font:500 15px/1.2 var(--font-sans);padding:11px 13px;border:1px solid var(--navy);background:var(--white);color:var(--navy);cursor:pointer;min-height:44px}
+.tap[aria-pressed="true"]{background:var(--navy);color:var(--white)}
+.lang{display:flex;gap:0;border:1px solid var(--navy)}
+.lang button{flex:1;font:600 14px/1 var(--font-sans);padding:12px 6px;background:var(--white);color:var(--navy);border:0;border-right:1px solid var(--navy);cursor:pointer;min-height:44px}
+.lang button:last-child{border-right:0}
+.lang button[aria-pressed="true"]{background:var(--navy);color:var(--white)}
+.lang button:disabled{color:var(--text-muted);cursor:not-allowed}
+.fieldlabel{font:600 12px/1.25 var(--font-sans);letter-spacing:1px;text-transform:uppercase;margin:0}
+.states{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;align-items:center}
+.dark{background:var(--navy);color:var(--white)}
+.safe{display:grid;gap:16px;padding:24px 18px}
+.safe img{width:56px;height:auto}
+.safe h3{font:700 30px/1.2 var(--font-display);margin:0}
+.safe h3 em{font-style:normal;color:var(--yellow)}
+.safe p{margin:0;font-size:18px;line-height:1.5}
+.safe .call{border:2px solid var(--white);padding:14px;display:grid;gap:2px}
+.safe .call b{font:700 34px/1.1 var(--font-sans);color:var(--yellow)}
+.btn.onDark{background:transparent;color:var(--white);border:2px solid var(--white)}
+.btn.onDark:hover{background:var(--white);color:var(--navy)}
+.staffnote{font-size:13px;line-height:1.5;border-top:1px solid rgba(255,255,255,.4);padding-top:12px;opacity:.95}
+.calm{background:var(--sand);padding:22px 18px;display:grid;gap:14px}
+.calm h3{font:700 28px/1.2 var(--font-display);margin:0}
+.calm p{margin:0;font-size:18px;line-height:1.5}
+.gapbox{display:grid;gap:14px}
+.gapbox .lede{background:var(--sand);padding:18px;display:grid;gap:8px}
+.gapbox .lede h3{font:700 26px/1.2 var(--font-display);margin:0}
+.gapbox p{margin:0;font-size:17px;line-height:1.5}
+.nextstep{border:2px solid var(--navy);padding:14px 16px;display:grid;gap:4px}
+.nextstep b{font:600 12px/1.4 var(--font-sans);letter-spacing:1px;text-transform:uppercase}
+.nextstep span{font:700 22px/1.25 var(--font-display)}
+
+/* ---- gaps dashboard ---- */
+.twocol{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:28px;align-items:start}
+@media (max-width:980px){.twocol{grid-template-columns:1fr}}
+.panel{display:grid;gap:12px;min-width:0}
+.panel > header{display:grid;gap:4px;border-bottom:2px solid var(--navy);padding-bottom:8px}
+.bars{display:grid;gap:0}
+.brow{display:grid;grid-template-columns:minmax(110px,170px) minmax(0,1fr) auto;gap:4px 14px;align-items:center;padding:9px 0;border-bottom:1px solid var(--sand)}
+.brow .lbl{font-weight:600;font-size:14px;line-height:1.3}
+.brow .tracks{display:grid;gap:4px}
+.track{display:flex;align-items:center;gap:8px;font-size:12px;font-variant-numeric:tabular-nums}
+.track i{display:block;height:12px;min-width:2px}
+.track.ask i{background:var(--navy)}
+.track.door i{background:var(--yellow);outline:1px solid var(--navy);outline-offset:-1px}
+.keyrow{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px}
+.keyrow span{display:inline-flex;align-items:center;gap:7px}
+.keyrow i{width:14px;height:10px;display:inline-block}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--navy);font-size:13.5px;vertical-align:top}
+th{font:600 11px/1.3 var(--font-sans);letter-spacing:1px;text-transform:uppercase;border-bottom-width:2px}
+td.n{text-align:right}
+.pull{background:var(--sand);padding:36px 24px;margin-top:32px;text-align:center;display:grid;gap:14px;justify-items:center}
+.pull img{width:40px;height:auto}
+.pull p{font:900 clamp(22px,2.6vw,30px)/1.4 var(--font-quote);margin:0;max-width:36ch;text-wrap:balance}
+.pull small{font:500 12px/1.2 var(--font-sans);letter-spacing:1px;text-transform:uppercase}
+
+/* ---- printout ---- */
+.paperdesk{background:var(--sand);padding:28px 16px}
+.paper{background:var(--white);max-width:816px;margin:0 auto;padding:clamp(20px,5vw,56px);display:grid;gap:22px;color:var(--navy)}
+.paper .ph{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;border-bottom:2px solid var(--navy);padding-bottom:14px}
+.paper .ph img{height:34px;width:auto}
+.paper .ph div{text-align:right;font-size:13px;line-height:1.5}
+.paper h2{font:700 34px/1.15 var(--font-display);margin:0}
+.paper .plancard{border-width:2px}
+.paper .pc-step p{font-size:19px}
+.paper .pfoot{font-size:12px;line-height:1.55;color:var(--text-muted);border-top:1px solid var(--navy);padding-top:12px;display:grid;gap:6px}
+@media print{.utility,header.top,.intro,footer,.viewhead,.noprint{display:none!important}.paperdesk{background:none;padding:0}}
+
+/* ---- how it works (kept from the draft guideline) ---- */
+.flow{border:1px solid var(--navy);padding:16px;margin:0 0 22px;overflow-x:auto}
+.flow svg{display:block;width:100%;min-width:860px;height:auto;color:var(--navy);font-family:var(--font-sans)}
+.flow figcaption{color:var(--text-muted);font-size:13px;margin-top:8px}
+.flow .box{fill:var(--white);stroke:var(--navy);stroke-width:1.5}
+.flow .claude{fill:var(--yellow);stroke:var(--navy);stroke-width:2}
+.flow .store{fill:var(--sand);stroke:var(--navy);stroke-width:1}
+.flow .stop{fill:var(--white);stroke:var(--navy);stroke-width:2.5;stroke-dasharray:6 4}
+.flow .t{font-size:13px;font-weight:700;fill:var(--navy)}
+.flow .s{font-size:11px;fill:var(--charcoal)}
+.flow .own{font:600 10.5px var(--font-sans);fill:var(--indigo);letter-spacing:.5px}
+.flow .lbl{font-size:10.5px;fill:var(--charcoal)}
+.flow .ln{stroke:var(--navy);stroke-width:1.4;fill:none}
+.flow .dash{stroke-dasharray:5 4}
+.flow .red{stroke:var(--navy);stroke-width:2.4}
+.handoff{overflow-x:auto;margin-bottom:32px}
+.handoff table{min-width:640px}
+.road{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:14px 0 18px}
+.phase{border:1px solid var(--navy);padding:14px;display:grid;gap:8px;align-content:start;min-width:0}
+.phase.now{background:var(--yellow);border-color:var(--yellow)}
+.phase .when{font:600 11px/1.3 var(--font-sans);letter-spacing:1px;text-transform:uppercase;color:var(--indigo)}
+.phase.now .when{color:var(--navy)}
+.phase h3{margin:0;font:700 19px/1.25 var(--font-display)}
+.phase ul{margin:0;padding-left:18px;display:grid;gap:4px;font-size:13.5px}
+.gate{font-size:13px;background:var(--sand);padding:8px 10px}
+.phase.now .gate{background:var(--white)}
+.gate b{display:block;font-size:11px;letter-spacing:1px;text-transform:uppercase}
+.ask{background:var(--navy);color:var(--white);padding:18px 20px;display:grid;gap:8px}
+.ask strong{font:700 20px/1.3 var(--font-display);color:var(--yellow)}
+.ask ul{margin:0;padding-left:18px;display:grid;gap:4px}
+@media (max-width:980px){.road{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.road{grid-template-columns:1fr}}
+
+footer.foot{border-top:1px solid var(--navy)}
+footer.foot .wrap{padding-block:26px 34px;display:flex;flex-wrap:wrap;gap:16px 32px;align-items:center;justify-content:space-between;font-size:12.5px;color:var(--text-muted)}
+footer.foot img{height:28px;width:auto;display:block}
+footer.foot p{margin:0;max-width:80ch}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+
+<div class="utility" role="region" aria-label="Get help now"><div class="wrap">
+  <span>Need help today? Dial <b>2-1-1</b> for Orange County housing, food and health resources.</span>
+  <span>In an emergency, call <b>9-1-1</b>.</span>
+  <span class="proto">Prototype · made-up clients · listings checked Oct 13, 2026</span>
+</div></div>
+
+<header class="top dark"><div class="wrap">
+  <div class="brand"><img src="logo-full.svg" alt="Illumination Health + Home"><span>Next Door</span></div>
+  <nav class="tabs" role="tablist" aria-label="Screens">
+    <div class="tabgroup"><small>Staff</small>
+      <button role="tab" aria-selected="true" data-view="today">Today</button>
+      <button role="tab" aria-selected="false" data-view="review">Review a plan</button>
+      <button role="tab" aria-selected="false" data-view="gaps">Gaps</button>
+    </div>
+    <div class="tabgroup"><small>Client</small>
+      <button role="tab" aria-selected="false" data-view="client">Client screen</button>
+      <button role="tab" aria-selected="false" data-view="print">Printout</button>
+    </div>
+    <div class="tabgroup">
+      <button role="tab" aria-selected="false" data-view="plan">How it works</button>
+    </div>
+  </nav>
+  <button class="gethelp" data-state="safety" type="button">Get help</button>
+</div></header>
+
+<section class="intro" aria-label="About this draft"><div class="wrap">
+  <div>
+    <p class="eyebrow">For IHH care managers and the people leaving recuperative care</p>
+    <h1 class="h-display" style="margin-top:10px">Every person leaves knowing which door to walk through today.</h1>
+    <p class="lead">Orange County has programs for most needs. People get stuck finding the one that fits, knowing if they qualify, and making the first call. Next Door turns a discharge into one plain-language plan. Every fact comes from a checked listing. Every need with no good door is logged.</p>
+  </div>
+  <ul class="index" aria-label="Screens in this draft">
+    <li><button data-view="today">Today</button><span>Who leaves soon and what they still need</span><em>Care manager</em></li>
+    <li><button data-view="review">Review a plan</button><span>Check sources, pick the next door, approve</span><em>Care manager</em></li>
+    <li><button data-view="client">Client screen</button><span>Say it your way, get one next step</span><em>Person leaving</em></li>
+    <li><button data-view="print">Printout</button><span>The plan they take home, in their language</span><em>Person leaving</em></li>
+    <li><button data-view="gaps">Gaps</button><span>Where Orange County has no good door</span><em>IHH leadership</em></li>
+  </ul>
+  <div class="tryrow"><span class="eyebrow" style="color:var(--navy)">Try a case</span>
+    <button class="try" data-case="C01" data-go="client">Ray needs a bed by Friday<small>Plan card</small></button>
+    <button class="try" data-case="C10" data-go="client">Lena isn't safe<small>Safety exit</small></button>
+    <button class="try" data-case="C03" data-go="client">Devon wants to get home<small>Gap state</small></button>
+    <button class="try" data-case="C02" data-go="print">Marisol, in Spanish<small>Printout</small></button>
+    <button class="try" data-case="C11" data-go="client">Bob asks about pills<small>Medical route</small></button>
+  </div>
+</div></section>
+
+<main>
+  <section class="view wrap" id="v-today">
+    <div class="viewhead"><div>
+      <span class="who">Care manager · daily dashboard</span>
+      <h2 class="h2">Who leaves soon, and what they still need</h2>
+      <p class="sub">Open a card to check the matches and approve a plan. Staff load and stages are mock data for the demo.</p>
+    </div></div>
+    <div class="stats" id="todayStats" aria-label="Today at a glance"></div>
+    <p class="eyebrow">Care manager load</p>
+    <div class="load" id="cap"></div>
+    <div class="boardscroll"><div class="board" id="board"></div></div>
+  </section>
+
+  <section class="view wrap" id="v-review" hidden>
+    <div class="viewhead"><div>
+      <span class="who">Care manager · before the plan goes home</span>
+      <h2 class="h2">Review a plan</h2>
+      <p class="sub">The tool drafts and cites. You pick the next door and approve. Nothing is sent.</p>
+    </div></div>
+    <div class="casebar">
+      <label for="pick" class="eyebrow" style="color:var(--navy)">Person</label>
+      <select id="pick"></select>
+      <span class="chip sand" id="caseMeta"></span>
+    </div>
+    <div class="panes">
+      <div class="pane" id="pSituation"></div>
+      <div class="pane" id="pMatches"></div>
+      <div class="pane" id="pPlan"></div>
+    </div>
+  </section>
+
+  <section class="view wrap" id="v-gaps" hidden>
+    <div class="viewhead"><div>
+      <span class="who lead">IHH leadership · monthly</span>
+      <h2 class="h2">Where Orange County has no good door</h2>
+      <p class="sub">Needs from the 12 sample discharges, set against the checked listings for each need. Short yellow bars next to long navy ones are where people get stuck.</p>
+    </div></div>
+    <div class="stats" id="gapStats"></div>
+    <div class="twocol">
+      <div class="panel">
+        <header><p class="eyebrow" style="color:var(--navy)">Demand against sure doors</p><span class="sub" style="font-size:13px">Clients asking, and listings checked at high confidence, on one scale.</span></header>
+        <div class="keyrow"><span><i style="background:var(--navy)"></i>Clients asking</span><span><i style="background:var(--yellow);outline:1px solid var(--navy);outline-offset:-1px"></i>High-confidence listings</span></div>
+        <div class="bars" id="bars"></div>
+      </div>
+      <div class="panel">
+        <header><p class="eyebrow" style="color:var(--navy)">Listings to re-check</p><span class="sub" style="font-size:13px">Below high confidence, or sources disagree. Re-verify before anyone relies on them.</span></header>
+        <div class="tablewrap"><table id="recheck"></table></div>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:28px">
+      <header><p class="eyebrow" style="color:var(--navy)">Coverage by need</p></header>
+      <div class="tablewrap"><table id="covTable" style="min-width:640px"></table></div>
+    </div>
+    <div class="pull"><img src="logo-mark.svg" alt=""><p>“Every discharge plan becomes data on where Orange County’s safety net has holes.”</p><small>Next Door · Gaps log</small></div>
+  </section>
+
+  <section class="view wrap" id="v-client" hidden>
+    <div class="viewhead"><div>
+      <span class="who client">Person leaving care · phone or shared tablet</span>
+      <h2 class="h2">Say it your way. Get one next step.</h2>
+      <p class="sub">Left: what the person sees first. Right: what comes back. Safety and medical checks run before any search.</p>
+    </div></div>
+    <div class="states noprint" id="clientCases"></div>
+    <div class="clientgrid">
+      <div><p class="phone-label">1 · Intake</p>
+        <form class="phone" id="intake" autocomplete="off">
+          <div class="bar"><img src="logo-full.svg" alt="Illumination Health + Home"><span>Next Door</span></div>
+          <div class="help">In danger? Call <b>9-1-1</b>. Questions? Dial <b>2-1-1</b>.</div>
+          <div class="scr">
+            <div class="lang" role="group" aria-label="Language" id="langPick">
+              <button type="button" data-lang="en" aria-pressed="true">English</button>
+              <button type="button" data-lang="es" aria-pressed="false">Español</button>
+              <button type="button" disabled title="Next build">Tiếng Việt</button>
+            </div>
+            <h3 class="bigq" id="iq">What do you need today?</h3>
+            <label class="fieldlabel" for="words" id="iwl">Say it in your own words</label>
+            <textarea class="client-ta" id="words"></textarea>
+            <p class="fieldlabel" id="itl">Tap any that fit you</p>
+            <div class="taps" id="taps"></div>
+            <button class="btn primary big" type="submit" id="makeBtn">Make my plan</button>
+          </div>
+        </form>
+      </div>
+      <div><p class="phone-label" id="outLabel">2 · What comes back</p>
+        <div class="phone" id="outPhone">
+          <div class="bar"><img src="logo-full.svg" alt="Illumination Health + Home"><span>Next Door</span></div>
+          <div class="help">In danger? Call <b>9-1-1</b>. Questions? Dial <b>2-1-1</b>.</div>
+          <div id="out"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="v-print" hidden>
+    <div class="wrap">
+      <div class="viewhead"><div>
+        <span class="who client">Take-home sheet · letter size</span>
+        <h2 class="h2">Printout</h2>
+        <p class="sub">The approved plan in the person’s language, with English below for staff. Large type, phone numbers set big, sources on every fact.</p>
+      </div>
+      <div class="casebar noprint" style="margin:0"><label for="pickPrint" class="eyebrow" style="color:var(--navy)">Person</label><select id="pickPrint"></select></div></div>
+    </div>
+    <div class="paperdesk"><article class="paper" id="paper"></article></div>
+  </section>
+
+  <section class="view wrap" id="v-plan" hidden>
+
+    <div class="viewhead"><div><span class="who">Team guideline · draft</span><h2 class="h2">How a discharge becomes a plan</h2>
+    <p class="sub" style="margin-bottom:16px">One client need moves left to right. Claude only ever cites the verified list, guardrails sit between the match and the client, and every outcome feeds the gaps view.</p></div></div>
+    <figure class="flow">
+      <svg viewBox="0 0 1120 380" role="img" aria-label="Workflow: client need is captured by the care manager, Claude matches it against the verified resource list, guardrails check safety and facts, a plain-language plan is handed over, follow-up records the outcome, and unmet needs flow into a gaps log that informs IHH leadership and re-verification of listings.">
+        <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker>
+        <marker id="ahr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--navy)"/></marker></defs>
+        <!-- row 1 -->
+        <rect class="box" x="20" y="40" width="150" height="84" rx="10"/>
+        <text class="t" x="95" y="68" text-anchor="middle">Client need</text><text class="s" x="95" y="86" text-anchor="middle">in their own words</text><text class="own" x="95" y="110" text-anchor="middle">input</text>
+        <rect class="box" x="205" y="40" width="150" height="84" rx="10"/>
+        <text class="t" x="280" y="68" text-anchor="middle">Capture</text><text class="s" x="280" y="86" text-anchor="middle">needs + constraints</text><text class="own" x="280" y="110" text-anchor="middle">Board · Designer</text>
+        <rect class="claude" x="390" y="40" width="150" height="84" rx="10"/>
+        <text class="t" x="465" y="68" text-anchor="middle">Claude match</text><text class="s" x="465" y="86" text-anchor="middle">rank by fit + access</text><text class="own" x="465" y="110" text-anchor="middle">Case · Engineer</text>
+        <rect class="box" x="575" y="40" width="150" height="84" rx="10"/>
+        <text class="t" x="650" y="68" text-anchor="middle">Guardrails</text><text class="s" x="650" y="86" text-anchor="middle">safety · medical · unknowns</text><text class="own" x="650" y="110" text-anchor="middle">Case · Architect</text>
+        <rect class="box" x="760" y="40" width="150" height="84" rx="10"/>
+        <text class="t" x="835" y="68" text-anchor="middle">Client plan</text><text class="s" x="835" y="86" text-anchor="middle">plain words, their language</text><text class="own" x="835" y="110" text-anchor="middle">Case · Designer</text>
+        <rect class="box" x="945" y="40" width="150" height="84" rx="10"/>
+        <text class="t" x="1020" y="68" text-anchor="middle">Follow-up</text><text class="s" x="1020" y="86" text-anchor="middle">did they walk through?</text><text class="own" x="1020" y="110" text-anchor="middle">Board · Care mgr</text>
+        <!-- row 1 arrows -->
+        <line class="ln" x1="170" y1="82" x2="203" y2="82" marker-end="url(#ah)"/>
+        <line class="ln" x1="355" y1="82" x2="388" y2="82" marker-end="url(#ah)"/>
+        <line class="ln" x1="540" y1="82" x2="573" y2="82" marker-end="url(#ah)"/>
+        <line class="ln" x1="725" y1="82" x2="758" y2="82" marker-end="url(#ah)"/>
+        <line class="ln" x1="910" y1="82" x2="943" y2="82" marker-end="url(#ah)"/>
+        <text class="lbl" x="280" y="28" text-anchor="middle">care manager types or picks</text>
+        <text class="lbl" x="465" y="28" text-anchor="middle">cites verified fields only</text>
+        <text class="lbl" x="835" y="28" text-anchor="middle">copy or SMS draft, never auto-sent</text>
+        <!-- row 2 -->
+        <rect class="store" x="390" y="230" width="150" height="84" rx="10"/>
+        <text class="t" x="465" y="258" text-anchor="middle">Verified list</text><text class="s" x="465" y="276" text-anchor="middle">source · date · confidence</text><text class="own" x="465" y="300" text-anchor="middle">data · Architect</text>
+        <rect class="stop" x="575" y="230" width="150" height="84" rx="10"/>
+        <text class="t" x="650" y="258" text-anchor="middle">Staff takes over</text><text class="s" x="650" y="276" text-anchor="middle">no addresses shown</text><text class="own" x="650" y="300" text-anchor="middle">human in the loop</text>
+        <rect class="store" x="760" y="230" width="150" height="84" rx="10"/>
+        <text class="t" x="835" y="258" text-anchor="middle">Gaps log</text><text class="s" x="835" y="276" text-anchor="middle">needs with no good door</text><text class="own" x="835" y="300" text-anchor="middle">Gaps · PM</text>
+        <rect class="box" x="945" y="230" width="150" height="84" rx="10"/>
+        <text class="t" x="1020" y="258" text-anchor="middle">IHH leadership</text><text class="s" x="1020" y="276" text-anchor="middle">programs · partners · grants</text><text class="own" x="1020" y="300" text-anchor="middle">decision</text>
+        <!-- row 2 arrows -->
+        <line class="ln" x1="465" y1="230" x2="465" y2="126" marker-end="url(#ah)"/>
+        <text class="lbl" x="472" y="182">feeds matches</text>
+        <line class="ln red" x1="650" y1="124" x2="650" y2="228" marker-end="url(#ahr)"/>
+        <text class="lbl" x="657" y="182">danger or medical</text>
+        <path class="ln dash" d="M520 124 C 600 190, 740 170, 790 228" marker-end="url(#ah)"/>
+        <text class="lbl" x="735" y="160">no verified door</text>
+        <line class="ln" x1="1020" y1="124" x2="910" y2="240" marker-end="url(#ah)"/>
+        <text class="lbl" x="970" y="200" text-anchor="middle">outcome</text>
+        <line class="ln" x1="910" y1="280" x2="943" y2="280" marker-end="url(#ah)"/>
+        <path class="ln dash" d="M835 314 L835 350 L465 350 L465 316" marker-end="url(#ah)"/>
+        <text class="lbl" x="650" y="366" text-anchor="middle">re-verify stale or missing listings</text>
+      </svg>
+      <figcaption>Top row is the care manager's path for one client. Bottom row is what makes it trustworthy and what makes it strategic. Mono labels show the screen and team owner for each step.</figcaption>
+    </figure>
+
+    <div class="handoff"><table>
+      <thead><tr><th>Step</th><th>Screen</th><th>Owner</th><th>Hands to next step</th><th>Status today</th></tr></thead>
+      <tbody>
+        <tr><td>Capture</td><td>Today</td><td>Designer</td><td>Need categories + constraints per client</td><td><span class="chip">Working</span></td></tr>
+        <tr><td>Claude match</td><td>Review a plan</td><td>Engineer</td><td>Top resources per need, each with its source id</td><td><span class="chip yellow">Rule-based, Claude next</span></td></tr>
+        <tr><td>Guardrails</td><td>Review a plan</td><td>Architect</td><td>Pass, or stop and hand to staff</td><td><span class="chip">Working</span></td></tr>
+        <tr><td>Client plan</td><td>Client screen · Printout</td><td>Designer</td><td>Numbered steps, copyable text draft</td><td><span class="chip yellow">Spanish draft, needs review</span></td></tr>
+        <tr><td>Follow-up</td><td>Today</td><td>Care manager</td><td>Walked through / did not / no door</td><td><span class="chip">Mock</span></td></tr>
+        <tr><td>Gaps log</td><td>Gaps</td><td>PM</td><td>KPIs and coverage table for leadership</td><td><span class="chip">Working on seed data</span></td></tr>
+      </tbody></table></div>
+
+    <h2 class="h2" style="margin-top:8px">Roadmap for IHH</h2>
+    <p class="sub" style="margin-bottom:16px">Start small at one site, prove care managers use it without being asked, then let the gaps data decide what IHH builds or funds next. Each phase ends with a go or no-go decision.</p>
+    <div class="road">
+      <div class="phase now"><span class="when">Today</span><h3>Working prototype</h3><ul><li>5 screens on the 40 checked listings, in the IHH design system</li><li>Guardrails: no invented facts, safety stop, medical redirect</li><li>Safety exit, gap state and Spanish plan card</li><li>Gaps view from 12 sample clients</li></ul><div class="gate"><b>Decision</b>Is this worth a 4-week pilot?</div></div>
+      <div class="phase"><span class="when">Weeks 1–4</span><h3>Pilot at one center</h3><ul><li>2–3 care managers, made-up or consented cases only</li><li>IHH owns and reviews the resource list; add a verified DV hotline</li><li>Claude matching that must cite a listing for every fact</li><li>Spanish and Vietnamese plans</li></ul><div class="gate"><b>Decision</b>Do care managers open it before discharge without a reminder?</div></div>
+      <div class="phase"><span class="when">Months 2–3</span><h3>Close the loop</h3><ul><li>Record follow-up: did the client reach the door?</li><li>Monthly gaps report to leadership</li><li>Wider directory through the national 211 API, with permission</li><li>Re-verify listings on a set schedule</li></ul><div class="gate"><b>Decision</b>Which gap do we fund or partner on first?</div></div>
+      <div class="phase"><span class="when">Months 4–6</span><h3>Scale and act on gaps</h3><ul><li>Roll out to all recuperative care sites</li><li>Privacy and IT review before any link to IHH case records</li><li>Use gaps evidence in grants and partner asks, such as small loans and travel home</li></ul><div class="gate"><b>Decision</b>Build in-house, or hand to a partner?</div></div>
+    </div>
+    <div class="ask"><strong>What we need from IHH to start</strong><ul><li>One pilot champion at a recuperative care center</li><li>One owner for the resource list</li><li>Two hours of care manager feedback in week 1</li><li>How IHH handles small loans and travel home today</li></ul></div>
+  
+  </section>
+</main>
+
+<footer class="foot"><div class="wrap">
+  <img src="logo-light.svg" alt="Illumination Health + Home">
+  <p>Prototype for the OC Impact Lab. Matching is rule-based over the seed list of 40 listings checked Oct 13, 2026. Claude-written plans and translation are the next build step. Nothing here sends a message or connects to IHH systems. All clients are made up.</p>
+</div></footer>
+
+<script>
+const DATA = {"generated": "2026-10-13", "disclaimer": "Seed data for a hackathon, not a directory to rely on. Every entry was read from a public web page on 2026-10-13 and may already be wrong: hours, phone numbers, operators and eligibility change often, and conflicts between sources are recorded in the notes. Re-verify each entry with the organization before giving it to anyone. Many shelters are referral-only, so do not send people to a shelter address without a referral. Street addresses of survivor-serving and confidential-location programs are intentionally omitted. Listing here is not an endorsement. This file contains no non-public information about Illumination Health + Home or its clients.", "resources": [{"id": "211-orange-county", "name": "211 Orange County (211OC) helpline", "organization": "Orange County United Way", "category": "other", "tags": ["information-referral", "helpline", "24-7", "multilingual", "coordinated-entry", "text-line"], "description": "Free, confidential 24/7 helpline and online directory that connects people in Orange County to local health and human services. Calling 2-1-1 is also the County's stated way to reach a Coordinated Entry access point.", "services": ["Information and referral by phone", "Text line (text your ZIP code to 898-211)", "Online resource directory", "Connection to Coordinated Entry System access points"], "eligibility": "Free and available to every resident and visitor in Orange County.", "population": ["anyone"], "how_to_access": "mixed", "referral_required": false, "phone": "2-1-1 or 888-600-4357 (toll-free)", "address": null, "city": null, "hours": "Phone 24/7. Text line Monday through Friday, 9am – 5pm.", "languages": ["English", "Spanish", "Korean", "Vietnamese", "200+ more through translation services"], "cost": "Free", "website": "https://211oc.org/", "source_url": "https://211oc.org/frequently-asked-questions/", "source_quote": "Callers seeking assistance can dial 2-1-1 or 888-600-4357 (toll-free) 24/7 and be connected to trained Information and Referral (I&R) specialists.", "verified_date": "2026-10-13", "confidence": "high", "notes": "Text-line hours are from the 211OC home page. The OC HMIS site (https://ochmis.org/) shows a different number for the same referral service, 949-646-4357. Some phones cannot dial 2-1-1; the FAQ says to use the toll-free number instead."}, {"id": "oc-coordinated-entry-system", "name": "Orange County Coordinated Entry System (CES)", "organization": "County of Orange, Office of Care Coordination", "category": "housing-navigation", "tags": ["coordinated-entry", "access-point", "rapid-rehousing", "housing-choice-voucher", "permanent-supportive-housing", "not-a-waitlist"], "description": "Countywide process that assesses people who are homeless or at risk and prioritizes the most vulnerable for limited housing such as Rapid Rehousing, Housing Choice Vouchers and Permanent Supportive Housing. People enter through a CES Access Point; it is not a waitlist.", "services": ["Housing needs assessment at an Access Point", "Placement on a Community Queue (separate queues for individuals, families and survivors)", "Referrals to Rapid Rehousing, Housing Choice Vouchers and Permanent Supportive Housing", "Shelter Bed Reservation System referrals"], "eligibility": "People at risk of or experiencing homelessness in Orange County. Time waiting does not affect priority. Some Access Points serve only specific subpopulations.", "population": ["adults", "families", "veterans", "youth 18-24", "survivors of domestic violence"], "how_to_access": "mixed", "referral_required": false, "phone": "2-1-1", "address": null, "city": null, "hours": null, "languages": null, "cost": null, "website": "https://ceo.oc.gov/care-coordination/homeless-services/coordinated-entry-system-ces", "source_url": "https://ceo.oc.gov/care-coordination/homeless-services/coordinated-entry-system-ces", "source_quote": "To access CES, you can connect with a CES Access Point.", "verified_date": "2026-10-13", "confidence": "high", "notes": "Ways in, per the County: ask your current homeless service provider whether it is an Access Point, or call 2-1-1. The County's Get Help page (https://ceo.oc.gov/office-care-coordination/get-help) also lists the Office of Care Coordination at (714) 834-5000. The County's own Access Point list is behind a login (egovoc.com CES Academy); 211OC's public directory (https://211oc.org/providers/?category=Housing&term=Housing+Related+Coordinated+Entry) returned 32 Access Point records, several limited to people with ties to one city. PATH states it became CES Administrator for the County on July 1, 2026. Veterans can also call the VA CRRC (separate entry)."}, {"id": "family-coordinated-entry", "name": "Family Coordinated Entry (families with minor children) via 2-1-1", "organization": "Family Solutions Collaborative (part of United to End Homelessness, Orange County United Way)", "category": "housing-navigation", "tags": ["families", "coordinated-entry", "family-shelter", "prevention", "diversion"], "description": "Entry point for families with children who are homeless or at risk: call 2-1-1 to be connected to a Family Access Point offering prevention, diversion and housing navigation, and to the family shelter bed reservation system.", "services": ["Connection to Family Access Points", "Prevention and diversion", "Housing navigation", "Family emergency shelter and transitional housing referrals"], "eligibility": "Households with a child under 18, a pregnant person, and/or working on being reunited with minor children (County CES wording).", "population": ["families", "pregnant people"], "how_to_access": "phone", "referral_required": false, "phone": "2-1-1", "address": null, "city": null, "hours": null, "languages": null, "cost": null, "website": "https://familysolutionscollaborative.org/", "source_url": "https://familysolutionscollaborative.org/help/", "source_quote": "simply dial 2-1-1 or search for local health and human services resources through 211 Orange County", "verified_date": "2026-10-13", "confidence": "high", "notes": "The online Family Service Request Form is closed ('we are no longer accepting requests through this form'), although the FSC home page and the County pocket guide still point to it. Family Access Points by region are listed at https://familysolutionscollaborative.org/access-points/. The County says the family bed reservation system refers to 65 emergency shelter and 13 transitional housing family units as openings occur."}, {"id": "yale-navigation-center", "name": "Yale Navigation Center", "organization": "PATH (People Assisting the Homeless), under contract with the County of Orange", "category": "shelter", "tags": ["emergency-shelter", "navigation-center", "central-spa", "couples", "referral-only", "bed-reservation"], "description": "County emergency shelter in Santa Ana for up to 425 adult individuals and couples experiencing homelessness in the Central Service Planning Area, with supportive services focused on stabilization and permanent housing.", "services": ["Emergency shelter", "Supportive services", "Permanent housing placement support"], "eligibility": "Adult individuals and couples experiencing homelessness in the Central Service Planning Area. Entry by referral only: approved Central SPA referring partners, or a Central SPA Access Point reached by calling 2-1-1.", "population": ["adults", "couples"], "how_to_access": "referral-only", "referral_required": true, "phone": "(800) 364-2221", "address": "2229 S. Yale St., Santa Ana, CA 92704", "city": "Santa Ana", "hours": null, "languages": null, "cost": null, "website": "https://epath.org/regions/orange-county/", "source_url": "https://ceo.oc.gov/care-coordination/homeless-services/shelter-programs", "source_quote": "PATH provides shelter and supportive services for up to 425 adult individuals and couples experiencing homelessness in the Central Service Planning Area (SPA).", "verified_date": "2026-10-13", "confidence": "high", "notes": "The phone is the OC Outreach & Engagement referral hotline given on the County page, not a front desk. Do not send anyone to the address without a referral. The County's Central SPA pocket guide (https://ceo.oc.gov/sites/ceo/files/2025-10/Pocket%20Guide%20Resource%20Directory%20-%20Central%20Updated%207.28.2025.pdf, dated 2025) lists a different referral number, 714-785-9889. Central SPA: Costa Mesa, Fountain Valley, Garden Grove, Huntington Beach, Midway City, Newport Beach, Santa Ana, Seal Beach, Tustin, Westminster."}, {"id": "bridges-at-kraemer-place", "name": "Bridges at Kraemer Place", "organization": "PATH (People Assisting the Homeless), under contract with the County of Orange", "category": "shelter", "tags": ["emergency-shelter", "north-spa", "referral-only", "bed-reservation"], "description": "County emergency shelter in Anaheim for up to 200 adult individuals experiencing homelessness in the North Service Planning Area, with supportive services focused on stabilization and permanent housing.", "services": ["Emergency shelter", "Supportive services", "Permanent housing placement support"], "eligibility": "Adult individuals experiencing homelessness in the North Service Planning Area. Entry by referral only: approved North SPA referring partners, or a North SPA Access Point reached by calling 2-1-1.", "population": ["adults"], "how_to_access": "referral-only", "referral_required": true, "phone": "(800) 364-2221", "address": "1000 N. Kraemer Place, Anaheim, CA 92806", "city": "Anaheim", "hours": null, "languages": null, "cost": null, "website": "https://epath.org/regions/orange-county/", "source_url": "https://ceo.oc.gov/care-coordination/homeless-services/shelter-programs", "source_quote": "Bridges provides shelter and supportive services for up to 200 adult individuals experiencing homelessness in the North Service Planning Area (SPA).", "verified_date": "2026-10-13", "confidence": "high", "notes": "Operator changed in 2026: PATH states it became operator on July 1, 2026, but 211OC's record (last verified 2026-02-17) still lists Mercy House Living Centers with an unrelated agency address. The phone is the OC Outreach & Engagement referral hotline, not a front desk. Do not send anyone to the address without a referral. North SPA: Anaheim, Brea, Buena Park, Cypress, Fullerton, La Habra, La Palma, Los Alamitos, Orange, Placentia, Rossmoor, Stanton, Villa Park, Yorba Linda."}, {"id": "costa-mesa-bridge-shelter", "name": "Costa Mesa Bridge Shelter", "organization": "City of Costa Mesa Network for Homeless Solutions (operated by Mercy House)", "category": "shelter", "tags": ["emergency-shelter", "bridge-shelter", "city-ties", "referral-only", "costa-mesa", "newport-beach"], "description": "70-bed city shelter providing interim housing with wrap-around services toward permanent housing. Guests are admitted by referral only, through the City's 24-hour Network for Homeless Solutions hotline.", "services": ["Interim housing", "Help locating and securing permanent housing", "Help with barriers to housing and employment", "Meals prepared on site", "Transportation to and from the shelter"], "eligibility": "Admission by referral only. The City gives direct assistance to people with Costa Mesa ties: a household member who has lived or worked in Costa Mesa for the preceding 36 months, or who attends school in the city.", "population": ["adults"], "how_to_access": "referral-only", "referral_required": true, "phone": "(714) 754-5346", "address": null, "city": "Costa Mesa", "hours": "24-hour NHS Hotline", "languages": null, "cost": null, "website": "https://www.costamesaca.gov/government/departments-and-divisions/city-manager-s-office/network-for-homeless-solutions", "source_url": "https://www.costamesaca.gov/government/departments-and-divisions/city-manager-s-office/network-for-homeless-solutions/costa-mesa-bridge-shelter/contact-shelter", "source_quote": "Guests are admitted into the Bridge Shelter by referral only.", "verified_date": "2026-10-13", "confidence": "high", "notes": "Bed count conflict: the City page says 70 beds, 211OC's record says 100. Newport Beach says it partners with Costa Mesa for shelter beds here. The shelter's street address was not on the pages fetched. costamesaca.gov returns HTTP 403 to plain scripted requests; it loaded only with browser-like headers."}, {"id": "huntington-beach-navigation-center", "name": "Huntington Beach Navigation Center", "organization": "City of Huntington Beach (operated by Mercy House)", "category": "shelter", "tags": ["emergency-shelter", "navigation-center", "city-ties", "referral-only", "couples", "huntington-beach"], "description": "City navigation center that can shelter up to 164 adults and couples with ties to Huntington Beach. No walk-ups: people must be prescreened and referred by the City's social workers or Homeless Task Force officers.", "services": ["Emergency shelter", "Case management", "Access to services on the path to housing"], "eligibility": "Experiencing homelessness in Huntington Beach, not sheltered elsewhere, with significant and verifiable ties to the city (for example a permanent address there within the last five years, current or recent employment there, full-time enrollment at Golden West College, or a close family member living there). No open felony warrant; registered sex or arson offenders are not admitted; must be able to meet all Activities of Daily Living.", "population": ["adults", "couples"], "how_to_access": "referral-only", "referral_required": true, "phone": "(714) 536-5576", "address": "17642 Beach Boulevard", "city": "Huntington Beach", "hours": "City social worker walk-in office hours: Huntington Beach Police Department front lobby, 2000 Main Street, Tuesday 9:00 a.m. – 11:00 a.m. and Wednesday 10:00 a.m. – 12:00 p.m.", "languages": null, "cost": null, "website": "https://huntingtonbeachca.gov/departments/city_manager/homeless_solutions/index.php", "source_url": "https://huntingtonbeachca.gov/departments/city_manager/homeless_solutions/hb_navigation_center.php", "source_quote": "The Center can shelter up to 164 adults and couples with ties to Huntington Beach.", "verified_date": "2026-10-13", "confidence": "high", "notes": "Phone and office hours are from the City's Homeless Assistance page (https://huntingtonbeachca.gov/departments/city_manager/homeless_solutions/homeless_assistance.php), which also lists office hours at Community United Methodist Church, 6652 Heil Avenue (Wednesday 1:30 p.m. - 3:00 p.m.) and Refuge Calvary Chapel, 7800 Edinger Avenue (Thursday 11:00 a.m. to 12:30 p.m.). The page says people who do not meet the requirements can still be connected to other services. Do not send anyone to the shelter address without a referral."}, {"id": "buena-park-navigation-center", "name": "Buena Park Navigation Center", "organization": "City of Buena Park (operated by Mercy House)", "category": "shelter", "tags": ["emergency-shelter", "navigation-center", "north-spa", "referral-only", "buena-park"], "description": "150-bed temporary shelter for North Orange County (North SPA) cities, with host cities such as Buena Park given priority. Clients are received on a referral basis only; walk-ins are not permitted.", "services": ["Temporary shelter", "Healthcare and other on-site services"], "eligibility": "Beds are designated for North SPA cities only, with host cities (including Buena Park) having priority. Referrals are typically made by police homeless liaison officers, the Homeless Outreach Team and the County of Orange.", "population": ["adults"], "how_to_access": "referral-only", "referral_required": true, "phone": "(714) 235-3296", "address": "6494 Caballero Blvd., Buena Park, CA 90620", "city": "Buena Park", "hours": null, "languages": null, "cost": null, "website": "https://www.buenapark.com/residents/navigation_center.php", "source_url": "https://www.buenapark.com/residents/navigation_center.php", "source_quote": "The center will only receive clients on a referral-basis; walk-ins are not permitted.", "verified_date": "2026-10-13", "confidence": "high", "notes": "The same page lists the Buena Park Homeless Outreach Team at (714) 236-3877. The City page does not state an age rule; 'adults' follows 211OC's record ('18 years and older', last verified 2026-02-17), which also lists a different contact number, (714) 410-4060 ext. 281. Do not send anyone to the address without a referral."}, {"id": "central-cities-navigation-center", "name": "Central Cities Navigation Center (CCNC)", "organization": "City of Garden Grove with Fountain Valley and Westminster (operated by Volunteers of America of Los Angeles)", "category": "shelter", "tags": ["emergency-shelter", "navigation-center", "central-spa", "referral-only", "garden-grove", "fountain-valley", "westminster", "pets"], "description": "Year-round, low-barrier navigation center in Garden Grove with 85 beds, offering transitional emergency housing and wrap-around services to homeless adults referred from Garden Grove, Fountain Valley and Westminster. No walk-ins.", "services": ["Emergency housing (length of stay up to 120 days)", "1-on-1 case management", "Mental health and substance use counseling resources", "Outpatient health services", "Employment assistance and job training", "Shuttle transportation", "Service animal and pet accommodation"], "eligibility": "18+, no children. No walk-in. Referral guidelines on the City page: by designated PD division (GGPD SRT, FVPD HLO, W HLO), the cities' contracted street outreach service providers, or through the bed reservation systems. Beds are split among Garden Grove (50), Fountain Valley (13) and Westminster (22).", "population": ["adults", "couples"], "how_to_access": "referral-only", "referral_required": true, "phone": null, "address": "13871 West Street, Garden Grove, CA 92843", "city": "Garden Grove", "hours": "24/7 including city holidays", "languages": null, "cost": null, "website": "https://ggcity.org/navigation-center", "source_url": "https://ggcity.org/navigation-center", "source_quote": "offering low-barrier transitional emergency housing and wrap-around services to homeless individuals in Orange County's Central Service Planning Area", "verified_date": "2026-10-13", "confidence": "high", "notes": "No public phone number: the City page lists none and 211OC's record says 'See chart for referral information'. The City page still says Garden Grove 'is developing' the center even though it reports an opening date of June 5, 2024. Do not send anyone to the address without a referral."}, {"id": "wiseplace", "name": "WISEPlace: shelter and housing help for unaccompanied women", "organization": "WISEPlace", "category": "shelter", "tags": ["women", "emergency-shelter", "case-management", "financial-assistance", "survivors"], "description": "Temporary shelter for unaccompanied individuals experiencing homelessness, with 1:1 case management, counseling, employment support and housing search help. Also offers financial assistance, such as a deposit or temporary rental assistance, to eligible people who are homeless but not seeking shelter.", "services": ["Temporary shelter", "1:1 case management and counseling", "Employment support", "Housing search assistance", "Help with job, housing and public benefits applications", "Financial assistance (deposit, temporary rental assistance, utility deposit)"], "eligibility": "Unaccompanied women / individuals experiencing homelessness. Request help by phone or the online inquiry form. Financial assistance has separate eligibility; the form asks about ties to the City of Santa Ana.", "population": ["women", "adults without children"], "how_to_access": "mixed", "referral_required": false, "phone": "(714)542-3577", "address": null, "city": "Santa Ana", "hours": null, "languages": null, "cost": null, "website": "https://wiseplace.org/", "source_url": "https://wiseplace.org/get-help/", "source_quote": "WISEPlace offers unaccompanied individuals experiencing homelessness a safe place by providing temporary shelter.", "verified_date": "2026-10-13", "confidence": "high", "notes": "Street address deliberately omitted: 211OC lists WISEPlace as a Coordinated Entry access point for survivors, and this seed gives a phone line only for survivor-serving programs. The site footer says its focus is 'unaccompanied women' while the help page says 'unaccompanied individuals', so confirm who is eligible when calling."}, {"id": "oc-outreach-and-engagement", "name": "OC Outreach & Engagement (OC O&E)", "organization": "County of Orange (OC Health Care Agency / Office of Care Coordination)", "category": "housing-navigation", "tags": ["street-outreach", "unsheltered", "shelter-referral", "linkage", "behavioral-health"], "description": "County outreach teams serving people experiencing unsheltered homelessness, linking them to housing, physical health, behavioral health and other supportive services. The same hotline is the referral line the County lists for its two shelters.", "services": ["Street outreach", "Linkage to housing and shelter", "Linkage to physical and behavioral health care", "Referral line for Yale Navigation Center and Bridges at Kraemer Place"], "eligibility": "Individuals experiencing unsheltered homelessness in Orange County.", "population": ["adults"], "how_to_access": "phone", "referral_required": false, "phone": "800-364-2221", "address": null, "city": null, "hours": "MON – FRI 8 AM – 5 PM", "languages": null, "cost": null, "website": "https://ceo.oc.gov/office-care-coordination/get-help", "source_url": "https://ochealthinfo.com/services-programs/mental-health-crisis-recovery/adult-18-services/outreach-and-engagement", "source_quote": "The Orange County Outreach & Engagement (OC O&E) program serves individuals experiencing unsheltered homelessness in Orange County.", "verified_date": "2026-10-13", "confidence": "high", "notes": "Hours are from the County's Central SPA pocket guide (https://ceo.oc.gov/sites/ceo/files/2025-10/Pocket%20Guide%20Resource%20Directory%20-%20Central%20Updated%207.28.2025.pdf, dated 2025); the program page itself states no hours, so confirm. The County Get Help page says to call 9-1-1 for a medical emergency and the Crisis Assessment Team at (855) 625-4657 for a non-emergency mental health crisis."}, {"id": "hub-resource-center-orange", "name": "The HUB Resource Center (HRC)", "organization": "The HUB OC, in partnership with the City of Orange", "category": "hygiene-mail-storage", "tags": ["showers", "laundry", "mail", "meals", "clothing", "charging", "case-management", "coordinated-entry-access-point", "orange"], "description": "Drop-in resource center in the City of Orange for unhoused people: meals, showers, laundry, clothing, mail service and phone charging, plus a Housing 101 class and one-on-one casework. Services are first-come, first-served with same-day appointments.", "services": ["Meals & food access", "Showers", "Laundry services", "Clothing distribution", "Mail services", "Charging stations", "Transportation support", "Medical & health services", "Pet supplies", "Hygiene kits", "Case management and housing pathways (Housing 101 class, Open Casework)"], "eligibility": "Serves the unhoused population in partnership with the City of Orange. The site offers a separate resource list 'for those not living in Orange, CA'.", "population": ["adults"], "how_to_access": "walk-in", "referral_required": false, "phone": "(657) 767-5751", "address": "517 W. Struck Ave, Orange, CA 92867", "city": "Orange", "hours": "Monday, Tuesday, Thursday, Friday: Basic Needs 7am to 11am, Programming 11am to 3pm. Saturday: Basic Needs only, 9am to 1pm.", "languages": null, "cost": null, "website": "https://thehubresourcecenter.org/", "source_url": "https://thehubresourcecenter.org/services", "source_quote": "At the HRC our services operate on a fair and straightforward first-come, first-served basis, with same-day appointments ensuring timely assistance to those in need.", "verified_date": "2026-10-13", "confidence": "high", "notes": "Address and phone are from the site's home page. 211OC lists this site as a Coordinated Entry Access Point for individuals and veterans in the North SPA with in-person intake, but with different hours (9:00 am-3:00 pm Monday-Friday, 9:00 am-1:00 pm Saturday; 211OC last verified 2026-01-12) and English/Spanish service; the center's own page lists no Wednesday hours. 211OC also still lists Mary's Kitchen at this same address, while Mary's Kitchen's own site now describes a food rescue based in Anaheim."}, {"id": "ocie-sbdc", "name": "Orange County Inland Empire Small Business Development Center (OCIE SBDC)", "organization": "Orange County Inland Empire SBDC Network", "category": "microenterprise", "tags": ["small-business", "business-plan", "consulting", "access-to-capital", "no-cost", "startup", "training"], "description": "No-cost one-on-one consulting and training for people starting or growing a small business in Orange, Riverside and San Bernardino counties, including help writing a business plan and preparing a loan package for lenders.", "services": ["One-on-one business consulting", "SBDC Start: four-week no-cost startup series", "Business plan help", "Loan package preparation and introductions to lenders", "Cohort training programs (for example EATS for food businesses)"], "eligibility": null, "population": ["adults", "entrepreneurs"], "how_to_access": "appointment", "referral_required": false, "phone": "(800) 616-7232", "address": null, "city": null, "hours": null, "languages": null, "cost": "No cost", "website": "https://ociesmallbusiness.org/", "source_url": "https://ociesmallbusiness.org/", "source_quote": "We provide no-cost consulting to small businesses across Orange, Riverside, and San Bernardino counties.", "verified_date": "2026-10-13", "confidence": "high", "notes": "Advising, not money: it is not a lender, but its finance center helps prepare a loan package and connects clients with banks, CDFIs and nonprofit lenders. Starts with a 15-minute intake phone call. Not designed for people experiencing homelessness; ask what address, ID or business registration is needed."}, {"id": "accessity-small-business-loans", "name": "Accessity small business loans ($300 to $25,000 start-up and expansion loans)", "organization": "Accessity", "category": "microenterprise", "tags": ["microloan", "startup", "nonprofit-lender", "southern-california", "business-coaching"], "description": "Nonprofit lender serving Southern California entrepreneurs with limited access to traditional financing. Offers term loans from $300 to $25,000 for start-up or growing businesses (and larger loans up to $250,000), plus business support.", "services": ["Term loans $300 to $25,000 for start-up or growing businesses", "Loans $25,001 to $250,000", "Business coaching and peer support network"], "eligibility": "Must be current on all personal financial obligations; live/work in Southern California; use the proceeds of the loan for your business; be at least 18 years of age and demonstrate good character; business must be a legal entity.", "population": ["adults", "entrepreneurs"], "how_to_access": "online", "referral_required": false, "phone": "619.884.8467", "address": null, "city": null, "hours": null, "languages": null, "cost": "8.99% – 14.99% fixed, simple interest; no application fees; closing costs financed into the loan", "website": "https://accessity.org/", "source_url": "https://accessity.org/loans/", "source_quote": "From $300 to $25,000 term loans for startup or growing businesses", "verified_date": "2026-10-13", "confidence": "medium", "notes": "Medium confidence: the page footer shows 'Copyright 2024' and product text refers to 2023 financial statements, so terms may have changed. 619.884.8467 is the staff line the site lists for Orange County; the main office line is 619.795.7250 (San Diego). These are loans with a credit review, and the business must be a legal entity. Both are real barriers for many clients."}, {"id": "jfla-zero-interest-loans", "name": "Jewish Free Loan Association (JFLA) zero-interest loans", "organization": "Jewish Free Loan Association", "category": "microenterprise", "tags": ["interest-free-loan", "small-business-loan", "startup-loan", "personal-loan", "guarantor-required"], "description": "Nonprofit offering zero-interest, zero-fee loans to individuals, families, students and small businesses in Los Angeles, Ventura, Orange and Santa Barbara counties. Business loans are considered case by case up to $50,000; personal or emergency loans go up to $15,000 with two guarantors.", "services": ["Startup and small business loans (case by case, up to $50,000)", "Personal/emergency loans (up to $15,000)", "Education loans"], "eligibility": "All applicants must be over 18, have a permanent residence in Los Angeles, Ventura, Orange, or Santa Barbara County, have proof of income and a valid CA state ID. Personal loans require two qualified guarantors/co-signers.", "population": ["adults", "entrepreneurs", "students"], "how_to_access": "online", "referral_required": false, "phone": "310-735-4911", "address": null, "city": null, "hours": null, "languages": null, "cost": "Zero interest, zero fees", "website": "https://www.jfla.org/", "source_url": "https://www.jfla.org/", "source_quote": "JFLA is a non-profit offering zero-interest, zero-fee loans to individuals, families, students and small businesses in Los Angeles, Ventura, Orange, and Santa Barbara counties.", "verified_date": "2026-10-13", "confidence": "high", "notes": "Eligibility is a real barrier for someone without housing: permanent residence, proof of income, a valid CA ID and guarantors are required. Phone is from https://www.jfla.org/about-jfla/contact-us and business loan terms from https://www.jfla.org/business-loans. JFLA describes itself as a remote agency with a Los Angeles mailing address."}, {"id": "cdc-small-business-finance-sba-microloans", "name": "CDC Small Business Finance: SBA Microloans ($10,000-$50,000)", "organization": "CDC Small Business Finance", "category": "microenterprise", "tags": ["sba-microloan", "nonprofit-lender", "small-business-loan", "irvine"], "description": "Small business lender and SBA microloan intermediary that advertises SBA Microloans of $10,000-$50,000 with 7-year terms for California small businesses, and lists an Orange County office in Irvine.", "services": ["SBA Microloans $10,000-$50,000", "SBA 7(a) Community Advantage loans", "Small business advising"], "eligibility": null, "population": ["adults", "entrepreneurs"], "how_to_access": "online", "referral_required": false, "phone": "800-611-5170", "address": "2 Executive Circle Suite 110, Irvine, CA 92614", "city": "Irvine", "hours": null, "languages": null, "cost": null, "website": "https://cdcloans.com/", "source_url": "https://cdcloans.com/small-business-loans/", "source_quote": "Looking for $10,000-$50,000 loans with 7-year terms? We offer SBA Microloans in California!", "verified_date": "2026-10-13", "confidence": "medium", "notes": "Medium confidence: microloan eligibility is in a downloadable factsheet that was not opened, so eligibility is left null. 800-611-5170 is the general line in the site footer; the Irvine office address (from https://cdcloans.com/contact/) has no phone listed. SBA's list of California microlenders shows this lender with a San Diego headquarters. For its general business loans the site says start-ups need a 10 percent down payment and management or industry experience. A $10,000 minimum is large for a first micro-business."}, {"id": "oc-workforce-solutions-business-accelerator", "name": "Business Accelerator Program (six-week no-cost course)", "organization": "OC Workforce Solutions", "category": "microenterprise", "tags": ["training", "startup", "no-cost", "virtual", "in-person", "cohort", "spanish"], "description": "Six-week no-cost course series on the fundamentals of starting, structuring and growing a business, offered in person at OC Workforce Solutions North in Brea or virtually.", "services": ["Six weekly classes on starting, structuring and growing a business", "In-person or virtual attendance"], "eligibility": null, "population": ["adults", "entrepreneurs"], "how_to_access": "online", "referral_required": false, "phone": "866.500.6587", "address": "675 Placentia Ave., Third Floor, Brea, CA 92821", "city": "Brea", "hours": "Tuesdays, October 6- November 10, 2026 | 10:00 A.M. - 11:30 A.M.", "languages": null, "cost": "No cost", "website": "https://www.ocworkforcesolutions.com/events", "source_url": "https://www.ocworkforcesolutions.com/event-details/business-accelerator-program-3", "source_quote": "Business Accelerator Program is a six-week no-cost course series to learn the fundamentals of starting, structuring, and growing your business.", "verified_date": "2026-10-13", "confidence": "medium", "notes": "Medium confidence because it is time-limited: this English cohort began October 6, 2026 and is under way on the hackathon date; check the events page for the next cohort. A Spanish-language cohort (Wednesdays, September 30 - November 4, 2026) was also listed. Street address is from the event listing on the OC Workforce Solutions home page."}, {"id": "costa-mesa-reconnection-program", "name": "Reconnection Program (help returning to your home community)", "organization": "City of Costa Mesa Network for Homeless Solutions, with local churches/non-profits", "category": "family-reunification-travel", "tags": ["reunification", "return-home", "family", "costa-mesa"], "description": "City partnership with local churches and non-profits that helps homeless individuals and families return to their original community when friends or family there are willing to offer permanent housing.", "services": ["Help returning to the person's original community where friends or family will provide housing"], "eligibility": "Homeless individuals/families who have friends or family in their original community willing to offer permanent housing options.", "population": ["adults", "families"], "how_to_access": "phone", "referral_required": null, "phone": "(714) 754-4977", "address": null, "city": "Costa Mesa", "hours": null, "languages": null, "cost": null, "website": "https://www.costamesaca.gov/government/departments-and-divisions/city-manager-s-office/network-for-homeless-solutions", "source_url": "https://www.costamesaca.gov/government/departments-and-divisions/city-manager-s-office/network-for-homeless-solutions/resources-getting-help/not-a-costa-mesa-resident", "source_quote": "assists homeless individuals/families in returning to their original community when there are friends or family willing to offer permanent housing options", "verified_date": "2026-10-13", "confidence": "low", "notes": "Low confidence. The page does not say whether travel costs are paid, how much, or how to qualify. It contains a leftover editing note ('[add hyperlink back to Resources & Getting Help page]'), which suggests it is not maintained, and its phone number differs from the Network for Homeless Solutions hotline on the City's other pages, (714) 754-5346. Call to confirm the program still operates before telling anyone it can pay for travel."}, {"id": "newport-beach-family-reunification-travel", "name": "City of Newport Beach homeless services: family reunification travel (case by case)", "organization": "City of Newport Beach", "category": "family-reunification-travel", "tags": ["reunification", "travel-expenses", "newport-beach", "outreach"], "description": "Newport Beach's homeless data dashboard lists family reunification travel expenses among the costs its Homeless Services Manager and Police Department cover for homeless people. There is no public application; the only route is the City's homeless outreach contact.", "services": ["Family reunification travel expenses (as reported by the City)", "Outreach and case management"], "eligibility": null, "population": ["adults"], "how_to_access": "phone", "referral_required": null, "phone": "949-718-1991", "address": null, "city": "Newport Beach", "hours": null, "languages": null, "cost": null, "website": "https://newportbeachca.gov/trending/community-issues/homelessness", "source_url": "https://nbgis.newportbeachca.gov/gispub/Dashboards/HomelessDash.htm", "source_quote": "Expenses related to supporting homeless people in bridge living arrangements, move-in items for permanent housing and family reunification travel expenses.", "verified_date": "2026-10-13", "confidence": "low", "notes": "Low confidence. This is an expense category on a city dashboard, not a described program: no eligibility rules, amounts or request process are published, and it is presumably limited to people the City's outreach team is already working with in Newport Beach. The phone is the homeless outreach contact on the City's Homeless Resources page (https://newportbeachca.gov/trending/community-issues/homelessness/documents-and-resources)."}, {"id": "home-free-national-runaway-safeline", "name": "Home Free (free bus ticket home for youth ages 12 to 21)", "organization": "National Runaway Safeline", "category": "family-reunification-travel", "tags": ["reunification", "bus-ticket", "greyhound", "youth", "national", "24-7"], "description": "National program that reunites youth with family or a legal guardian, or gets them to an alternative living arrangement, through a free Greyhound bus ticket. It starts with a call to 1-800-RUNAWAY.", "services": ["Free Greyhound bus ticket home or to a safe living arrangement", "Planning call about where the youth will go and who they will stay with"], "eligibility": "Youth ages 12 to 21 who are away from home, don't have a safe way to return, and are ready to reunite with family or a safe adult who agrees to help.", "population": ["youth 12-21"], "how_to_access": "phone", "referral_required": false, "phone": "1-800-RUNAWAY (1-800-786-2929)", "address": null, "city": null, "hours": "Available 24/7", "languages": null, "cost": "No cost to youth", "website": "https://www.1800runaway.org/", "source_url": "https://www.1800runaway.org/youth-teens/home-free", "source_quote": "The Home Free program helps young people ages 12–21 return safely to their families or a safe place — at no cost to youth.", "verified_date": "2026-10-13", "confidence": "high", "notes": "National, not an Orange County program, and limited to ages 12 to 21, so it fits only the youngest adult clients. The page shows the number as 1-800-RUNAWAY and links it to 1-800-786-2929. No equivalent adult program with a public intake was found for Orange County."}, {"id": "oc-workforce-solutions", "name": "OC Workforce Solutions career centers", "organization": "OC Workforce Solutions (Orange County Workforce Development Board)", "category": "employment", "tags": ["resume", "job-search", "career-counseling", "workshops", "job-fairs", "training", "no-cost", "one-stop"], "description": "No-cost employment and training services for job seekers: free career workshops on resumes, interviewing and LinkedIn, one-on-one career counseling with an Individualized Employment Plan, job fairs and skills training.", "services": ["Free career workshops (resume, interview skills, soft skills, LinkedIn)", "Career counseling and Individualized Employment Plan", "Job fairs and hiring events", "Skills building (reading, writing, math, computers, GED preparation, English)", "Veteran career services"], "eligibility": "To start: complete the interest and eligibility assessment, register with CalJOBS, then call. Program-specific eligibility is not stated on the page.", "population": ["adults", "youth", "veterans"], "how_to_access": "mixed", "referral_required": false, "phone": "(866) 500-6587", "address": "675 Placentia Avenue, Suite 330, Brea, CA 92821", "city": "Brea", "hours": "Mon-Fri: 9 AM - 6 PM; Sat: 9 AM - 1 PM", "languages": null, "cost": "No cost", "website": "https://www.ocworkforcesolutions.com/", "source_url": "https://www.ocworkforcesolutions.com/career-services", "source_quote": "Learn how to create an impressive resume, practice your interview skills, strengthen your soft skills, build your LinkedIn profile", "verified_date": "2026-10-13", "confidence": "high", "notes": "Address, phone and hours are from https://www.ocworkforcesolutions.com/contact, which also lists: South County, 28202 Cabot Road, Suite 140, Laguna Niguel, CA 92677 (same phone and hours); Anaheim Workforce Connection, 201 South Anaheim Boulevard, 2nd Floor, Anaheim, CA 92805, (714) 765-4350, Mon-Fri 8 AM - 5 PM; and the Santa Ana Work Center (separate entry). TTY (800) 735-2922 or 711. anaheim.net blocked automated fetching, so the Anaheim details are not confirmed on the City's own site."}, {"id": "santa-ana-work-center-resume-help", "name": "Santa Ana WORK Center: free one-on-one resume help", "organization": "City of Santa Ana", "category": "employment", "tags": ["resume", "walk-in", "job-search", "mock-interviews", "vocational-training", "santa-ana"], "description": "City job center offering free one-on-one resume reviewing, editing and formatting on a walk-in basis, plus job seeker services such as mock interviews, vocational training and on-the-job training.", "services": ["One-on-one resume assistance (walk-in)", "Mock interviews", "Resource center", "Vocational training", "On-the-job training", "Youth employment services", "Veterans Resource Center"], "eligibility": null, "population": ["adults", "youth", "veterans"], "how_to_access": "walk-in", "referral_required": false, "phone": "(714) 565-2600", "address": "801 W. Civic Center Dr., Suite 200, Santa Ana, CA 92701", "city": "Santa Ana", "hours": "Resume help: Monday – Friday from 1:00 p.m. – 4:00 p.m., no appointment needed. Center: Monday-Thursday 8 a.m. to 5 p.m.; alternating Fridays 8 a.m. to 5 p.m.; Saturday-Sunday closed.", "languages": null, "cost": "Free", "website": "https://santa-ana.gov/departments/santa-ana-work-center/", "source_url": "https://santa-ana.gov/resume-assistance/", "source_quote": "please stop by the Santa Ana WORK Center, Monday – Friday from 1:00 p.m. – 4:00 p.m. No appointment is needed.", "verified_date": "2026-10-13", "confidence": "high", "notes": "Phone, address and center hours are from the WORK Center's main page. The resume page says Monday to Friday, but the main page says the center is open only on alternating Fridays, so call before going on a Friday. Parking is validated for 3 hours. TTY Relay Service (800) 735-2929."}, {"id": "chrysalis-orange-county", "name": "Chrysalis Orange County: job-readiness program", "organization": "Chrysalis", "category": "employment", "tags": ["job-readiness", "resume", "practice-interviews", "employment-specialist", "barriers-to-work", "spanish"], "description": "Free job-readiness program for people facing barriers to work, with an Employment Specialist, resume and practice-interview help and supportive services. The first step is attending an orientation at the Anaheim center.", "services": ["Individualized case management with an Employment Specialist", "Job-readiness program", "One-on-one resume writing and practice interviews", "Online job application assistance", "Supportive services"], "eligibility": "Free and available to all; the only program requirement is being willing and able to work. An active phone number or email address is needed to keep in contact with the Employment Specialist.", "population": ["adults"], "how_to_access": "walk-in", "referral_required": false, "phone": "(714) 204-3000", "address": "290 S. Anaheim Blvd., Anaheim, CA 92805", "city": "Anaheim", "hours": "Monday – Thursday from 8 a.m. to 12 p.m., 1 to 4 p.m.; Friday from 8 a.m. to 12 p.m. Orientation: Monday – Thursday at 8 a.m.", "languages": ["English", "Spanish"], "cost": "Free", "website": "https://www.changelives.org/", "source_url": "https://www.changelives.org/our-services/", "source_quote": "Chrysalis’ services are free and available to all. Our only program requirement is that an individual is willing and able to work.", "verified_date": "2026-10-13", "confidence": "high", "notes": "Chrysalis reports that 74% of its clients are unstably housed. The need for an active phone number or email is a practical barrier; pair it with the phone entry. General information line (213) 394-2390. Address, phone and hours also match the County's Central SPA pocket guide (dated 2025)."}, {"id": "working-wardrobes-rebuilding-careers", "name": "Working Wardrobes: Rebuilding Careers Program", "organization": "Working Wardrobes", "category": "employment", "tags": ["career-coaching", "resume", "interview-clothing", "workshops", "veterans", "justice-impacted", "no-cost"], "description": "No-cost career readiness services for anyone facing self-described barriers to employment: career navigation, coaching on resumes and interviews, trainings and workshops, and an interview outfit for enrolled clients.", "services": ["Career navigation and an individualized plan", "Career coaching (resume, interview)", "Soft and hard skills training, workshops and certification programs", "Interview outfit ('Success Suit') for enrolled clients with an upcoming interview"], "eligibility": "Anyone facing self-described barriers to gainful employment (unemployed, underemployed, Veterans, justice-impacted, seniors, survivors of domestic violence, etc.). Interview clothing is for clients who are enrolled, actively engaged and have an upcoming job interview.", "population": ["adults", "veterans", "seniors"], "how_to_access": "mixed", "referral_required": false, "phone": "714-210-2460", "address": "2000 E McFadden Ave, Santa Ana, CA 92705", "city": "Santa Ana", "hours": "Mon-Fri: 8AM – 5PM", "languages": null, "cost": "No cost", "website": "https://www.workingwardrobes.org/", "source_url": "https://www.workingwardrobes.org/our-services/", "source_quote": "We offer no-cost services to anyone facing self-described barriers to gainful employment.", "verified_date": "2026-10-13", "confidence": "medium", "notes": "Medium confidence on location only: the home page announces 'WE'RE MOVING!' and says the Career Success Center and Donation Center are coming together under one roof, so the McFadden Ave address (from the Contact page) may change. Confirm by phone. Sign-up is an online 'referral form' a person can fill in themselves; staff say they respond within 3 business days."}, {"id": "dmv-no-fee-and-reduced-fee-id", "name": "California DMV no-fee and reduced-fee ID cards", "organization": "California Department of Motor Vehicles", "category": "id-documents", "tags": ["california-id", "fee-waiver", "homeless", "reduced-fee", "dl-937", "senior"], "description": "The DMV may issue an ID card at no fee to a person who is homeless as defined by the McKinney-Vento Act, and at a reduced fee to people who meet income requirements for certain assistance programs. Applications are finished in person at a DMV office.", "services": ["No-fee ID card for people who are homeless", "Reduced-fee ID card (with a completed DL 937 from an assistance program)", "No-fee senior ID card (62 or older)"], "eligibility": "No fee: a \"homeless person\" as defined by the McKinney-Vento Act (includes a homeless child or youth, and an individual or family fleeing domestic violence or similar danger). Reduced fee: meet income requirements for selected governmental or non-profit assistance programs and bring a completed DL 937. Senior no-fee card: at least 62 years old.", "population": ["adults", "youth", "seniors"], "how_to_access": "mixed", "referral_required": null, "phone": null, "address": null, "city": null, "hours": null, "languages": null, "cost": "No fee or reduced fee if eligible", "website": "https://www.dmv.ca.gov/", "source_url": "https://www.dmv.ca.gov/portal/driver-licenses-identification-cards/identification-id-cards/", "source_quote": "You may be eligible for a no-fee ID card if you are a “homeless person” as defined by the McKinney-Vento Act.", "verified_date": "2026-10-13", "confidence": "high", "notes": "Statewide; use any DMV field office. The page names form DL 937 for the reduced fee but does not say, on this page, what proof of homelessness is needed for the no-fee card. Ask the DMV or a homeless services provider. Applicants still have to prove identity and, for a first California card, residency; that is often the real obstacle."}, {"id": "homeless-fee-exempt-birth-certificate", "name": "Free certified birth certificate for people experiencing homelessness (AB 1733 / AB 2490)", "organization": "California Department of Public Health: Vital Records, and county recorders (for Orange County births: Orange County Clerk-Recorder)", "category": "id-documents", "tags": ["birth-certificate", "fee-waiver", "affidavit", "vital-records", "homeless"], "description": "California law lets a person who is homeless get a certified copy of their birth record without a fee, from the county where they were born or from the State Registrar, using an Affidavit of Homeless Status signed by a homeless services provider.", "services": ["Fee-exempt certified copy of a birth record (one per application)"], "eligibility": "Meets the federal McKinney-Vento definition of homeless person or homeless child or youth, and can verify homeless status. The affidavit must be signed by both a homeless services provider and the person requesting the record.", "population": ["adults", "youth", "families"], "how_to_access": "mixed", "referral_required": true, "phone": "(714) 834-2500", "address": "601 N. Ross St., Santa Ana, CA 92701", "city": "Santa Ana", "hours": "8:00 a.m. - 4:30 p.m. Monday - Friday", "languages": null, "cost": "No fee with a completed affidavit; the Orange County Clerk-Recorder fee schedule otherwise lists a birth certificate at $34.00", "website": "https://www.ocrecorder.com/clerk-services/vital-records", "source_url": "https://www.cdph.ca.gov/Programs/CHSI/Pages/Assembly-Bill-(AB)-1733.aspx", "source_quote": "allows a homeless person, or a homeless child or youth, to be eligible to receive a copy of a birth record without a fee", "verified_date": "2026-10-13", "confidence": "medium", "notes": "Medium confidence: the State page and affidavit establish the right, but the Orange County Clerk-Recorder pages fetched (vital records page and fee schedule effective 2026-09-01) do not mention the fee exemption or how to present the affidavit, so call first. Phone, address and hours are the Clerk-Recorder's Central Office, for people born in Orange County; branches are at 222 S. Harbor Blvd, Ste. 110A, Anaheim and 24031 El Toro Rd., Ste. 150, Laguna Hills (9:00 a.m. - 4:30 p.m.). People born elsewhere apply to that county or the State. The affidavit lists who counts as a homeless services provider, including a nonprofit agency funded to serve homeless people. In-person applicants must fill in the application online first and bring valid government photo ID, which can be circular for someone with no ID."}, {"id": "oc-social-services-agency-benefits", "name": "County of Orange Social Services Agency: CalFresh, Medi-Cal, CalWORKs and General Relief", "organization": "County of Orange Social Services Agency (SSA)", "category": "benefits", "tags": ["calfresh", "medi-cal", "calworks", "general-relief", "capi", "benefitscal", "ebt"], "description": "County agency that takes applications for CalFresh food benefits, Medi-Cal, CalWORKs and General Relief. People can apply for CalFresh online at BenefitsCal.com, by phone, or in person at a regional center.", "services": ["CalFresh applications and EBT", "Medi-Cal applications", "CalWORKs", "General Relief", "Cash Assistance Program for Immigrants (CAPI)"], "eligibility": "CalFresh: must be a resident of Orange County and report all household members' income and property; limits vary with household size and ages. Other programs have their own rules.", "population": ["adults", "families", "seniors"], "how_to_access": "mixed", "referral_required": false, "phone": "800-281-9799", "address": "1928 S. Grand Ave., BLDG. B, Santa Ana, CA 92705", "city": "Santa Ana", "hours": "8:00am - 5:00pm, Monday - Friday", "languages": null, "cost": null, "website": "https://ssa.ocgov.com/", "source_url": "https://ssa.ocgov.com/cash-calfresh/calfresh", "source_quote": "The CalFresh Program is a federal nutrition program that helps eligible, low-income, people purchase the food they need for good health.", "verified_date": "2026-10-13", "confidence": "high", "notes": "Phone, address and hours are from the SSA office list (https://ssa.ocgov.com/about-us/office-locations/office-location-list); 800-281-9799 is the Service Center number, TTY 714-834-8500. Other CalFresh / General Relief / Medi-Cal offices: Anaheim Regional Center, 3320 E. La Palma Ave., Anaheim, CA 92806; Garden Grove Regional Center, 12912 Brookhurst St., Garden Grove, CA 92840; Laguna Hills Regional Center, 23330 Moulton Parkway, Laguna Hills, CA 92653; County Community Service Center Brea, 675 Placentia Ave. Suite 100, Brea, CA 92821 (714-834-7500). On 2026-10-13 the SSA site showed an alert that the Santa Ana Regional Center had a utility disruption and services may be delayed. The County pocket guide misspells the portal as 'www.benifitscal.com'."}, {"id": "oc-general-relief", "name": "General Relief (GR): County of Orange", "organization": "County of Orange Social Services Agency (SSA)", "category": "benefits", "tags": ["general-relief", "interview-required", "repayment-agreement", "bus-passes", "disability-accommodation"], "description": "County General Relief benefits: apply by phone, in person at select Social Services Agency offices, or by mail; an interview is required. Bus passes are available to applicants or recipients who need transportation to meet eligibility and verification requirements.", "services": ["General Relief application and interview", "Bus passes to meet eligibility and verification requirements", "Disability accommodations (home application, phone interview, mail-in application)"], "eligibility": "Applicants must verify their circumstances, including identification for all adults who apply, a Social Security card or other acceptable documentation, income, property, registration with the CalFresh Employment & Training / General Relief Work Program, and documentation of legal immigration status. The application includes a Repayment Agreement.", "population": ["adults"], "how_to_access": "mixed", "referral_required": false, "phone": "800-281-9799", "address": null, "city": null, "hours": "Call Center: Weekdays (Monday-Friday) from 7:30 a.m. to 5 p.m.", "languages": null, "cost": null, "website": "https://ssa.ocgov.com/cash-calfresh/general-relief", "source_url": "https://ssa.ocgov.com/cash-calfresh/how-apply/how-apply-general-relief", "source_quote": "You can apply for General Relief Benefits by phone (800-281-9799 / TTY 714-834-8500), in person at select Social Services Agency office locations, or by mail.", "verified_date": "2026-10-13", "confidence": "high", "notes": "Identification and a Social Security card are required verifications, so pair this with the ID-documents entries. People whose disability prevents an office visit can ask for a supervisor at the same number to arrange a home or phone application. In-person offices are listed in the Social Services Agency entry."}, {"id": "octa-reduced-fares", "name": "OC Bus reduced fares (seniors 60+, people with disabilities, college students, youth)", "organization": "Orange County Transportation Authority (OCTA)", "category": "transportation", "tags": ["bus", "reduced-fare", "senior", "disability", "youth-ride-free", "wave-card", "fare-capping"], "description": "Reduced OC Bus fares for riders 60 and older and people with disabilities ($0.75 single fare instead of the $2.00 regular fare), free rides for youth 18 and under, and college discounts. Riders apply through an account on the Wave website.", "services": ["Senior and Disabled reduced fare", "Youth Ride Free pass (18 and under)", "College student fares", "OC ACCESS eligible fixed-route fare", "Daily and monthly fare capping with Wave"], "eligibility": "Seniors 60 years and older; persons with disabilities; college students enrolled in 9 or more units a semester; youth 18 and under. Proof examples listed: DMV license or ID, Medicare card, passport, service-connected veteran ID, receipt for a DMV Disabled Person Placard, Braille Institute ID.", "population": ["seniors", "people with disabilities", "youth", "students"], "how_to_access": "online", "referral_required": false, "phone": null, "address": null, "city": null, "hours": null, "languages": ["English", "Spanish", "Vietnamese"], "cost": "Senior and Disabled single fare $0.75; regular single fare $2.00", "website": "https://octa.net/", "source_url": "https://octa.net/getting-around/bus/oc-bus/fares-and-passes/reduced-fares", "source_quote": "If you are 60 years and older, disabled, college student, or youth, you can enjoy riding OCTA transit services using a reduced fare.", "verified_date": "2026-10-13", "confidence": "high", "notes": "No income-based (low-income) fare appeared on the OCTA fare pages fetched. Fare prices are from https://octa.net/getting-around/bus/oc-bus/fares-and-passes/overview. Proving age or disability needs ID documents, and applying needs a Wave online account. Languages reflect the page's English, Spanish and Vietnamese versions. Separately, the County says bus passes are available to General Relief applicants for eligibility appointments."}, {"id": "second-harvest-find-food", "name": "Second Harvest Food Bank of Orange County: find a food pantry", "organization": "Second Harvest Food Bank of Orange County", "category": "food", "tags": ["food-pantry", "pantry-map", "groceries", "tefap", "calfresh-help"], "description": "Food bank whose partner network provides food at more than 300 locations in Orange County. Its Need Food page has a searchable pantry map and a PDF list with distribution hours; generally no forms are needed to receive food.", "services": ["Searchable map of pantries by city, zip code or pantry name", "PDF listing of pantries", "Pointer to CalFresh application help through 211"], "eligibility": "Generally no forms are needed. Sites distributing federal TEFAP food ask for name, county of residence and household count.", "population": ["anyone"], "how_to_access": "online", "referral_required": false, "phone": "949.653.2900", "address": null, "city": null, "hours": null, "languages": null, "cost": "Free", "website": "https://feedoc.org/", "source_url": "https://feedoc.org/need-food/", "source_quote": "Use the map below. You may search by city, zip code or pantry name.", "verified_date": "2026-10-13", "confidence": "high", "notes": "The page said its pantry list was 'updated as of 09/14/26'. The phone is the food bank's main office line (8014 Marine Way, Irvine), which is not listed as a public pantry. No address is given here so that nobody is sent there for food. Always open a pantry's own listing for its hours. The page also tells people to call 2-1-1 or text 898-211."}, {"id": "southwest-community-center", "name": "Southwest Community Center (SWCC): hot meals and support services", "organization": "Community Action Partnership of Orange County (CAP OC)", "category": "food", "tags": ["hot-meal", "grab-and-go", "tefap", "diapers", "calfresh-enrollment", "medi-cal-enrollment", "santa-ana"], "description": "Community center in Santa Ana providing a free grab-and-go hot lunch on weekdays, TEFAP food and diaper distributions on Monday and Wednesday mornings, and Medi-Cal and CalFresh enrollment support by appointment.", "services": ["Free hot meal (lunch Mon-Fri 12-1 PM)", "TEFAP food distribution (Mon & Wed 9-11 AM)", "Free diaper distribution (Mon & Wed 9-11 AM)", "Medi-Cal & CalFresh enrollment support (by appointment)", "Information & referral services", "Financial empowerment workshops", "Free tax preparation for qualifying individuals (Feb-Apr)"], "eligibility": "Hot meals are described as for people experiencing homelessness. The center's flyer says all services are free and available by appointment.", "population": ["adults", "families", "youth"], "how_to_access": "mixed", "referral_required": false, "phone": "(714) 547-4073", "address": "1601 W. 2ND ST., SANTA ANA, CA 92703", "city": "Santa Ana", "hours": "General hours MON-FRI: 8 AM-4:30 PM. Hot lunch Mon-Fri 12-1 PM. Food and diaper distribution Mon & Wed 9-11 AM.", "languages": null, "cost": "Free", "website": "https://www.capoc.org/addressing-immediate-needs/", "source_url": "https://www.capoc.org/addressing-immediate-needs/", "source_quote": "SWCC, located in Santa Ana, provides Grab and Go hot meals to people experiencing homelessness every week day.", "verified_date": "2026-10-13", "confidence": "high", "notes": "Phone, address and hours are from CAP OC's bilingual English/Spanish SWCC flyer linked on the same page (https://www.capoc.org/wp-content/uploads/2026/04/SWCC-Flyer-2025-040126.pdf). WARNING for link checkers: 211OC lists this center's website as swcommunitycenter.org, which returned unrelated gambling content on 2026-10-13. Do not use that domain. The County pocket guide (dated 2025) and 211OC show slightly different meal times, including a weekend breakfast."}, {"id": "oc-links", "name": "OC Links: behavioral health information, referral and crisis line", "organization": "OC Health Care Agency", "category": "behavioral-health", "tags": ["mental-health", "substance-use", "crisis", "mobile-crisis", "24-7", "chat", "navigation"], "description": "Free, confidential 24/7 phone and online chat line that connects Orange County residents to mental health and substance use services, and can dispatch a mobile crisis response team when needed.", "services": ["Information and referral to County behavioral health programs", "Mobile crisis response and crisis stabilization", "Outpatient mental health treatment linkage", "Substance use programs, outpatient and residential", "Outreach and engagement for unhoused individuals and families", "Suicide prevention support"], "eligibility": "Orange County residents; call for yourself, a family member, or anyone else.", "population": ["anyone"], "how_to_access": "mixed", "referral_required": false, "phone": "(855) 625-4657", "address": null, "city": null, "hours": "24 hours a day, 7 days a week", "languages": null, "cost": "Free", "website": "https://www.ochealthinfo.com/oclinks", "source_url": "https://www.ochealthinfo.com/services-programs/mental-health-crisis-recovery/navigation-help-resources/oc-links", "source_quote": "OC Links is a free and confidential telephone and online chat service that connects Orange County residents to mental health and substance use services", "verified_date": "2026-10-13", "confidence": "high", "notes": "Also written 855-OC-LINKS. The County Get Help page gives the same number for its Crisis Assessment Team, and the City of Huntington Beach lists it for voluntary sobering or detox referrals. The page says to call 911 when a firefighter, paramedic or police officer is needed."}, {"id": "nami-oc-warmline", "name": "NAMI OC WarmLine", "organization": "NAMI Orange County", "category": "behavioral-health", "tags": ["warmline", "peer-support", "non-crisis", "call", "text", "chat"], "description": "Warm line for emotional support by phone, text or online chat, answered by volunteer peer support specialists. Call backs are made during operating hours.", "services": ["Phone and text support", "Online chat", "Call backs during operating hours"], "eligibility": null, "population": ["anyone"], "how_to_access": "phone", "referral_required": false, "phone": "(714) 991-6412", "address": null, "city": null, "hours": "12:00 PM to 12:00 AM, 7 days a week, 365 days a year", "languages": null, "cost": null, "website": "https://www.namioc.org/oc-warmline", "source_url": "https://www.namioc.org/oc-warmline", "source_quote": "We provide call backs during our regular operating hours — 12:00 PM to 12:00 AM, 7 days a week, 365 days a year.", "verified_date": "2026-10-13", "confidence": "high", "notes": "Hours appear to have changed: NAMI OC's page says 'Now Available 12pm – 12am', while the County's Central SPA pocket guide (dated 2025) still lists the WarmLine as 24/7 with a second toll-free number. Not a crisis line; for a crisis use OC Links or 988. The page describes a call back queue, so an immediate answer is not guaranteed."}, {"id": "988-suicide-and-crisis-lifeline", "name": "988 Suicide & Crisis Lifeline", "organization": "988 Suicide & Crisis Lifeline", "category": "behavioral-health", "tags": ["crisis", "suicide-prevention", "24-7", "call", "text", "chat", "national"], "description": "National crisis line with counselors available by call, text or chat for mental health struggles, emotional distress, or alcohol or drug use concerns. Free, confidential and available at all hours.", "services": ["Call 988", "Text 988", "Online chat", "Deaf/HoH access"], "eligibility": "The 988 Lifeline is for everyone.", "population": ["anyone"], "how_to_access": "mixed", "referral_required": false, "phone": "988", "address": null, "city": null, "hours": "24/7/365", "languages": ["English", "Spanish"], "cost": "Free", "website": "https://988lifeline.org/", "source_url": "https://988lifeline.org/", "source_quote": "The 988 Lifeline is available 24/7/365. Your conversations are free and confidential.", "verified_date": "2026-10-13", "confidence": "high", "notes": "National service, included because any tool used by people in crisis needs a crisis line. Spanish is listed because the site announces text and chat services in Spanish. For Orange County mobile crisis response use OC Links."}, {"id": "community-legal-aid-socal", "name": "Community Legal Aid SoCal", "organization": "Community Legal Aid SoCal", "category": "legal", "tags": ["civil-legal-aid", "low-income", "hotline", "online-intake", "expungement", "tenant-hotline", "seniors"], "description": "Legal advice, counseling and representation for low-income people on civil matters, reached through a telephone hotline or online intake form, plus free legal workshops and clinics.", "services": ["Legal advice, counseling and representation on civil matters", "Telephone hotline intake", "Online intake form", "Free legal workshops and clinics", "Tenant hotline", "Expungement", "Small Claims Advisory"], "eligibility": "Low-income individuals.", "population": ["adults", "seniors"], "how_to_access": "mixed", "referral_required": false, "phone": "714-571-5200", "address": "2101 North Tustin Avenue, Santa Ana, CA 92705", "city": "Santa Ana", "hours": "Office M-F 9:00 a.m. to 5:00 p.m. Hotline hours: 9:30 a.m. – 2:30 p.m. Monday – Thursday; 9:00 a.m. – 12:00 p.m. Friday. Seniors: hotline Monday through Thursday to 6:00 p.m.", "languages": null, "cost": null, "website": "https://www.communitylegalsocal.org/", "source_url": "https://www.communitylegalsocal.org/contact-us/", "source_quote": "We provide legal advice, counseling, and representation to low-income individuals on various civil matters.", "verified_date": "2026-10-13", "confidence": "high", "notes": "Also lists an Anaheim office at 250 East Center Street, Anaheim, CA 92805 (same phone). Small Claims Advisory direct line 714-845-7560. The County pocket guide (dated 2025) describes the service as including lawyer referrals and expungement clinics."}, {"id": "public-law-center", "name": "Public Law Center", "organization": "Public Law Center", "category": "legal", "tags": ["free-legal-services", "low-income", "housing", "immigration", "bankruptcy", "veterans", "micro-business", "spanish", "vietnamese"], "description": "Pro bono law firm providing free legal services to low-income Orange County residents, including immigrants, veterans, seniors and micro- or small business owners, from legal advice to full representation.", "services": ["Individual legal advice", "Full representation", "Housing, immigration, domestic violence, bankruptcy, consumer, family and health law help", "Legal help for micro- or small business owners", "Online application for services"], "eligibility": "Low-income residents of Orange County.", "population": ["adults", "veterans", "seniors", "immigrants", "entrepreneurs"], "how_to_access": "mixed", "referral_required": false, "phone": "(714) 541-1010", "address": "601 Civic Center Drive West, Santa Ana, CA 92701-4002", "city": "Santa Ana", "hours": "Monday-Friday: 8:30 AM – 4:30 PM. Closed for lunch from 12:30 PM – 1:30 PM everyday.", "languages": ["English", "Spanish", "Vietnamese"], "cost": "Free", "website": "https://www.publiclawcenter.org/", "source_url": "https://www.publiclawcenter.org/", "source_quote": "The Public Law Center is a 501(c)(3) nonprofit providing free legal services to low income residents and other nonprofits in Orange County.", "verified_date": "2026-10-13", "confidence": "high", "notes": "Also relevant to the microenterprise need: the site says it serves 'micro- or small business owners'. Hours and the online application (offered in English, Spanish and Vietnamese) are from https://www.publiclawcenter.org/about/contact/."}, {"id": "oc-veterans-service-office", "name": "Orange County Veterans Service Office", "organization": "County of Orange Veterans Service Office", "category": "veterans", "tags": ["va-benefits", "claims", "walk-in", "appointments", "dependents", "surviving-family"], "description": "County office offering free benefits claims counseling and information and referral to veterans, their dependents and survivors, by walk-in or appointment.", "services": ["VA benefits claims counseling", "Information and referral assistance"], "eligibility": "Veterans, their dependents, and survivors.", "population": ["veterans", "families"], "how_to_access": "mixed", "referral_required": false, "phone": "(714) 480-6555", "address": "1300 S. Grand Ave., Bldg. B., Second Floor, Santa Ana, CA 92705", "city": "Santa Ana", "hours": "Monday-Friday, 8 a.m. - 4 p.m.", "languages": null, "cost": "Free", "website": "https://veterans.oc.gov/", "source_url": "https://veterans.oc.gov/about-us", "source_quote": "scheduling appointments for free benefits claims counseling and information and referral assistance to Veterans, their dependents, and survivors", "verified_date": "2026-10-13", "confidence": "high", "notes": "Address, phone and hours match the County's Central SPA pocket guide (dated 2025)."}, {"id": "va-crrc-santa-ana", "name": "VA Community Resource & Referral Center (CRRC): West Santa Ana VA Clinic", "organization": "U.S. Department of Veterans Affairs, VA Long Beach health care", "category": "veterans", "tags": ["homeless-veterans", "hud-vash", "housing-placement", "va-health-care", "benefits", "lockers", "dd214", "walk-in"], "description": "VA walk-in center for veterans who are homeless or at risk: help with housing placement including HUD-VASH vouchers, VA health care eligibility, benefit applications, counseling, lockers, transportation to service providers, and getting a copy of a DD214.", "services": ["Housing placement assistance including HUD-VASH vouchers", "VA healthcare eligibility", "VA benefit application help", "Counseling", "Lockers", "Transportation to service providers", "Help obtaining a DD214 or Official Military Personnel File"], "eligibility": "Veterans experiencing homelessness or at risk of becoming homeless. A referral is not required.", "population": ["veterans"], "how_to_access": "walk-in", "referral_required": false, "phone": "844-838-8300", "address": "888 West Santa Ana Boulevard, Community Resource & Referral Center (CRRC), Suite 150, Santa Ana, CA 92701-4561", "city": "Santa Ana", "hours": "Mon-Fri 8:00 a.m. to 4:00 p.m.; Sat-Sun closed", "languages": null, "cost": "Free", "website": "https://www.va.gov/long-beach-health-care/locations/west-santa-ana-va-clinic/", "source_url": "https://www.va.gov/long-beach-health-care/locations/west-santa-ana-va-clinic/", "source_quote": "Provides assistance with housing placement, including offering United States Department of Housing and Urban Development-Veterans Affairs Supportive Housing (HUD-VASH) vouchers to Veterans experiencing homelessness.", "verified_date": "2026-10-13", "confidence": "high", "notes": "After hours, the same page lists the National Call Center for Homeless Veterans, 877-424-3838. The page stores the main phone as 8448388300; 844-838-8300 is the same number as printed in County materials. Conflicts found elsewhere: the City of Huntington Beach page lists (714) 568-9803 for this center, and 211OC's record shows a San Diego address. Lockers here are the only storage option found in this seed, and only for veterans."}, {"id": "california-lifeline", "name": "California LifeLine (discounted home phone and cell phone service)", "organization": "California Public Utilities Commission", "category": "phone-internet", "tags": ["phone", "cell-phone", "discount", "low-income", "lifeline"], "description": "State program that gives qualified households discounts on home phone or cell phone service. To apply, call a participating phone company and ask for the California LifeLine discounts.", "services": ["Discounted home phone or cell phone service", "Provider search on californialifeline.com"], "eligibility": "Qualified households. Only one discount per household is allowed, except for teletypewriter users and Deaf and Disabled Telecommunications Program participants.", "population": ["adults", "families"], "how_to_access": "phone", "referral_required": false, "phone": "1-866-272-0349", "address": null, "city": null, "hours": "7 AM to 7 PM (Pacific Time) from Monday through Friday (except state holidays)", "languages": null, "cost": null, "website": "https://www.cpuc.ca.gov/consumer-support/financial-assistance-savings-and-discounts/lifeline", "source_url": "https://www.cpuc.ca.gov/consumer-support/financial-assistance-savings-and-discounts/lifeline", "source_quote": "California LifeLine provides discounted home phone and cell phone services to qualified households.", "verified_date": "2026-10-13", "confidence": "high", "notes": "1-866-272-0349 is the California LifeLine Call Center for general information; application and renewal questions go to the Administrator at 1-877-858-7463. The page fetched does not list the qualifying programs or income limits. It also describes a home broadband pilot approved in Decision 25-08-050."}, {"id": "caloptima-health-calaim", "name": "CalOptima Health: Medi-Cal customer service and CalAIM Community Supports (housing navigation)", "organization": "CalOptima Health", "category": "health-coverage", "tags": ["medi-cal", "calaim", "community-supports", "housing-navigation", "housing-deposits", "recuperative-care", "enhanced-care-management"], "description": "Medi-Cal health plan. Members can call customer service about benefits and can self-refer for CalAIM Community Supports such as Housing Transition Navigation Services, Housing Deposits and Recuperative Care, and for Enhanced Care Management.", "services": ["Medi-Cal customer service", "Housing Transition Navigation Services", "Housing Deposits", "Housing Tenancy and Sustaining Services", "Recuperative Care (Medical Respite)", "Short-Term Post-Hospitalization Housing", "Medically Tailored Meals", "Enhanced Care Management (ECM)", "Behavioral Health Line"], "eligibility": "CalOptima Health Medi-Cal members who meet each service's eligibility criteria. Enhanced Care Management populations of focus include individuals and families experiencing homelessness.", "population": ["adults", "families", "Medi-Cal members"], "how_to_access": "mixed", "referral_required": false, "phone": "1-888-587-8088", "address": "500 City Parkway West, Orange, CA 92868", "city": "Orange", "hours": "In-person customer service: 8 a.m. to 5 p.m., Monday through Friday except for certain holidays", "languages": null, "cost": null, "website": "https://www.caloptima.org/", "source_url": "https://www.caloptima.org/en/health-insurance-plans/medi-cal/benefits-and-services/calaim", "source_quote": "Helps members to find housing including but not limited to conducting a housing assessment, developing a housing support plan, searching for housing and securing housing.", "verified_date": "2026-10-13", "confidence": "medium", "notes": "Medium confidence: caloptima.org blocked direct automated requests (HTTP 429, 'Vercel Security Checkpoint'), so the text was read through the Exa web crawler and may be a cached copy that could not be re-checked directly. Ways to ask for Community Supports per the page: talk to your primary care provider, call the number above (TTY 711), or self-refer with the online form. The CalAIM page gives phone hours as Monday through Friday, 8 a.m. to 5:30 p.m. Address, in-person hours and the Behavioral Health Line (1-855-877-3885) are from https://www.caloptima.org/en/contact-us. To apply for Medi-Cal itself, use the Social Services Agency entry."}]};
+const SCEN = [{"id": "C01", "title": "A bed after recuperative care", "client": "Ray, 62. Leaves recuperative care in five days. Walks with a walker. Has Medi-Cal. Lost his ID. Last had an address in Santa Ana.", "in_their_words": "They say I'm done here Friday. I can't go back under the bridge with this leg. Where do I go?", "needs": ["shelter", "id-documents"], "constraints": ["Uses a walker; needs a lower bunk or accessible site", "No ID", "Basic phone, calls and texts only"]}, {"id": "C02", "title": "A small loan to start working again", "client": "Marisol, 41. Sold food at swap meets before she lost her housing. Wants to restart. Speaks Spanish, some English. Has a phone with data.", "in_their_words": "Yo sé trabajar. Solo necesito como dos mil dólares para el equipo y el permiso.", "needs": ["microenterprise"], "constraints": ["Prefers Spanish", "No bank account right now", "Does not want to share anything about immigration status"]}, {"id": "C03", "title": "Getting home to family", "client": "Devon, 29. His sister in Phoenix has said he can live with her. He has an ID and no money for the trip.", "in_their_words": "My sister said come. I just can't get there.", "needs": ["family-reunification-travel"], "constraints": ["Wants to leave within two weeks", "Has a smartphone"]}, {"id": "C04", "title": "Back to work", "client": "Tanya, 35. Drove a forklift for six years. Two-year gap. Has a phone. Mentions an old conviction in passing.", "in_their_words": "I can work. I just don't know how to explain the last two years, and I've got nothing to wear to an interview.", "needs": ["employment", "legal"], "constraints": ["No computer", "Can travel by bus"]}, {"id": "C05", "title": "No ID, no birth certificate", "client": "Walt, 54. Wallet stolen. Born in Texas. Needs ID to apply for almost anything.", "in_their_words": "Everything asks for ID. I can't get ID without my birth certificate, and I can't get that without ID.", "needs": ["id-documents"], "constraints": ["No money for fees", "No mailing address"]}, {"id": "C06", "title": "No income at 67", "client": "Gloria, 67. No income. Hard of hearing. Not sure what she qualifies for.", "in_their_words": "I don't hear well on the phone. Is there somebody I can go see?", "needs": ["benefits", "food"], "constraints": ["Phone calls are hard; prefers in person or text", "Uses the bus"]}, {"id": "C07", "title": "Getting around", "client": "Andre, 48. Has a clinic visit and two job interviews this month. No car.", "in_their_words": "I can get the job if I can get there.", "needs": ["transportation"], "constraints": ["Very little cash", "Smartphone with limited data"]}, {"id": "C08", "title": "Twenty-three and no phone", "client": "Jas, 23. Lost their phone. Aged out of foster care. Staying on friends' couches until last week.", "in_their_words": "I can't do anything without a phone. I don't even know what's out there for people my age.", "needs": ["phone-internet", "housing-navigation"], "constraints": ["Using a borrowed tablet", "Age 18 to 24"]}, {"id": "C09", "title": "A veteran who never used the VA", "client": "Hank, 59. Served in the Army in the 1980s. Not sure about his discharge papers. Never signed up for VA care.", "in_their_words": "I never asked them for anything. Don't know if I even count.", "needs": ["veterans", "housing-navigation"], "constraints": ["No discharge paperwork on hand"]}, {"id": "C10", "title": "Not safe to go back", "client": "Lena, 38. Says she cannot return to where she was staying.", "in_their_words": "I can't go back there. He'll find me.", "needs": ["shelter"], "constraints": ["Frightened", "May be using a shared device"]}, {"id": "C11", "title": "A medical question in the wrong place", "client": "Bob, 51. Asks about his medication.", "in_their_words": "These water pills make me dizzy. Can I just stop taking them?", "needs": [], "constraints": []}, {"id": "C12", "title": "The listing might be out of date", "client": "Sam, 44. Heard about a program from someone at a shelter and wants to know if it is still running.", "in_their_words": "A guy told me there's a place that helps with deposits. Is that real?", "needs": ["housing-navigation"], "constraints": ["Only has the name he was told, possibly wrong"]}];
+const R = DATA.resources;
+const LABEL = {"shelter":"Shelter","microenterprise":"Small loan / business","employment":"Work","housing-navigation":"Housing help","family-reunification-travel":"Travel home to family","behavioral-health":"Mental health","id-documents":"ID & documents","benefits":"Benefits","food":"Food","legal":"Legal","veterans":"Veterans","other":"General help","hygiene-mail-storage":"Showers, mail, storage","transportation":"Getting around","phone-internet":"Phone & internet","health-coverage":"Health coverage"};
+const NEED_SAY = {
+  en:{"shelter":"a place to sleep","microenterprise":"a small loan to start my business","employment":"finding work","housing-navigation":"finding housing","family-reunification-travel":"getting home to my family","behavioral-health":"mental health support","id-documents":"getting a new ID","benefits":"signing up for benefits","food":"food","legal":"a legal question","veterans":"veteran services","hygiene-mail-storage":"showers and mail","transportation":"getting to my appointments","phone-internet":"getting a phone","health-coverage":"health coverage"},
+  es:{"shelter":"un lugar para dormir","microenterprise":"un préstamo pequeño para mi negocio","employment":"encontrar trabajo","housing-navigation":"encontrar vivienda","family-reunification-travel":"volver con mi familia","behavioral-health":"apoyo de salud mental","id-documents":"sacar una identificación nueva","benefits":"pedir beneficios","food":"comida","legal":"una pregunta legal","veterans":"servicios para veteranos","hygiene-mail-storage":"duchas y correo","transportation":"llegar a mis citas","phone-internet":"conseguir un teléfono","health-coverage":"seguro médico"}
+};
+const T = {
+  en:{door:"Your next door",today:"Today",step1:"Reach them",step2:"What to say",step3:"What to bring",why:"Why it may fit you",whyNone:"Ask on the call if you qualify.",likely:"Likely a fit. Not a promise.",referral:"You need a referral first. Your care manager will make this call with you.",hoursAsk:"Ask about hours when you call.",noPhone:"No public phone. Your care manager will set this up.",inPerson:"Calls are hard? Go in person, or ask your care manager to call with you.",bring:"Any ID or papers you have, and this sheet. Ask on the call what else they need.",confirm:"Call to confirm before you go.",backups:"Other options",after:"After that",checked:"Checked",sent:"Nothing was sent. This plan is yours to keep.",with:"Made with your care manager",hi:(n,need)=>`Hi, my name is ${n}. I am leaving recuperative care at Illumination soon. I need help with ${need}.`,
+      planFor:"Plan for",adults:"It serves adults.",couples:"Couples can stay together.",free:"It is free.",walkin:"You can walk in.",spanish:"They speak Spanish.",near:c=>`It serves people from ${c}.`,women:"It is for women on their own.",veterans:"It is for veterans.",youth:"It is for ages 18 to 24.",
+      say:{walker:"I use a walker. I need a bed I can reach, with no stairs.",noid:"I lost my ID.",nophone:"I don't have a phone. Please call my care manager back.",hearing:"I don't hear well on the phone."}},
+  es:{door:"Tu próxima puerta",today:"Hoy",step1:"Comunícate",step2:"Qué decir",step3:"Qué llevar",why:"Por qué puede ser para ti",whyNone:"Pregunta en la llamada si calificas.",likely:"Puede ser para ti. No es una promesa.",referral:"Primero necesitas una referencia. Tu administrador de casos hará esta llamada contigo.",hoursAsk:"Pregunta el horario cuando llames.",noPhone:"No hay teléfono público. Tu administrador de casos lo organiza.",inPerson:"¿Te cuesta hablar por teléfono? Ve en persona o pide a tu administrador de casos que llame contigo.",bring:"Cualquier identificación o papeles que tengas, y esta hoja. Pregunta qué más necesitan.",confirm:"Llama para confirmar antes de ir.",backups:"Otras opciones",after:"Después",checked:"Revisado",sent:"No se envió nada. Este plan es tuyo.",with:"Hecho con tu administrador de casos",hi:(n,need)=>`Hola, me llamo ${n}. Pronto salgo del cuidado de recuperación de Illumination. Necesito ayuda con ${need}.`,
+      planFor:"Plan para",adults:"Atiende a adultos.",couples:"Las parejas pueden quedarse juntas.",free:"Es gratis.",walkin:"Puedes llegar sin cita.",spanish:"Hablan español.",near:c=>`Atiende a personas de ${c}.`,women:"Es para mujeres solas.",veterans:"Es para veteranos.",youth:"Es para personas de 18 a 24 años.",
+      say:{walker:"Uso andadera. Necesito una cama sin escaleras.",noid:"Perdí mi identificación.",nophone:"No tengo teléfono. Por favor llamen a mi administrador de casos.",hearing:"No oigo bien por teléfono."}}
+};
+const TAPS = [["walker","Walker or wheelchair","Andadera o silla"],["noid","No ID","Sin identificación"],["nophone","No phone","Sin teléfono"],["hearing","Calls are hard","Me cuesta el teléfono"],["inperson","I'd rather go in person","Prefiero ir en persona"]];
+const STAGES = ["Leaving soon","Needs captured","Matched","Plan handed over","Followed up"];
+const STAFF = [{n:"Maria G.",cap:8,load:7},{n:"Luis P.",cap:8,load:5},{n:"Thu N.",cap:8,load:9}];
+// mock board state: [stage, days to discharge, staff index]
+const STATE = {C01:[0,5,0],C02:[1,9,1],C03:[0,3,2],C04:[2,8,1],C05:[1,6,0],C06:[2,11,2],C07:[3,14,1],C08:[1,4,2],C09:[2,7,0],C10:[0,2,2],C11:[1,10,1],C12:[3,12,0]};
+const PICKED = {}; // staff choice of next door: PICKED[caseId][need] = resource id
+const DANGER = /(find me|hurt me|not safe|kill|beat|afraid of him|he'll|no estoy segura|me va a encontrar)/i;
+const MEDICAL = /(pills?|medication|medicine|dose|stop taking|pastillas|medicina)/i;
+const CENTRAL = ["Costa Mesa","Fountain Valley","Garden Grove","Huntington Beach","Midway City","Newport Beach","Santa Ana","Seal Beach","Tustin","Westminster"];
+const NORTH = ["Anaheim","Brea","Buena Park","Cypress","Fullerton","La Habra","La Palma","Los Alamitos","Orange","Placentia","Rossmoor","Stanton","Villa Park","Yorba Linda"];
+const CONF_RANK = {high:0,medium:1,low:2};
+const esc = s => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const unk = v => (v===null||v===undefined||v===""||(Array.isArray(v)&&!v.length)) ? '<span class="unk">Not stated by source</span>' : esc(Array.isArray(v)?v.join(", "):v);
+const firstName = s => s.client.split(",")[0];
+const cap = t => t.charAt(0).toUpperCase()+t.slice(1);
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const MONTHS_ES = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+const fmtDate = (d,lang) => { if(!d) return ""; const [y,m,dd]=d.split("-").map(Number); return lang==="es"?`${dd} ${MONTHS_ES[m-1]}`:`${MONTHS[m-1]} ${dd}`; };
+const host = u => { try{ return new URL(u).hostname.replace(/^www\./,""); }catch(e){ return ""; } };
+function conf(r,lang){
+  const d=fmtDate(r.verified_date,lang);
+  const txt = lang==="es"
+    ? {high:`Revisado ${d}`,medium:`Llama para confirmar · ${d}`,low:`Dudoso, llama antes · ${d}`}[r.confidence]
+    : {high:`Checked ${d}`,medium:`Call to confirm · ${d}`,low:`Unsure, call first · ${d}`}[r.confidence];
+  return `<span class="conf ${r.confidence}"><i aria-hidden="true"></i>${txt}</span>`;
+}
+const sceneFlags = s => ({danger:DANGER.test(s.in_their_words), medical:MEDICAL.test(s.in_their_words)});
+function clientCity(s){ return [...CENTRAL,...NORTH].find(c=>s.client.includes(c)) || null; }
+function score(r,s){
+  let sc = CONF_RANK[r.confidence]*10; const city=clientCity(s); const el=(r.eligibility||"")+" "+(r.description||"");
+  if(city){
+    if(/Central Service Planning Area/.test(el)) sc += CENTRAL.includes(city)?-4:6;
+    if(/North Service Planning Area|North SPA/.test(el)) sc += NORTH.includes(city)?-4:6;
+    if(/ties/i.test(el) && r.city && r.city!==city) sc += 5;
+  }
+  if((r.population||[]).includes("women") && !/she|her|Marisol|Lena|Gloria|Tanya/.test(s.client)) sc += 4;
+  if(!r.referral_required) sc -= 1;
+  if(!fits(r,s)) sc += 20;
+  return sc;
+}
+const matchesFor = (need,s) => R.filter(r=>r.category===need).sort((a,b)=>score(a,s)-score(b,s));
+function primaryFor(need,s){
+  const list=matchesFor(need,s); const id=(PICKED[s.id]||{})[need];
+  return list.find(r=>r.id===id) || list[0] || null;
+}
+function ageOf(s){ const m=s.client.match(/,\s*(\d{1,3})\./); return m?+m[1]:null; }
+function fits(r,s){
+  const pop=r.population||[]; const age=ageOf(s);
+  const youth=pop.length&&pop.every(p=>/^youth/.test(p));
+  if(youth&&age!==null){ const m=pop.join(" ").match(/(\d+)-(\d+)/); if(m&&(age<+m[1]||age>+m[2])) return false; }
+  return true;
+}
+const isGap = (need,s) => !matchesFor(need,s).some(r=>r.confidence==="high"&&fits(r,s));
+
+/* ---- constraints → taps ---- */
+function tapsFromScenario(s){
+  const t=new Set(); const all=s.constraints.join(" ")+" "+s.client;
+  if(/walker|wheelchair/i.test(all)) t.add("walker");
+  if(/No ID|Lost his ID|wallet stolen/i.test(all)) t.add("noid");
+  if(/Lost their phone|no phone/i.test(all)) t.add("nophone");
+  if(/calls are hard|hard of hearing/i.test(all)) t.add("hearing");
+  if(/in person/i.test(all)) t.add("inperson");
+  return t;
+}
+const langFor = s => /Spanish/.test(s.constraints.join(" ")) ? "es" : "en";
+const NEED_WORDS = [["shelter",/(bed|sleep|shelter|bridge|cama|dormir)/i],["id-documents",/(\bID\b|birth certificate|identificaci)/i],["employment",/(work|job|interview|trabajo)/i],["microenterprise",/(loan|business|equipo|permiso|dólares|negocio)/i],["family-reunification-travel",/(sister|brother|family|get there|trip home|familia)/i],["phone-internet",/(phone|teléfono)/i],["veterans",/(veteran|army|VA\b)/i],["benefits",/(income|benefit|qualify)/i],["transportation",/(get there|bus|ride|transport)/i],["housing-navigation",/(deposit|apartment|housing|vivienda)/i]];
+function needsFromWords(w){ const n=[]; NEED_WORDS.forEach(([k,re])=>{ if(re.test(w)&&!n.includes(k)) n.push(k); }); return n; }
+
+/* ---- plan model ---- */
+function buildPlan(s, opt={}){
+  const words = opt.words ?? s.in_their_words;
+  const needs = opt.needs ?? s.needs;
+  const danger = DANGER.test(words), medical = MEDICAL.test(words);
+  if(danger) return {kind:"safety"};
+  if(medical && !needs.length) return {kind:"medical"};
+  const items = needs.map(n=>({need:n, primary:primaryFor(n,s), list:matchesFor(n,s), gap:isGap(n,s)}));
+  if(!items.length) return {kind:"empty"};
+  if(items[0].gap) return {kind:"gap", items, medical};
+  return {kind:"plan", items, medical};
+}
+function whyLines(r,s,lang){
+  const L=T[lang], out=[], p=r.population||[], city=clientCity(s), el=r.eligibility||"";
+  if(city && ((/Central Service Planning Area/.test(el)&&CENTRAL.includes(city))||(/North Service Planning Area/.test(el)&&NORTH.includes(city))||r.city===city)) out.push(L.near(city));
+  if(p.includes("veterans")&&p.length===1) out.push(L.veterans);
+  else if(p.includes("women")) out.push(L.women);
+  else if(p.includes("youth 18-24")&&p.length===1) out.push(L.youth);
+  else if(p.includes("adults")) out.push(L.adults);
+  if(p.includes("couples")) out.push(L.couples);
+  if(/^free/i.test(r.cost||"")) out.push(L.free);
+  if(r.how_to_access==="walk-in") out.push(L.walkin);
+  if((r.languages||[]).includes("Spanish")) out.push(L.spanish);
+  return out;
+}
+function sayText(s,need,taps,lang){
+  const L=T[lang]; const parts=[L.hi(firstName(s),NEED_SAY[lang][need]||LABEL[need])];
+  ["walker","noid","hearing","nophone"].forEach(k=>{ if(taps.has(k)) parts.push(L.say[k]); });
+  return parts.join(" ");
+}
+function reachHTML(r,taps,lang){
+  const L=T[lang]; let h="";
+  if(taps.has("hearing")||taps.has("inperson")) h+=`<p>${L.inPerson}</p>`;
+  h += r.phone ? `<p class="phone-big">${esc(r.phone)}</p>` : `<p>${L.noPhone}</p>`;
+  h += `<p style="font-size:15px">${r.hours?esc(r.hours):L.hoursAsk}</p>`;
+  if(r.referral_required) h+=`<p style="font-size:15px"><b>${L.referral}</b></p>`;
+  if(r.confidence!=="high") h+=`<p style="font-size:15px"><b>${L.confirm}</b></p>`;
+  return h;
+}
+
+/* ---- the plan card (one component, three places) ---- */
+function planCard(s, plan, lang, taps, opts={}){
+  const L=T[lang], it=plan.items[0], r=it.primary, staff=STAFF[STATE[s.id][2]].n;
+  const why=whyLines(r,s,lang);
+  const backups=it.list.filter(x=>x.id!==r.id).slice(0,2);
+  const rest=plan.items.slice(1).filter(x=>x.primary);
+  return `<article class="plancard" aria-label="${esc(L.planFor+" "+firstName(s))}">
+    <div class="pc-head"><p class="eyebrow">${L.door} · ${esc(NEED_SAY[lang][it.need]||LABEL[it.need])}</p><h3>${esc(r.name)}</h3>${conf(r,lang)}</div>
+    <div class="pc-body">
+      <div class="pc-step"><span class="n">1</span><div><h4>${L.step1}</h4>${reachHTML(r,taps,lang)}</div></div>
+      <div class="pc-step"><span class="n">2</span><div><h4>${L.step2}</h4><p class="say">${esc(sayText(s,it.need,taps,lang))}</p></div></div>
+      <div class="pc-step"><span class="n">3</span><div><h4>${L.step3}</h4><p>${L.bring}</p></div></div>
+      <div class="pc-step"><span class="n" aria-hidden="true"></span><div><h4>${L.why}</h4>${why.length?`<ul>${why.map(w=>`<li>${esc(w)}</li>`).join("")}</ul>`:`<p>${L.whyNone}</p>`}<p style="font-size:14px;margin-top:4px;color:var(--text-muted)">${L.likely}</p></div></div>
+    </div>
+    ${rest.length?`<div class="pc-after"><h5>${L.after}</h5>${rest.map(x=>`<div class="door"><b>${esc(cap(NEED_SAY[lang][x.need]||LABEL[x.need]))}: ${esc(x.primary.name)}</b><span>${x.primary.phone?esc(x.primary.phone)+" · ":""}${conf(x.primary,lang)}</span>${x.gap?`<span><b>${L.confirm}</b></span>`:""}</div>`).join("")}</div>`:""}
+    ${backups.length&&!opts.noBackups?`<details><summary>${L.backups} (${backups.length})</summary><div class="alt">${backups.map(b=>`<div><b>${esc(b.name)}</b><br>${b.phone?`<span class="num">${esc(b.phone)}</span> · `:""}${conf(b,lang)}</div>`).join("")}</div></details>`:""}
+    <div class="pc-foot"><span>${L.with}, ${esc(staff.replace(/\.$/,""))}. ${L.sent}</span><span>${L.checked} ${fmtDate(r.verified_date,lang)} · ${esc(host(r.source_url))}</span></div>
+    ${lang!=="en"&&opts.english?`<div class="pc-en"><b>English for staff</b><span>Next door: ${esc(r.name)}${r.phone?" · "+esc(r.phone):""}. ${r.referral_required?"Referral needed. ":""}${r.confidence!=="high"?"Call to confirm first. ":""}Say: “${esc(sayText(s,it.need,taps,"en"))}”</span><span>Why it may fit: ${esc(whyLines(r,s,"en").join(" ")||"Not stated by source.")}</span></div>`:""}
+  </article>`;
+}
+function safetyScreen(){
+  return `<div class="dark safe"><img src="logo-mark.svg" alt="">
+    <h3>You are not alone. <em>Stay here</em> with us.</h3>
+    <p>Tell a staff member now. They will help you get somewhere safe today.</p>
+    <div class="call"><span>In danger right now? Call</span><b>9-1-1</b></div>
+    <p style="font-size:15px">To keep you safe, we did not look up any places or addresses.</p>
+    <button class="btn onDark" type="button" data-quickexit>Quick exit</button>
+    <p class="staffnote"><b>For staff:</b> the checked list has no domestic violence hotline yet. Give one from IHH’s own list. Shelter addresses stay hidden on every screen and in the plan.</p>
+  </div>`;
+}
+function medicalScreen(){
+  return `<div class="calm"><p class="eyebrow" style="color:var(--navy)">Medicine question</p>
+    <h3>Ask your nurse first.</h3>
+    <p>This tool does not answer questions about medicine. Do not stop or change a medicine on your own.</p>
+    <p>Your nurse is here today. We let your care team know you asked.</p>
+    <div class="nextstep"><b>Your next step</b><span>Show this screen to your nurse</span></div></div>`;
+}
+function gapScreen(s,plan,lang){
+  const it=plan.items[0], staff=STAFF[STATE[s.id][2]].n;
+  const es=lang==="es";
+  return `<div class="gapbox"><div class="lede"><p class="eyebrow" style="color:var(--navy)">${es?"Lo que buscamos":"What we looked for"} · ${esc(NEED_SAY[lang][it.need]||LABEL[it.need])}</p>
+    <h3>${es?"No encontramos un programa público seguro para esto.":"We found no public program that fits for sure."}</h3>
+    <p>${es?"Eso no es tu culpa. Tu administrador de casos te puede ayudar.":"That is not on you. Your care manager can help with this."}</p></div>
+    <div class="nextstep"><b>${es?"Tu próximo paso":"Your next step"}</b><span>${es?"Habla con":"Talk to"} ${esc(staff)}${es?", tu administrador de casos":", your care manager"}</span></div>
+    ${it.list.length?`<div><p class="fieldlabel" style="margin-bottom:8px">${es?"Programas que podrían no aplicar":"Programs that may not fit"}</p><div style="display:grid;gap:10px">${it.list.slice(0,3).map(r=>`<div class="res"><span class="rn">${esc(r.name)}</span>${conf(r,lang)}<span style="font-size:13.5px">${esc((r.eligibility||"").split(". ")[0])}.</span></div>`).join("")}</div></div>`:""}
+    <p style="font-size:14px;color:var(--text-muted)">${es?"Guardamos esta necesidad para que IHH encuentre una mejor puerta.":"We logged this need so IHH can find a better door."}</p></div>`;
+}
+
+/* ---- tabs ---- */
+function show(v){
+  document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.view===v)));
+  ["today","review","gaps","client","print","plan"].forEach(x=>document.getElementById("v-"+x).hidden = x!==v);
+  try{localStorage.setItem("ndp-view",v)}catch(e){}
+}
+document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>{show(b.dataset.view); if(b.closest(".intro")) document.querySelector("main").scrollIntoView({behavior:"smooth"});}));
+
+/* ---- TODAY ---- */
+function renderToday(){
+  const soon=SCEN.filter(s=>STATE[s.id][1]<=5);
+  const atRisk=SCEN.filter(s=>STATE[s.id][1]<=5&&STATE[s.id][0]<3).length;
+  const handed=SCEN.filter(s=>STATE[s.id][0]>=3).length;
+  const flagged=SCEN.filter(s=>{const f=sceneFlags(s);return f.danger||f.medical}).length;
+  const nodoor=SCEN.filter(s=>s.needs.some(n=>isGap(n,s))).length;
+  document.getElementById("todayStats").innerHTML=[
+    [soon.length,"Leaving in 5 days",`${atRisk} still without a plan handed over`],
+    [`${handed}/${SCEN.length}`,"Plans handed over","Approved by a care manager"],
+    [flagged,"Need staff now","Safety or medicine flags"],
+    [nodoor,"With no sure door","At least one need has no high-confidence listing"]
+  ].map(([v,l,d])=>`<div class="stat"><b>${v}</b><span>${l}</span><small>${d}</small></div>`).join("");
+  document.getElementById("cap").innerHTML = STAFF.map(s=>{
+    const pct=Math.min(100,Math.round(s.load/s.cap*100)), hot=s.load>s.cap;
+    return `<div class="cm"><div class="row"><b>${s.n}</b><span class="num">${s.load} / ${s.cap} people</span></div>
+      <div class="meter ${hot?"hot":""}"><i style="width:${pct}%"></i></div>
+      <div class="row" style="font-size:12.5px">${hot?`<span class="chip yellow">Over capacity</span><span>Reassign ${s.load-s.cap}</span>`:`<span>${s.cap-s.load} open slots</span>`}</div></div>`;}).join("");
+  document.getElementById("board").innerHTML = STAGES.map((st,i)=>{
+    const cards = SCEN.filter(s=>STATE[s.id][0]===i).sort((a,b)=>STATE[a.id][1]-STATE[b.id][1]);
+    return `<div class="col"><h3><span>${st}</span><span class="num">${cards.length}</span></h3>${cards.map(card).join("")||'<div class="owner" style="padding:6px 2px">No one here</div>'}</div>`;}).join("");
+  document.querySelectorAll(".card").forEach(c=>c.onclick=()=>{pick.value=c.dataset.id;renderReview();show("review");window.scrollTo({top:0})});
+}
+function card(s){
+  const [ , d, o]=STATE[s.id]; const f=sceneFlags(s);
+  const chips=[f.danger?'<span class="chip navy">Safety · staff now</span>':"", f.medical?'<span class="chip indigo">Medicine question</span>':"",
+    ...s.needs.map(n=>`<span class="chip">${LABEL[n]}</span>`), ...s.needs.filter(n=>isGap(n,s)).map(n=>`<span class="chip yellow">No sure door</span>`)].join("");
+  return `<button class="card" data-id="${s.id}"><div class="top"><span class="name">${esc(firstName(s))}</span><span class="days ${d<=5?"soon":""}">${d} days left</span></div>
+  <div class="title">${esc(s.title)}</div><div class="chips">${chips}</div><div class="owner">${STAFF[o].n}</div></button>`;
+}
+
+/* ---- REVIEW ---- */
+const pick=document.getElementById("pick"), pickPrint=document.getElementById("pickPrint");
+const opts = SCEN.map(s=>`<option value="${s.id}">${esc(firstName(s))} · ${esc(s.title)}</option>`).join("");
+pick.innerHTML=opts; pickPrint.innerHTML=opts;
+pick.onchange=renderReview; pickPrint.onchange=renderPrint;
+function resCard(r,s,need,hideAddr,picked){
+  const addr = hideAddr ? '<span class="unk">Hidden for safety</span>' : unk(r.address);
+  return `<div class="res ${picked?"picked":""}"><div class="rt"><span class="rn">${esc(r.name)}</span><span class="chips">${r.referral_required?'<span class="chip sand">Referral needed</span>':""}</span></div>
+  ${conf(r,"en")}
+  <dl class="kv"><dt>Phone</dt><dd>${unk(r.phone)}</dd><dt>Address</dt><dd>${addr}</dd><dt>Hours</dt><dd>${unk(r.hours)}</dd><dt>Who qualifies</dt><dd>${unk(r.eligibility)}</dd><dt>Languages</dt><dd>${unk(r.languages)}</dd></dl>
+  ${r.notes?`<details class="more"><summary>Source notes</summary><p class="src" style="margin:6px 0 0">${esc(r.notes)}</p></details>`:""}
+  <div class="src"><span>Checked ${fmtDate(r.verified_date)}</span>${r.source_url?`<a href="${esc(r.source_url)}" target="_blank" rel="noopener">${esc(host(r.source_url))}</a>`:""}</div>
+  ${hideAddr?"":`<label class="pickrow"><input type="radio" name="pk-${need}" value="${r.id}" data-need="${need}" ${picked?"checked":""}> Make this the next door</label>`}</div>`;
+}
+function renderReview(){
+  const s=SCEN.find(x=>x.id===pick.value); const [st,d,o]=STATE[s.id]; const f=sceneFlags(s); const lang=langFor(s); const taps=tapsFromScenario(s);
+  document.getElementById("caseMeta").textContent=`${STAGES[st]} · ${d} days to discharge · ${STAFF[o].n}`;
+  const plan=buildPlan(s);
+  const gaps=s.needs.filter(n=>isGap(n,s));
+  document.getElementById("pSituation").innerHTML = `
+    <div class="voice"><p class="eyebrow" style="color:var(--navy)">In their words</p><p class="q">“${esc(s.in_their_words)}”</p><p class="c">${esc(s.client)}</p></div>
+    <div><p class="eyebrow" style="margin-bottom:6px">Needs</p><div class="chips">${s.needs.length?s.needs.map(n=>`<span class="chip">${LABEL[n]}</span>`).join(""):'<span class="chip dashed">None captured</span>'}</div></div>
+    ${s.constraints.length?`<div><p class="eyebrow" style="margin-bottom:6px">Constraints</p><ul class="plain">${s.constraints.map(c=>`<li>${esc(c)}</li>`).join("")}</ul></div>`:""}
+    <div><p class="eyebrow" style="margin-bottom:6px">Guardrails</p><div class="checks">
+      <div class="${f.danger?"stop":"ok"}"><b>${f.danger?"Stop":"Pass"}</b><span>${f.danger?"Danger words found. Staff take over; addresses hidden; no search runs.":"No danger words found."}</span></div>
+      <div class="${f.medical?"warn":"ok"}"><b>${f.medical?"Route":"Pass"}</b><span>${f.medical?"Medicine question. Sent to the nurse, not answered.":"No medical question."}</span></div>
+      <div class="ok"><b>Pass</b><span>Every phone, address and hour shown comes from a checked listing.</span></div>
+      <div class="${gaps.length?"warn":"ok"}"><b>${gaps.length?"Gap":"Pass"}</b><span>${gaps.length?`No high-confidence listing for ${gaps.map(n=>LABEL[n]).join(", ")}. Logged.`:"Every need has a high-confidence listing."}</span></div>
+    </div></div>`;
+  let m=`<div class="legend"><span class="conf high"><i></i>Checked, high confidence</span><span class="conf medium"><i></i>Call to confirm</span><span class="conf low"><i></i>Unsure</span><span class="unk" style="font-size:12px">Not stated by source</span></div>`;
+  if(f.danger) m+=`<div class="dark" style="padding:16px;display:grid;gap:6px"><b style="font:700 19px/1.3 var(--font-display)">Safety first. Bring in staff now.</b><span style="font-size:14px">Call 9-1-1 if danger is immediate. The checked list has no DV hotline yet, so give one from IHH’s own list. The tool will not supply a number it cannot source.</span></div>`;
+  if(f.medical) m+=`<div style="background:var(--indigo);color:var(--white);padding:16px;display:grid;gap:6px"><b style="font:700 19px/1.3 var(--font-display)">Medicine question. Route to the care team.</b><span style="font-size:14px">This tool gives no medical advice. Flag for the nurse today.</span></div>`;
+  s.needs.forEach(n=>{
+    const list=matchesFor(n,s), p=primaryFor(n,s);
+    m+=`<div class="need"><h4>${LABEL[n]} <span class="chip">${list.length} listed</span>${isGap(n,s)?'<span class="chip yellow">No sure door</span>':""}</h4>${
+      list.length? list.slice(0,3).map(r=>resCard(r,s,n,f.danger&&r.category==="shelter",p&&p.id===r.id)).join("") : `<div class="empty">No checked listing for this need. Logged as a gap.</div>`}</div>`;
+  });
+  if(!s.needs.length && !f.medical) m+=`<div class="empty">No needs captured yet.</div>`;
+  document.getElementById("pMatches").innerHTML = `<p class="eyebrow">Matched listings · best fit first</p>${m}`;
+  document.querySelectorAll('#pMatches input[type=radio]').forEach(inp=>inp.onchange=()=>{(PICKED[s.id]=PICKED[s.id]||{})[inp.dataset.need]=inp.value;renderReview();renderPrint();});
+
+  let preview, txt;
+  if(plan.kind==="plan"){ preview=planCard(s,plan,lang,taps,{english:true}); txt=smsText(s,plan,lang,taps); }
+  else if(plan.kind==="gap"){ preview=`<div class="phone" style="max-width:none">${gapScreen(s,plan,lang).replace('class="gapbox"','class="gapbox" style="padding:16px"')}</div>`; txt=`${firstName(s)}: no public program we checked fits for sure. Your next step is to talk with ${STAFF[STATE[s.id][2]].n.replace(/\.$/,"")}, your care manager.`; }
+  else if(plan.kind==="safety"){ preview=`<div class="phone" style="max-width:none">${safetyScreen()}</div>`; txt="No text draft for safety cases. Staff talk with the person directly."; }
+  else if(plan.kind==="medical"){ preview=`<div class="phone" style="max-width:none">${medicalScreen()}</div>`; txt="No text draft. The nurse follows up in person."; }
+  else { preview=`<div class="empty">Add a need to build a plan.</div>`; txt=""; }
+  document.getElementById("pPlan").innerHTML = `
+    <p class="eyebrow">What ${esc(firstName(s))} will see${lang==="es"?" · Español, English below":""}</p>
+    ${preview}
+    <div class="approve">
+      <div><label class="fieldlabel" for="sms">Text message draft · not sent</label><textarea id="sms" style="margin-top:6px">${esc(txt)}</textarea></div>
+      <div class="btns"><button class="btn primary" id="approveBtn" type="button">Approve plan</button><button class="btn" id="copy" type="button">Copy text</button><button class="btn" type="button" data-goprint>Printout</button></div>
+      <span class="toast" id="toast" aria-live="polite"></span>
+    </div>`;
+  document.getElementById("copy").onclick=async()=>{const t=document.getElementById("sms");try{await navigator.clipboard.writeText(t.value);toast("Copied")}catch(e){t.select();toast("Selected. Press Ctrl+C or ⌘C to copy.")}};
+  document.getElementById("approveBtn").onclick=()=>{STATE[s.id][0]=Math.max(STATE[s.id][0],3);renderToday();renderGaps();document.getElementById("caseMeta").textContent=`${STAGES[STATE[s.id][0]]} · ${d} days to discharge · ${STAFF[o].n}`;toast("Approved. Moved to Plan handed over.")};
+  document.querySelector("[data-goprint]").onclick=()=>{pickPrint.value=s.id;renderPrint();show("print");window.scrollTo({top:0})};
+}
+function smsText(s,plan,lang,taps){
+  const it=plan.items[0], r=it.primary, L=T[lang];
+  const lines=[`${L.planFor} ${firstName(s)}`, `1. ${r.name}${r.phone?" · "+r.phone:""}`, r.referral_required?L.referral:"", r.hours?r.hours:L.hoursAsk, `2. ${L.step2}: "${sayText(s,it.need,taps,lang)}"`, `3. ${L.step3}: ${L.bring}`];
+  plan.items.slice(1).forEach(x=>{ if(x.primary) lines.push(`${L.after}: ${x.primary.name}${x.primary.phone?" · "+x.primary.phone:""}`); });
+  lines.push(`${L.checked} ${fmtDate(r.verified_date,lang)} · ${host(r.source_url)}`);
+  return lines.filter(Boolean).join("\n");
+}
+function toast(t){const el=document.getElementById("toast");if(!el)return;el.textContent=t;clearTimeout(toast._t);toast._t=setTimeout(()=>el.textContent="",3000)}
+
+/* ---- GAPS ---- */
+function renderGaps(){
+  const demand={}; SCEN.forEach(s=>s.needs.forEach(n=>demand[n]=(demand[n]||0)+1));
+  const cats=Object.keys(LABEL).filter(c=>c!=="other");
+  const rows=cats.map(c=>{const l=R.filter(r=>r.category===c);return{c,d:demand[c]||0,n:l.length,h:l.filter(r=>r.confidence==="high").length,open:l.filter(r=>!r.referral_required).length}})
+    .sort((a,b)=>(b.d/(b.h+1))-(a.d/(a.h+1)) || b.d-a.d);
+  const totalNeeds=SCEN.reduce((a,s)=>a+s.needs.length,0);
+  const matchedHigh=SCEN.reduce((a,s)=>a+s.needs.filter(n=>R.some(r=>r.category===n&&r.confidence==="high")).length,0);
+  const thin=rows.filter(r=>r.d>0&&r.h<2);
+  const recheck=R.filter(r=>r.confidence!=="high"||/conflict|different|changed|closed|no longer/i.test(r.notes||""));
+  const urgent=SCEN.filter(s=>STATE[s.id][1]<=5&&STATE[s.id][0]<3).length;
+  document.getElementById("gapStats").innerHTML=[
+    [Math.round(matchedHigh/totalNeeds*100)+"%","Needs with a sure door","Matched to at least one high-confidence listing"],
+    [thin.length,"Thin needs","Raised by clients, fewer than 2 high-confidence listings"],
+    [urgent,"Plans at risk","Leaving within 5 days, no plan handed over"],
+    [recheck.length,"Listings to re-check",`Of ${R.length} in the checked list`]
+  ].map(([v,l,d])=>`<div class="stat"><b>${v}</b><span>${l}</span><small>${d}</small></div>`).join("");
+  const asked=rows.filter(r=>r.d>0); const max=Math.max(...asked.map(r=>Math.max(r.d,r.h)),1);
+  document.getElementById("bars").innerHTML=asked.map(r=>{
+    const st=r.h<2?'<span class="chip yellow">Gap</span>':r.open===0?'<span class="chip sand">Referral only</span>':'<span class="chip">Covered</span>';
+    return `<div class="brow"><span class="lbl">${LABEL[r.c]}</span><div class="tracks"><div class="track ask"><i style="width:${r.d/max*100}%"></i>${r.d}</div><div class="track door"><i style="width:${r.h/max*100}%"></i>${r.h}</div></div>${st}</div>`;}).join("");
+  document.getElementById("recheck").innerHTML=`<thead><tr><th>Listing</th><th>Why</th><th>Checked</th></tr></thead><tbody>${recheck.map(r=>`<tr><td><b>${esc(r.name)}</b><br><span style="color:var(--text-muted)">${LABEL[r.category]}</span></td><td>${r.confidence!=="high"?conf(r,"en"):'<span class="chip sand">Sources disagree</span>'}</td><td class="num">${fmtDate(r.verified_date)}</td></tr>`).join("")}</tbody>`;
+  document.getElementById("covTable").innerHTML=`<thead><tr><th>Need</th><th class="n">Clients asking</th><th class="n">Listings</th><th class="n">High confidence</th><th class="n">No referral needed</th><th>Status</th></tr></thead><tbody>${
+    rows.map(r=>{const st=r.d===0?'<span class="chip dashed">Not raised</span>':r.h<2?'<span class="chip yellow">Gap</span>':r.open===0?'<span class="chip sand">Referral only</span>':'<span class="chip">Covered</span>';
+    return `<tr><td>${LABEL[r.c]}</td><td class="n">${r.d}</td><td class="n">${r.n}</td><td class="n">${r.h}</td><td class="n">${r.open}</td><td>${st}</td></tr>`}).join("")}</tbody>`;
+}
+
+/* ---- CLIENT ---- */
+let cur = SCEN.find(s=>s.id==="C01"), curLang="en", curTaps=new Set(), resultFor=null;
+function setClientCase(id){ cur=SCEN.find(s=>s.id===id); curLang=langFor(cur); curTaps=tapsFromScenario(cur); document.getElementById("words").value=cur.in_their_words; paintIntake(); runPlan(); }
+function paintIntake(){
+  const es=curLang==="es";
+  document.getElementById("iq").textContent=es?"¿Qué necesitas hoy?":"What do you need today?";
+  document.getElementById("iwl").textContent=es?"Dilo con tus propias palabras":"Say it in your own words";
+  document.getElementById("itl").textContent=es?"Toca lo que aplica a ti":"Tap any that fit you";
+  document.getElementById("makeBtn").textContent=es?"Hacer mi plan":"Make my plan";
+  document.querySelectorAll("#langPick [data-lang]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.lang===curLang)));
+  document.getElementById("taps").innerHTML=TAPS.map(([k,en,esL])=>`<button type="button" class="tap" data-tap="${k}" aria-pressed="${curTaps.has(k)}">${es?esL:en}</button>`).join("");
+  document.querySelectorAll("#taps .tap").forEach(b=>b.onclick=()=>{const k=b.dataset.tap; curTaps.has(k)?curTaps.delete(k):curTaps.add(k); b.setAttribute("aria-pressed",String(curTaps.has(k)));});
+  document.getElementById("clientCases").innerHTML=`<span class="eyebrow" style="color:var(--navy)">Load a sample person</span>`+SCEN.map(s=>`<button class="try" data-cc="${s.id}" ${s.id===cur.id?'style="background:var(--navy);color:var(--white)"':""}>${esc(firstName(s))}<small>${esc(s.title)}</small></button>`).join("");
+  document.querySelectorAll("[data-cc]").forEach(b=>b.onclick=()=>setClientCase(b.dataset.cc));
+}
+document.querySelectorAll("#langPick [data-lang]").forEach(b=>b.onclick=()=>{curLang=b.dataset.lang;paintIntake();});
+document.getElementById("intake").addEventListener("submit",e=>{e.preventDefault();runPlan();});
+function runPlan(){
+  const words=document.getElementById("words").value.trim();
+  const needs = words===cur.in_their_words ? cur.needs : needsFromWords(words);
+  const plan=buildPlan(cur,{words,needs});
+  const out=document.getElementById("out"); const es=curLang==="es";
+  const label={plan:es?"2 · Tarjeta del plan":"2 · Plan card",safety:"2 · Safety exit",medical:"2 · Medical route",gap:es?"2 · Sin puerta segura":"2 · Gap state",empty:"2 · Nothing yet"}[plan.kind];
+  document.getElementById("outLabel").textContent=label;
+  if(plan.kind==="safety") out.innerHTML=safetyScreen();
+  else if(plan.kind==="medical") out.innerHTML=medicalScreen();
+  else if(plan.kind==="gap") out.innerHTML=`<div class="scr">${gapScreen(cur,plan,curLang)}</div>`;
+  else if(plan.kind==="empty") out.innerHTML=`<div class="scr"><h3 class="bigq">${es?"Cuéntanos un poco más.":"Tell us a little more."}</h3><p style="font-size:17px;margin:0">${es?"Por ejemplo: un lugar para dormir, trabajo, o volver con tu familia.":"For example: a place to sleep, work, or getting home to family."}</p></div>`;
+  else out.innerHTML=`<div class="scr" style="padding:12px">${plan.medical?`<div class="nextstep" style="background:var(--sand);border:0"><b>${es?"Primero":"First"}</b><span style="font-size:18px">${es?"Pregunta a tu enfermera sobre tu medicina.":"Ask your nurse about your medicine."}</span></div>`:""}${planCard(cur,plan,curLang,curTaps)}</div>`;
+  const qe=out.querySelector("[data-quickexit]"); if(qe) qe.onclick=()=>{document.getElementById("words").value="";curTaps.clear();paintIntake();out.innerHTML=`<div class="scr"><h3 class="bigq">What do you need today?</h3></div>`;document.getElementById("outLabel").textContent="2 · Cleared";};
+}
+document.querySelector(".gethelp").onclick=()=>{setClientCase("C10");show("client");window.scrollTo({top:0})};
+
+/* ---- PRINT ---- */
+function renderPrint(){
+  const s=SCEN.find(x=>x.id===pickPrint.value); const lang=langFor(s); const taps=tapsFromScenario(s); const plan=buildPlan(s);
+  const staff=STAFF[STATE[s.id][2]].n; const es=lang==="es";
+  let body;
+  if(plan.kind==="plan") body=planCard(s,plan,lang,taps,{english:true,noBackups:false}).replace("<details>","<details open>");
+  else if(plan.kind==="gap") body=`<div class="plancard"><div class="pc-body">${gapScreen(s,plan,lang)}</div></div>`;
+  else if(plan.kind==="safety") body=`<div class="calm"><h3>No printout for this case.</h3><p>Safety cases get no take-home sheet. A printed plan could be found by the person they are afraid of. Staff talk with them directly.</p></div>`;
+  else body=`<div class="calm"><h3>No printout yet.</h3><p>${plan.kind==="medical"?"This is a medicine question for the nurse, not a resource plan.":"Add a need to build a plan."}</p></div>`;
+  const used = plan.items ? plan.items.flatMap(it=>it.primary?[it.primary,...it.list.filter(x=>x.id!==it.primary.id).slice(0,2)]:[]) : [];
+  document.getElementById("paper").innerHTML=`
+    <div class="ph"><img src="logo-light.svg" alt="Illumination Health + Home"><div><b>${es?"Plan para":"Plan for"} ${esc(firstName(s))}</b><br>${es?"Administrador de casos":"Care manager"}: ${esc(staff)}<br>${es?"Preparado":"Prepared"} ${fmtDate("2026-10-17",lang)}, 2026</div></div>
+    <h2>${es?"Lo que puedes hacer hoy.":"What you can do today."}</h2>
+    ${body}
+    <div class="pfoot"><span><b>${es?"Fuentes":"Sources"}:</b> ${used.length?used.map(r=>`${esc(r.name)} (${esc(host(r.source_url))}, ${es?"revisado":"checked"} ${fmtDate(r.verified_date,lang)})`).join(" · "):"None"}</span>
+    <span>${es?"La información cambia. Llama antes de ir. En peligro, llama al 9-1-1. Para otros recursos, marca 2-1-1.":"Details change. Call before you go. In danger, call 9-1-1. For other resources, dial 2-1-1."}</span>${es?'<span>Borrador en español. Una persona que habla español debe revisarlo antes de usarlo.</span>':""}</div>`;
+}
+
+/* ---- intro try buttons ---- */
+document.querySelectorAll(".try[data-case]").forEach(b=>b.onclick=()=>{
+  if(b.dataset.go==="print"){pickPrint.value=b.dataset.case;renderPrint();show("print");}
+  else {setClientCase(b.dataset.case);show("client");}
+  document.querySelector("main").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
+});
+
+renderToday(); renderReview(); renderGaps(); setClientCase("C01"); pickPrint.value="C01"; renderPrint();
+try{const v=localStorage.getItem("ndp-view"); if(v&&document.getElementById("v-"+v)) show(v)}catch(e){}
+
+</script>
+
+</body>
+</html>

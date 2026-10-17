@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Desktop no sure door</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&amp;family=Playfair+Display:wght@700;900&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#122640}a:hover{color:#1a2187}
+</style>
+</helmet>
+<div style="box-sizing: border-box; min-height: 800px; background: #ffffff; color: #122640; font-family: Archivo, system-ui, sans-serif; display: flex; flex-direction: column;">
+  <div style="background: #facc0a;"><div style="max-width: 1200px; margin: 0 auto; padding: 9px 20px; font-size: 15px; line-height: 1.4;">In danger? Call <b>9-1-1</b> · Questions? Dial <b>2-1-1</b>, day or night</div></div>
+  <div style="background: #122640; color: #ffffff;">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 12px 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px;">
+      <img src="/_blob/f19eb12f87a9b6bc202ac10f5bad41fb" alt="Illumination Health + Home" style="height: 24px; width: auto;">
+      <span style="font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; flex-grow: 1;">Next Door</span>
+      <a href="D1-Start.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 18px; border: 2px solid #ffffff; color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 600; text-transform: uppercase;">Start over</a>
+    </div>
+  </div>
+
+  <div style="max-width: 1200px; width: 100%; box-sizing: border-box; margin: 0 auto; padding: 20px 20px 40px; display: flex; flex-wrap: wrap; gap: 20px 40px; align-items: flex-start; flex-grow: 1;">
+    <a href="D1-Start.dc.html" style="flex-basis: 100%; display: flex; align-items: center; min-height: 44px; font-size: 16px; font-weight: 600;"><span>← Change what I said</span></a>
+    <div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 22px;">
+      <div style="background: #ede5de; padding: 28px 30px; display: flex; flex-direction: column; gap: 10px;">
+        <span style="font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">What we looked for · getting home to family</span>
+        <h1 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 40px; line-height: 1.15;">We found no public program that fits for sure.</h1>
+        <p style="margin: 0; font-size: 20px; line-height: 1.5;">That is not on you. Your care manager can help with this.</p>
+      </div>
+      <div style="border: 2px solid #122640; padding: 22px 24px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px 28px;">
+        <div style="display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+          <span style="font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Your next step</span>
+          <b style="font-family: 'Playfair Display', Georgia, serif; font-size: 28px; line-height: 1.2;">Talk to Thu N., your care manager</b>
+          <span style="font-size: 18px; line-height: 1.5;">Tell Thu your sister in Phoenix said you can stay with her.</span>
+        </div>
+        <button type="button" onClick="{{print}}" style="{{printStyle}}">{{printText}}</button>
+      </div>
+      <span style="font-size: 16px; color: #33373d;">IHH counts needs like this one to find better doors.</span>
+    </div>
+
+    <aside style="flex: 1 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 0;">
+      <span style="font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; border-bottom: 2px solid #122640; padding-bottom: 8px;">Programs we checked that may not fit</span>
+      <div style="padding: 14px 0; border-bottom: 1px solid #122640; display: flex; flex-direction: column; gap: 4px;">
+        <b style="font-size: 17px;">Home Free · National Runaway Safeline</b>
+        <span style="font-size: 16px;">For ages 12 to 21.</span>
+        <span style="display: flex; align-items: center; gap: 8px; font-size: 14px;"><span style="width: 11px; height: 11px; background: #122640;"></span>Checked Oct 13</span>
+      </div>
+      <div style="padding: 14px 0; border-bottom: 1px solid #122640; display: flex; flex-direction: column; gap: 4px;">
+        <b style="font-size: 17px;">Costa Mesa Reconnection Program</b>
+        <span style="font-size: 16px;">A city program. Ask if it can help you.</span>
+        <span style="display: flex; align-items: center; gap: 8px; font-size: 14px;"><span style="width: 11px; height: 11px; border: 1.5px dashed #122640; box-sizing: border-box;"></span>Unsure, call first · Oct 13</span>
+      </div>
+      <div style="padding: 14px 0; border-bottom: 1px solid #122640; display: flex; flex-direction: column; gap: 4px;">
+        <b style="font-size: 17px;">Newport Beach travel home help</b>
+        <span style="font-size: 16px;">A city program. Ask if it can help you.</span>
+        <span style="display: flex; align-items: center; gap: 8px; font-size: 14px;"><span style="width: 11px; height: 11px; border: 1.5px dashed #122640; box-sizing: border-box;"></span>Unsure, call first · Oct 13</span>
+      </div>
+    </aside>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { printed: false };
+  }
+  renderVals() {
+    const p = this.state.printed;
+    return {
+      printText: p ? "Printing ✓" : "Print this note",
+      printStyle: "min-height: 60px; padding: 0 36px; border: 2px solid #122640; border-radius: 0; font-family: Archivo, system-ui, sans-serif; font-size: 17px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; cursor: pointer; " + (p ? "background: #122640; color: #ffffff;" : "background: #facc0a; color: #122640;"),
+      print: () => this.setState({ printed: true })
+    };
+  }
+}
+</script>
+</body>
+</html>

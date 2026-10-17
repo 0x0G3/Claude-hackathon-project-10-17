@@ -1,0 +1,149 @@
+{
+  "v": 3,
+  "layout": "files",
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-10-17T18:09:59Z"
+  },
+  "title": "Illumination Health + Home",
+  "namespace": "IHH",
+  "libraries": [],
+  "sections": {},
+  "groups": [
+    "Logos",
+    "Reference"
+  ],
+  "assetGroups": {
+    "Logos": {
+      "name": "Logos",
+      "tile": "l",
+      "order": [
+        "IHH-Logo-Full.svg",
+        "IHH-Logo-Variant-2.svg",
+        "IHH-Logo-Yellow.svg",
+        "IHH-Logo-Yellow-Squared.svg",
+        "IHH-Logo-Full.png",
+        "IHH-Logo-Variant-2.png",
+        "IHH-Logo-Yellow.png",
+        "IHH-Logo-Yellow-Squared.png"
+      ],
+      "files": {
+        "IHH-Logo-Full.svg": {
+          "name": "IHH-Logo-Full.svg",
+          "blob": "2abd915505bfedc45948a4fbb1a73218",
+          "size": 6458,
+          "type": "image/svg+xml"
+        },
+        "IHH-Logo-Variant-2.svg": {
+          "name": "IHH-Logo-Variant-2.svg",
+          "blob": "677b65c1f4e0661edf9b1be9106eab38",
+          "size": 6635,
+          "type": "image/svg+xml"
+        },
+        "IHH-Logo-Yellow.svg": {
+          "name": "IHH-Logo-Yellow.svg",
+          "blob": "49735a46a108ffc98d534038e4131b80",
+          "size": 1335,
+          "type": "image/svg+xml"
+        },
+        "IHH-Logo-Yellow-Squared.svg": {
+          "name": "IHH-Logo-Yellow-Squared.svg",
+          "blob": "ec9cf852c4f3e1adb0770ed4660a6247",
+          "size": 1041,
+          "type": "image/svg+xml"
+        },
+        "IHH-Logo-Full.png": {
+          "name": "IHH-Logo-Full.png",
+          "blob": "e43ea03a832eb53af6364ee482a325e3",
+          "size": 22127,
+          "type": "image/png"
+        },
+        "IHH-Logo-Variant-2.png": {
+          "name": "IHH-Logo-Variant-2.png",
+          "blob": "e0b873bd39f16840c0046b31ebc41348",
+          "size": 26093,
+          "type": "image/png"
+        },
+        "IHH-Logo-Yellow.png": {
+          "name": "IHH-Logo-Yellow.png",
+          "blob": "31f3a8ab9768f9b9331411746efd5c0d",
+          "size": 36426,
+          "type": "image/png"
+        },
+        "IHH-Logo-Yellow-Squared.png": {
+          "name": "IHH-Logo-Yellow-Squared.png",
+          "blob": "dbb4e8e9f47f17889b37a4aa8cbd889b",
+          "size": 40371,
+          "type": "image/png"
+        }
+      }
+    },
+    "Reference": {
+      "name": "Reference",
+      "tile": "l",
+      "order": [
+        "01-hero-nav.jpg",
+        "02-intro-ctas.jpg",
+        "03-service-cards.jpg",
+        "04-testimonial-ticker.jpg",
+        "05-stories-carousel.jpg",
+        "06-impact-stats-newsletter.jpg",
+        "07-footer.jpg"
+      ],
+      "files": {
+        "01-hero-nav.jpg": {
+          "name": "01-hero-nav.jpg",
+          "blob": "408593ed45f406861d131382f4d16144",
+          "size": 52634,
+          "type": "image/jpeg"
+        },
+        "02-intro-ctas.jpg": {
+          "name": "02-intro-ctas.jpg",
+          "blob": "6c1a6121db4c50fa41935e54682c6ef6",
+          "size": 38020,
+          "type": "image/jpeg"
+        },
+        "03-service-cards.jpg": {
+          "name": "03-service-cards.jpg",
+          "blob": "24aa85d22ff3fe05a10dd5cc83210beb",
+          "size": 43231,
+          "type": "image/jpeg"
+        },
+        "04-testimonial-ticker.jpg": {
+          "name": "04-testimonial-ticker.jpg",
+          "blob": "29e02be472e231c825c189bea1c310dd",
+          "size": 42368,
+          "type": "image/jpeg"
+        },
+        "05-stories-carousel.jpg": {
+          "name": "05-stories-carousel.jpg",
+          "blob": "ea493ef11f3fcada86d2ea0dcc52ea13",
+          "size": 41229,
+          "type": "image/jpeg"
+        },
+        "06-impact-stats-newsletter.jpg": {
+          "name": "06-impact-stats-newsletter.jpg",
+          "blob": "9ff287e3613b6327777a7594e2ee8c30",
+          "size": 44792,
+          "type": "image/jpeg"
+        },
+        "07-footer.jpg": {
+          "name": "07-footer.jpg",
+          "blob": "3e50846f98c5d14853b338911b853b77",
+          "size": 25200,
+          "type": "image/jpeg"
+        }
+      }
+    }
+  },
+  "blobs": {},
+  "docs": {
+    "sections": []
+  },
+  "lastChange": {
+    "by": "Freddie",
+    "at": "2026-10-17T18:09:59Z",
+    "via": "Claude (Cowork)",
+    "note": "Initial system from the IHH design packet and brief"
+  }
+}

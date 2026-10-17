@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Make it easier</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&amp;family=Playfair+Display:wght@700;900&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#122640}a:hover{color:#1a2187}
+</style>
+</helmet>
+<div style="width: 390px; min-height: 900px; box-sizing: border-box; background: #ffffff; color: #122640; font-family: Archivo, system-ui, sans-serif; display: flex; flex-direction: column;">
+  <div style="background: #facc0a; padding: 10px 20px; font-size: 17px; line-height: 1.4;">Danger? Call <b>9-1-1</b>.<br>Questions? Call <b>2-1-1</b>.</div>
+  <div style="background: #122640; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+    <img src="/_blob/f19eb12f87a9b6bc202ac10f5bad41fb" alt="Illumination Health + Home" style="height: 18px; width: auto;">
+    <button type="button" onClick="{{toggleRead}}" aria-pressed="{{readOn}}" style="{{readStyle}}">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"></path><path d="M16 9a4 4 0 0 1 0 6"></path><path d="M19 6a8 8 0 0 1 0 12"></path></svg>
+      <span>{{readLabel}}</span>
+    </button>
+  </div>
+
+  <div style="flex-grow: 1; padding: 14px 20px 24px; display: flex; flex-direction: column; gap: 16px;">
+    <a href="01-Language.dc.html" style="align-self: flex-start; display: flex; align-items: center; min-height: 48px; font-size: 18px; font-weight: 700;">← Back</a>
+    <h1 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 34px; line-height: 1.2;">Make it easier</h1>
+    <span style="font-size: 20px; line-height: 1.5;">Turn on what helps you. You can change it any time.</span>
+
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <sc-for list="{{opts}}" as="o" hint-placeholder-count="4">
+        <button type="button" aria-pressed="{{o.pressed}}" onClick="{{o.toggle}}" style="{{o.style}}">
+          <span style="display: flex; flex-direction: column; gap: 2px; text-align: left;"><span>{{o.label}}</span><span style="font-size: 16px; font-weight: 400; line-height: 1.35;">{{o.help}}</span></span>
+          <span style="font-size: 17px; flex-shrink: 0;">{{o.state}}</span>
+        </button>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{deaf}}" hint-placeholder-val="{{true}}">
+      <div style="border: 3px solid #122640; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px;">
+        <b style="font-size: 20px;">If you can’t hear well</b>
+        <span style="font-size: 18px; line-height: 1.5;">Everything we say out loud also shows as words.</span>
+        <span style="font-size: 18px; line-height: 1.5;">You never have to make a phone call. Your care manager can call for you, or go with you.</span>
+        <span style="font-size: 18px; line-height: 1.5;">To call yourself, dial <b>7-1-1</b> for a relay service.</span>
+        <span style="font-size: 18px; line-height: 1.5;">You can ask staff for a sign language interpreter.</span>
+      </div>
+    </sc-if>
+
+    <a href="A2-SayIt.dc.html" style="margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 12px; min-height: 68px; background: #facc0a; color: #122640; border: 2px solid #122640; text-decoration: none; font-size: 20px; font-weight: 700;">Done <span aria-hidden="true">→</span></a>
+  </div>
+
+  <sc-if value="{{read}}" hint-placeholder-val="{{false}}">
+    <div role="status" style="background: #122640; color: #ffffff; padding: 14px 20px 18px; display: flex; flex-direction: column; gap: 4px; border-top: 4px solid #facc0a;">
+      <span style="font-size: 15px; font-weight: 700;">Now reading</span>
+      <span style="font-size: 20px; line-height: 1.4;">“Make it easier. Turn on what helps you.”</span>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1180}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { big: true, read: false, simple: true, deaf: true };
+  }
+  renderVals() {
+    const S = this.state;
+    const row = (on) => "display: flex; justify-content: space-between; align-items: center; gap: 12px; width: 100%; min-height: 76px; padding: 10px 18px; box-sizing: border-box; border-radius: 0; cursor: pointer; font-family: Archivo, system-ui, sans-serif; font-size: 20px; font-weight: 700; " + (on ? "background: #122640; color: #ffffff; border: 3px solid #122640;" : "background: #ffffff; color: #122640; border: 2px solid #122640;");
+    const opts = [
+      ["big", "Bigger text", "Text and buttons get larger"],
+      ["read", "Read it to me", "Each screen is read out loud, with the words shown"],
+      ["simple", "Simple steps", "One step on each screen"],
+      ["deaf", "I can’t hear well", "Words instead of sound. No calls needed."]
+    ].map(([k, label, help]) => ({
+      label, help, pressed: S[k] ? "true" : "false", state: S[k] ? "On ✓" : "Off",
+      style: row(S[k]), toggle: () => this.setState({ [k]: !S[k] })
+    }));
+    return {
+      opts, deaf: S.deaf, read: S.read,
+      readOn: S.read ? "true" : "false",
+      readLabel: S.read ? "Stop reading" : "Read it to me",
+      readStyle: "display: flex; align-items: center; gap: 8px; min-height: 52px; padding: 0 14px; border-radius: 0; cursor: pointer; font-family: Archivo, system-ui, sans-serif; font-size: 17px; font-weight: 700; " + (S.read ? "background: #facc0a; color: #122640; border: 2px solid #facc0a;" : "background: #122640; color: #ffffff; border: 2px solid #ffffff;"),
+      toggleRead: () => this.setState({ read: !S.read })
+    };
+  }
+}
+</script>
+</body>
+</html>

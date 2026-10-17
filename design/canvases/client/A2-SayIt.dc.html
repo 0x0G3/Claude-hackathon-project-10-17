@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Accessible: what do you need</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&amp;family=Playfair+Display:wght@700;900&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#122640}a:hover{color:#1a2187}
+</style>
+</helmet>
+<div style="width: 390px; min-height: 900px; box-sizing: border-box; background: #ffffff; color: #122640; font-family: Archivo, system-ui, sans-serif; display: flex; flex-direction: column;">
+  <div style="background: #facc0a; padding: 10px 20px; font-size: 17px; line-height: 1.4;">Danger? Call <b>9-1-1</b>.<br>Questions? Call <b>2-1-1</b>.</div>
+  <div style="background: #122640; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+    <img src="/_blob/f19eb12f87a9b6bc202ac10f5bad41fb" alt="Illumination Health + Home" style="height: 18px; width: auto;">
+    <button type="button" style="display: flex; align-items: center; gap: 8px; min-height: 52px; padding: 0 14px; background: #122640; color: #ffffff; border: 2px solid #ffffff; border-radius: 0; cursor: pointer; font-family: Archivo, system-ui, sans-serif; font-size: 17px; font-weight: 700;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"></path><path d="M16 9a4 4 0 0 1 0 6"></path><path d="M19 6a8 8 0 0 1 0 12"></path></svg>
+      <span>Read it to me</span>
+    </button>
+  </div>
+  <div style="flex-grow: 1; padding: 14px 20px 24px; display: flex; flex-direction: column; gap: 16px;">
+    <a href="A1-Start.dc.html" style="align-self: flex-start; display: flex; align-items: center; min-height: 48px; font-size: 18px; font-weight: 700;">← Back</a>
+    <h1 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 34px; line-height: 1.2;">What do you need?</h1>
+    <span style="font-size: 20px; line-height: 1.5;">Pick one or more.</span>
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <sc-for list="{{needs}}" as="n" hint-placeholder-count="6">
+        <button type="button" aria-pressed="{{n.pressed}}" onClick="{{n.toggle}}" style="{{n.style}}"><span>{{n.label}}</span><span style="font-size: 17px; flex-shrink: 0;">{{n.state}}</span></button>
+      </sc-for>
+    </div>
+    <a href="A3-Plan.dc.html" style="margin-top: 6px; display: flex; align-items: center; justify-content: center; gap: 12px; min-height: 68px; background: #facc0a; color: #122640; border: 2px solid #122640; text-decoration: none; font-size: 20px; font-weight: 700;">Make my plan <span aria-hidden="true">→</span></a>
+    <a href="A2-SayIt.dc.html" style="display: flex; align-items: center; justify-content: center; min-height: 68px; background: #ffffff; color: #122640; border: 2px solid #122640; text-decoration: none; font-size: 20px; font-weight: 700;">Say it in my own words</a>
+    <div style="border-top: 1px dashed #122640; padding-top: 10px; display: flex; gap: 16px; flex-wrap: wrap; font-size: 15px;">
+      <span>Demo paths:</span><a href="A4-SafetyExit.dc.html">Lena</a><a href="A5-NoSureDoor.dc.html">Devon</a>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { on: { sleep: true, id: true } };
+  }
+  renderVals() {
+    const on = this.state.on;
+    const list = [["sleep", "A place to sleep"], ["id", "A new ID"], ["work", "Work"], ["home", "Get home to family"], ["money", "Money to start a business"], ["other", "Something else"]];
+    return {
+      needs: list.map(([k, label]) => ({
+        label,
+        pressed: on[k] ? "true" : "false",
+        state: on[k] ? "Selected ✓" : "",
+        style: "display: flex; justify-content: space-between; align-items: center; gap: 12px; width: 100%; min-height: 64px; padding: 8px 18px; box-sizing: border-box; border-radius: 0; cursor: pointer; text-align: left; font-family: Archivo, system-ui, sans-serif; font-size: 20px; font-weight: 700; " + (on[k] ? "background: #122640; color: #ffffff; border: 3px solid #122640;" : "background: #ffffff; color: #122640; border: 2px solid #122640;"),
+        toggle: () => this.setState({ on: Object.assign({}, on, { [k]: !on[k] }) })
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

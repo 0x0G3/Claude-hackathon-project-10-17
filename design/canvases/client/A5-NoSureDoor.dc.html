@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Accessible no sure door</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&amp;family=Playfair+Display:wght@700;900&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#122640}a:hover{color:#1a2187}
+</style>
+</helmet>
+<div style="width: 390px; min-height: 900px; box-sizing: border-box; background: #ffffff; color: #122640; font-family: Archivo, system-ui, sans-serif; display: flex; flex-direction: column;">
+  <div style="background: #facc0a; padding: 10px 20px; font-size: 17px; line-height: 1.4;">Danger? Call <b>9-1-1</b>.<br>Questions? Call <b>2-1-1</b>.</div>
+  <div style="background: #122640; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+    <img src="/_blob/f19eb12f87a9b6bc202ac10f5bad41fb" alt="Illumination Health + Home" style="height: 18px; width: auto;">
+    <button type="button" style="display: flex; align-items: center; gap: 8px; min-height: 52px; padding: 0 14px; background: #122640; color: #ffffff; border: 2px solid #ffffff; border-radius: 0; cursor: pointer; font-family: Archivo, system-ui, sans-serif; font-size: 17px; font-weight: 700;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"></path><path d="M16 9a4 4 0 0 1 0 6"></path><path d="M19 6a8 8 0 0 1 0 12"></path></svg>
+      <span>Read it to me</span>
+    </button>
+  </div>
+  <div style="flex-grow: 1; padding: 14px 20px 24px; display: flex; flex-direction: column; gap: 18px;">
+    <a href="A2-SayIt.dc.html" style="align-self: flex-start; display: flex; align-items: center; min-height: 48px; font-size: 18px; font-weight: 700;">← Back</a>
+    <b style="font-size: 18px;">You asked for: getting home to family</b>
+    <h1 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 34px; line-height: 1.2;">We did not find a sure program.</h1>
+    <span style="font-size: 22px; line-height: 1.5;">That is not your fault.</span>
+    <span style="font-size: 22px; line-height: 1.5;">A person can help you with this.</span>
+    <div style="border: 3px solid #122640; padding: 16px 18px; display: flex; flex-direction: column; gap: 6px;">
+      <b style="font-size: 18px;">Your next step</b>
+      <span style="font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 28px; line-height: 1.25;">Talk to Thu N.</span>
+      <span style="font-size: 20px; line-height: 1.5;">Thu is your care manager. Tell Thu your sister can take you in.</span>
+    </div>
+    <span style="font-size: 18px; line-height: 1.5;">We wrote this down so IHH can find more help like this.</span>
+    <a href="04-TakeIt.dc.html" style="margin-top: auto; display: flex; align-items: center; justify-content: center; gap: 12px; min-height: 68px; background: #facc0a; color: #122640; border: 2px solid #122640; text-decoration: none; font-size: 20px; font-weight: 700;">Keep this note <span aria-hidden="true">→</span></a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

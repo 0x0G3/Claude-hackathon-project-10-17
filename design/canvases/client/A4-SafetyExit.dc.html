@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Accessible safety exit</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&amp;family=Playfair+Display:wght@700;900&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#ffffff}a:hover{color:#facc0a}
+</style>
+</helmet>
+<div style="width: 390px; min-height: 900px; box-sizing: border-box; background: #122640; color: #ffffff; font-family: Archivo, system-ui, sans-serif; display: flex; flex-direction: column;">
+  <div style="background: #facc0a; color: #122640; padding: 10px 20px; font-size: 17px; line-height: 1.4;">Danger? Call <b>9-1-1</b>.<br>Questions? Call <b>2-1-1</b>.</div>
+  <div style="padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 2px solid #ffffff;">
+    <img src="/_blob/f19eb12f87a9b6bc202ac10f5bad41fb" alt="Illumination Health + Home" style="height: 18px; width: auto;">
+    <a href="A1-Start.dc.html" style="display: flex; align-items: center; min-height: 56px; padding: 0 18px; border: 3px solid #ffffff; color: #ffffff; text-decoration: none; font-size: 18px; font-weight: 700;">Quick exit</a>
+  </div>
+  <div style="flex-grow: 1; padding: 28px 20px 24px; display: flex; flex-direction: column; gap: 20px;">
+    <h1 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 36px; line-height: 1.2;">You are not alone.<br><span style="color: #facc0a;">Stay here</span> with us.</h1>
+    <span style="font-size: 22px; line-height: 1.5;">Tell a staff member now.</span>
+    <span style="font-size: 22px; line-height: 1.5;">They will help you be safe today.</span>
+    <div style="border: 3px solid #ffffff; padding: 16px 18px; display: flex; flex-direction: column; gap: 4px;">
+      <span style="font-size: 20px;">In danger right now?</span>
+      <span style="font-size: 20px;">Call</span>
+      <b style="font-size: 48px; line-height: 1.1; color: #facc0a; letter-spacing: 2px;">9-1-1</b>
+    </div>
+    <span style="font-size: 20px; line-height: 1.5;">We did not look up any places. Nothing here is saved.</span>
+    <sc-if value="{{shown}}" hint-placeholder-val="{{false}}">
+      <div style="background: #ffffff; color: #122640; padding: 16px 18px; font-size: 22px; line-height: 1.45;"><b>Give this phone to any IHH staff member.</b></div>
+    </sc-if>
+    <button type="button" onClick="{{show}}" style="margin-top: auto; min-height: 68px; background: #facc0a; color: #122640; border: 0; border-radius: 0; cursor: pointer; font-family: Archivo, system-ui, sans-serif; font-size: 20px; font-weight: 700;">Show this to staff</button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { shown: false };
+  }
+  renderVals() {
+    return { shown: this.state.shown, show: () => this.setState({ shown: true }) };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Desktop safety exit</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&amp;family=Playfair+Display:wght@700;900&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#ffffff}a:hover{color:#facc0a}
+</style>
+</helmet>
+<div style="box-sizing: border-box; min-height: 800px; background: #122640; color: #ffffff; font-family: Archivo, system-ui, sans-serif; display: flex; flex-direction: column;">
+  <div style="background: #facc0a; color: #122640;"><div style="max-width: 1200px; margin: 0 auto; padding: 9px 20px; font-size: 15px; line-height: 1.4;">In danger? Call <b>9-1-1</b> · Questions? Dial <b>2-1-1</b>, day or night</div></div>
+  <div style="border-bottom: 1px solid #ffffff;">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 12px 20px; display: flex; align-items: center; gap: 24px;">
+      <img src="/_blob/f19eb12f87a9b6bc202ac10f5bad41fb" alt="Illumination Health + Home" style="height: 24px; width: auto;">
+      <span style="flex-grow: 1;"></span>
+      <a href="D1-Start.dc.html" style="display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 20px; border: 2px solid #ffffff; color: #ffffff; text-decoration: none; font-size: 15px; font-weight: 600; text-transform: uppercase;">Quick exit <span style="font-size: 12px; border: 1px solid #ffffff; padding: 2px 6px; text-transform: none;">Esc</span></a>
+    </div>
+  </div>
+
+  <div style="max-width: 1200px; width: 100%; box-sizing: border-box; margin: 0 auto; padding: 56px 20px 48px; display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start; flex-grow: 1;">
+    <div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 22px;">
+      <img src="/_blob/70e9e3c53b9351ae335b6a0527233c70" alt="" style="width: 76px; height: auto;">
+      <h1 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 48px; line-height: 1.15;">You are not alone. <span style="color: #facc0a;">Stay here</span> with us.</h1>
+      <p style="margin: 0; font-size: 22px; line-height: 1.5;">Tell a staff member now. They will help you get somewhere safe today.</p>
+      <p style="margin: 0; font-size: 18px; line-height: 1.5;">To keep you safe, we did not look up any places or addresses. Nothing from this screen is saved or printed.</p>
+      <sc-if value="{{shown}}" hint-placeholder-val="{{false}}">
+        <div style="background: #ffffff; color: #122640; padding: 18px 20px; font-size: 20px; line-height: 1.45;"><b>Wave to any IHH staff member near you.</b> They know what to do.</div>
+      </sc-if>
+      <button type="button" onClick="{{show}}" style="align-self: flex-start; min-height: 64px; padding: 0 48px; background: #facc0a; color: #122640; border: 0; border-radius: 0; font-family: Archivo, system-ui, sans-serif; font-size: 18px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; cursor: pointer;">Get a staff member</button>
+    </div>
+    <div style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 18px;">
+      <div style="border: 2px solid #ffffff; padding: 22px 24px; display: flex; flex-direction: column; gap: 4px;">
+        <span style="font-size: 18px;">In danger right now? Call</span>
+        <b style="font-size: 64px; line-height: 1.05; color: #facc0a; letter-spacing: 2px;">9-1-1</b>
+      </div>
+      <div style="border-top: 1px solid #ffffff; padding-top: 16px; font-size: 14px; line-height: 1.55;"><b>For staff:</b> the checked list has no domestic violence hotline yet. Give one from IHH’s own list. On this shared computer, press Quick exit when you move to a private room.</div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { shown: false };
+  }
+  renderVals() {
+    return { shown: this.state.shown, show: () => this.setState({ shown: true }) };
+  }
+}
+</script>
+</body>
+</html>

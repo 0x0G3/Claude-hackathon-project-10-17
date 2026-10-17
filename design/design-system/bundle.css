@@ -1,0 +1,152 @@
+/* Illumination Health + Home — component styles. Load after tokens.css. Every class is prefixed ihh-. */
+
+/* ---------- Base + type helpers ---------- */
+.ihh { font-family: var(--font-sans); font-size: 16px; line-height: 1.8; color: var(--text); background: var(--bg); }
+.ihh *, .ihh *::before, .ihh *::after { box-sizing: border-box; }
+.ihh-wrap { max-width: var(--content-max); margin-inline: auto; padding-inline: var(--gutter); }
+.ihh-display { font: 700 60px/1.1 var(--font-display); margin: 0; text-wrap: balance; }
+.ihh-h2 { font: 700 44px/1.25 var(--font-display); margin: 0; text-wrap: balance; }
+.ihh-h3 { font: 700 32px/1.18 var(--font-display); margin: 0; }
+.ihh-eyebrow { font: 500 13.5px/1.25 var(--font-sans); letter-spacing: 1px; text-transform: uppercase; margin: 0; }
+.ihh-lead { font-weight: 600; }
+.ihh-hl { color: var(--highlight-on-dark); } /* one phrase per headline, dark grounds only */
+.ihh-on-dark { color: var(--on-dark); --ihh-focus: var(--focus-ring-on-dark); }
+.ihh-arrow { width: 20px; height: 12px; flex: none; }
+@media (max-width: 760px) {
+  .ihh-display { font-size: 40px; }
+  .ihh-h2 { font-size: 34px; }
+  .ihh-h3 { font-size: 28px; }
+}
+
+/* ---------- Focus (addition: the source shows none) ---------- */
+.ihh a:focus-visible, .ihh button:focus-visible, .ihh input:focus-visible, .ihh-btn:focus-visible {
+  outline: 2px solid var(--ihh-focus, var(--focus-ring)); outline-offset: 2px;
+}
+
+/* ---------- Button ---------- */
+.ihh-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  font: 500 14px/1 var(--font-sans); text-transform: uppercase; text-decoration: none; letter-spacing: 0;
+  padding: var(--btn-pad-y) var(--btn-pad-x); border: var(--border-thin) solid transparent;
+  border-radius: var(--radius); box-shadow: var(--shadow); cursor: pointer; white-space: nowrap;
+}
+.ihh-btn--primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.ihh-btn--primary:hover { background: var(--navy); color: var(--yellow); border-color: var(--navy); }
+.ihh-btn--outline { background: transparent; color: var(--navy); border: var(--border-thick) solid var(--navy); }
+.ihh-btn--outline:hover { background: var(--navy); color: var(--white); }
+.ihh-btn--outline-light { background: transparent; color: var(--white); border: var(--border-thick) solid var(--white); --ihh-focus: var(--focus-ring-on-dark); }
+.ihh-btn--outline-light:hover { background: var(--white); color: var(--indigo); }
+.ihh-btn--dark { background: var(--navy); color: var(--white); border-color: var(--white); padding: 10px 40px; --ihh-focus: var(--focus-ring-on-dark); }
+.ihh-btn--dark:hover { background: var(--white); color: var(--navy); border-color: var(--navy); }
+.ihh-btn--ghost { background: var(--navy-glass); color: var(--white); border-color: transparent; padding: var(--btn-sm-pad-y) var(--btn-sm-pad-x); min-height: 44px; --ihh-focus: var(--focus-ring-on-dark); }
+.ihh-btn--ghost .ihh-arrow { color: var(--yellow); }
+.ihh-btn--ghost:hover { background: var(--navy); }
+
+/* ---------- UtilityBar ---------- */
+.ihh-utility { background: var(--yellow); color: var(--navy); font: 500 13px/1.4 var(--font-sans); }
+.ihh-utility__inner { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px 16px; padding-block: 8px; text-align: center; }
+.ihh-utility a { color: var(--navy); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---------- Header ---------- */
+.ihh-header { position: sticky; top: 0; z-index: 10; background: var(--navy); color: var(--white); display: flex; align-items: stretch; min-height: 64px; --ihh-focus: var(--focus-ring-on-dark); }
+.ihh-header__logo { display: flex; align-items: center; padding-inline: var(--gutter) 32px; }
+.ihh-header__logo img { height: 22px; width: auto; display: block; }
+.ihh-header__nav { flex: 1; display: flex; align-items: center; justify-content: center; gap: 36px; }
+.ihh-header__nav a { font: 600 12px/1 var(--font-sans); text-transform: uppercase; color: var(--white); text-decoration: none; padding-block: 10px; border-bottom: var(--border-thick) solid transparent; }
+.ihh-header__nav a[aria-current="page"], .ihh-header__nav a:hover { border-bottom-color: var(--yellow); }
+.ihh-header__cta { display: flex; align-items: center; padding-inline: 24px; font: 500 14px/1 var(--font-sans); text-transform: uppercase; text-decoration: none; }
+.ihh-header__cta--help { background: var(--navy); color: var(--white); border-left: var(--border-thin) solid var(--charcoal); }
+.ihh-header__cta--give { background: var(--yellow); color: var(--navy); --ihh-focus: var(--focus-ring); }
+@media (max-width: 900px) { .ihh-header__nav { display: none; } .ihh-header__logo { margin-right: auto; } }
+
+/* ---------- Photo slot + scrim ---------- */
+.ihh-photo { position: relative; background: var(--charcoal); overflow: hidden; border-radius: var(--radius); }
+.ihh-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.ihh-photo__label { position: absolute; left: 16px; bottom: 12px; font: 500 11px/1.25 var(--font-sans); letter-spacing: 1px; text-transform: uppercase; color: var(--white); }
+.ihh-scrim { position: absolute; inset: 0; background: var(--scrim); }
+
+/* ---------- Hero ---------- */
+.ihh-hero { position: relative; color: var(--on-dark); text-align: center; overflow: hidden; --ihh-focus: var(--focus-ring-on-dark); }
+.ihh-hero > .ihh-photo { position: absolute; inset: 0; }
+.ihh-hero__body { position: relative; max-width: var(--text-max); margin-inline: auto; padding: var(--hero-top) var(--gutter) var(--section-y); display: grid; gap: 20px; justify-items: center; }
+.ihh-hero__sub { margin: 0; max-width: 560px; font-size: 16px; line-height: 1.8; }
+@media (max-width: 760px) { .ihh-hero__body { padding-top: 120px; } }
+
+/* ---------- ServiceCard ---------- */
+.ihh-service { padding: var(--card-pad-y) var(--card-pad-x); display: grid; gap: 16px; align-content: start; border-radius: var(--radius); }
+.ihh-service p { margin: 0; font-size: 14px; line-height: 1.8; }
+.ihh-service .ihh-btn { justify-self: start; margin-top: 8px; }
+.ihh-service--housing { background: var(--yellow); color: var(--navy); }
+.ihh-service--health { background: var(--indigo); color: var(--white); --ihh-focus: var(--focus-ring-on-dark); }
+.ihh-service-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+
+/* ---------- Testimonial ---------- */
+.ihh-testimonial { background: var(--sand); color: var(--navy); text-align: center; padding-block: var(--section-y); }
+.ihh-testimonial__mark { width: 40px; height: auto; display: block; margin: 0 auto 28px; }
+.ihh-testimonial__quote { font: 900 40px/1.4 var(--font-quote); margin: 0 auto; max-width: 960px; text-wrap: balance; }
+.ihh-testimonial__by { display: flex; justify-content: center; align-items: center; gap: 14px; margin-top: 20px; font: 500 12px/1.25 var(--font-sans); letter-spacing: 1px; text-transform: uppercase; }
+.ihh-testimonial__by span + span { border-left: var(--border-thin) solid var(--yellow); padding-left: 14px; }
+@media (max-width: 760px) { .ihh-testimonial__quote { font-size: 28px; } }
+
+/* ---------- Carousel controls (round arrows: the one rounded element in the source) ---------- */
+.ihh-carousel-nav { display: flex; justify-content: center; align-items: center; gap: 14px; margin-top: 36px; }
+.ihh-round-btn { width: 44px; height: 44px; border-radius: 50%; border: var(--border-thin) solid var(--navy); background: transparent; color: var(--navy); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
+.ihh-dots { display: flex; gap: 8px; }
+.ihh-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--navy); opacity: .25; border: 0; padding: 0; }
+.ihh-dot[aria-current="true"] { opacity: 1; }
+.ihh-dots--yellow .ihh-dot { background: var(--yellow); opacity: .35; }
+.ihh-dots--yellow .ihh-dot[aria-current="true"] { opacity: 1; }
+
+/* ---------- TickerBand ---------- */
+.ihh-ticker { background: var(--indigo); color: var(--white); overflow: hidden; padding-block: 14px; }
+.ihh-ticker__track { display: flex; width: max-content; gap: 28px; animation: ihh-ticker 40s linear infinite; }
+.ihh-ticker__item { display: inline-flex; align-items: center; gap: 8px; font: 600 13px/1 var(--font-sans); letter-spacing: 1px; text-transform: uppercase; white-space: nowrap; }
+.ihh-ticker__item img { height: 13px; width: auto; display: block; }
+@keyframes ihh-ticker { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .ihh-ticker__track { animation: none; } }
+
+/* ---------- StoryCard ---------- */
+.ihh-story { display: grid; text-decoration: none; color: var(--navy); border-radius: var(--radius); }
+.ihh-story .ihh-photo { aspect-ratio: 3 / 2; max-width: 100%; }
+.ihh-story__bar { background: var(--yellow); color: var(--navy); display: flex; align-items: center; gap: 14px; padding: 18px 24px; font: 700 24px/1.2 var(--font-display); }
+.ihh-story:hover .ihh-story__bar { background: var(--navy); color: var(--yellow); }
+
+/* ---------- ImpactStats ---------- */
+.ihh-impact { position: relative; color: var(--on-dark); overflow: hidden; --ihh-focus: var(--focus-ring-on-dark); }
+.ihh-impact > .ihh-photo { position: absolute; inset: 0; }
+.ihh-impact__inner { position: relative; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 48px; align-items: center; padding-block: var(--section-y); }
+.ihh-impact__story { display: grid; gap: 20px; justify-items: start; }
+.ihh-impact__story blockquote { margin: 0; font-size: 14px; line-height: 1.8; max-width: 440px; }
+.ihh-impact__actions { display: flex; flex-wrap: wrap; gap: 16px; }
+.ihh-impact__stats { display: grid; gap: 18px; justify-items: center; text-align: center; }
+.ihh-impact__label { font: 600 18px/1.1 var(--font-sans); text-transform: uppercase; color: var(--highlight-on-dark); margin: 0; }
+.ihh-stat { display: grid; gap: 2px; }
+.ihh-stat__num { font: 700 50px/1.25 var(--font-display); color: var(--highlight-on-dark); font-variant-numeric: lining-nums tabular-nums; }
+.ihh-stat__label { font-size: 14px; line-height: 1.6; }
+
+/* ---------- TextInput (underline only) ---------- */
+.ihh-field { display: grid; gap: 8px; }
+.ihh-field__label { font: 600 12px/1.25 var(--font-sans); letter-spacing: 1px; text-transform: uppercase; color: var(--navy); }
+.ihh-input { font: 400 14px/1.4 var(--font-sans); color: var(--navy); background: transparent; border: 0; border-bottom: var(--border-thin) solid var(--navy); border-radius: var(--radius); padding: 10px 0; width: 100%; }
+.ihh-input::placeholder { color: var(--charcoal); opacity: 1; }
+.ihh-input--on-dark { color: var(--white); border-bottom-color: var(--white); }
+.ihh-input--on-dark::placeholder { color: var(--white); }
+
+/* ---------- NewsletterBand ---------- */
+.ihh-newsletter { background: var(--yellow); color: var(--navy); padding: var(--card-pad-y) var(--card-pad-x); display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px 40px; align-items: end; }
+.ihh-newsletter p { margin: 0; font-size: 14px; line-height: 1.8; }
+.ihh-newsletter__form { display: flex; flex-wrap: wrap; gap: 16px; align-items: end; grid-column: span 2; }
+.ihh-newsletter__form .ihh-field { flex: 1 1 220px; }
+@media (max-width: 760px) { .ihh-newsletter__form { grid-column: auto; } }
+
+/* ---------- Footer ---------- */
+.ihh-footer { background: var(--white); color: var(--navy); padding-top: var(--section-y); }
+.ihh-footer__grid { display: grid; grid-template-columns: minmax(200px, 1.4fr) repeat(auto-fit, minmax(120px, 1fr)); gap: 32px; }
+.ihh-footer__brand img { height: 30px; width: auto; display: block; }
+.ihh-footer__label { font: 600 12px/1.25 var(--font-sans); letter-spacing: 1px; text-transform: uppercase; color: var(--navy); margin: 0 0 14px; }
+.ihh-footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.ihh-footer a { color: var(--navy); text-decoration: none; font-size: 14px; line-height: 1.6; }
+.ihh-footer a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.ihh-footer__social { display: flex; gap: 14px; flex-wrap: wrap; }
+.ihh-footer__legal { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 24px; border-top: var(--border-thin) solid var(--sand); margin-top: var(--section-y); padding-block: 24px; font-size: 11px; color: var(--charcoal); }
+.ihh-footer__legal a { font-size: 11px; color: var(--charcoal); }

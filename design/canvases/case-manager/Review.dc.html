@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Review Ray's plan</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&amp;family=Playfair+Display:wght@700;900&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#122640}a:hover{color:#1a2187}
+</style>
+</helmet>
+<div style="box-sizing: border-box; background: #ffffff; color: #122640; font-family: Archivo, system-ui, sans-serif; min-height: 1500px;">
+
+  <div style="background: #122640; color: #ffffff;">
+    <div style="max-width: 1360px; margin: 0 auto; padding: 0 20px; display: flex; flex-wrap: wrap; align-items: stretch; gap: 0 28px; min-height: 64px;">
+      <div style="display: flex; align-items: center; gap: 14px; padding: 12px 0;">
+        <img src="/_blob/7f10f9ff3819bb379e8b4c7308ae4c02" alt="Illumination Health + Home" style="height: 20px; width: auto;">
+        <span style="border-left: 1px solid #ffffff; padding-left: 14px; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; white-space: nowrap;">Next Door · Case manager</span>
+      </div>
+      <nav aria-label="Main" style="display: flex; align-items: stretch; gap: 24px; flex-grow: 1;">
+        <a href="Main.dc.html" style="display: flex; align-items: center; color: #ffffff; text-decoration: none; font-size: 12px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; border-bottom: 2px solid transparent;">Today</a>
+        <a href="Review.dc.html" aria-current="page" style="display: flex; align-items: center; color: #ffffff; text-decoration: none; font-size: 12px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; border-bottom: 2px solid #facc0a;">Plans to review (1)</a>
+        <a href="Leadership.dc.html" style="display: flex; align-items: center; color: #ffffff; text-decoration: none; font-size: 12px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; border-bottom: 2px solid transparent;">Gaps</a>
+      </nav>
+      <div style="display: flex; align-items: center; gap: 12px; font-size: 13px;">
+        <span>Sat, Oct 17</span>
+        <span style="display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; background: #facc0a; color: #122640; font-weight: 700; font-size: 13px;">MG</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="background: #ede5de;">
+    <div style="max-width: 1360px; margin: 0 auto; padding: 22px 20px 24px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 18px 32px;">
+      <div style="display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+        <a href="Main.dc.html" style="font-size: 13px; font-weight: 600;">← Today</a>
+        <h1 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 38px; line-height: 1.1;">Review Ray’s plan</h1>
+        <span style="font-size: 15px;"><b style="background: #facc0a; padding: 1px 6px;">5 days left</b> · Shelter, then ID · English</span>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; background: #ffffff; border: 2px solid #122640; padding: 14px 18px;">
+        <div style="display: flex; flex-direction: column; gap: 3px; min-width: 0;">
+          <span style="font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: #33373d;">Your decision</span>
+          <span style="font-size: 15px; line-height: 1.4;"><b>1.</b> {{door.name}} &nbsp; <b>2.</b> {{idDoor}}</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <button type="button" onClick="{{approve}}" style="{{approveStyle}}">{{approveText}}</button>
+          <span style="font-size: 13px; color: #33373d;">Ray sees it next. Nothing is sent.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width: 1360px; margin: 0 auto; padding: 26px 20px 64px; display: flex; flex-direction: column; gap: 22px;">
+
+    <sc-if value="{{approved}}" hint-placeholder-val="{{false}}">
+      <div style="background: #facc0a; padding: 16px 20px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px 20px;">
+        <span style="font-size: 16px;"><b>Approved.</b> Ray moves to Plan handed over. His printout and text draft are ready. Nothing was sent.</span>
+        <a href="Main.dc.html" style="font-size: 14px; font-weight: 700;">Back to Today</a>
+      </div>
+    </sc-if>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start;">
+
+      <div style="flex: 1 1 280px; min-width: 0; display: flex; flex-direction: column; gap: 18px;">
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <span style="font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: #33373d;">In his words</span>
+          <p style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 900; font-size: 22px; line-height: 1.4;">“They say I’m done here Friday. I can’t go back under the bridge with this leg. Where do I go?”</p>
+          <span style="font-size: 14px; line-height: 1.5; color: #33373d;">Ray, 62. Walker. Medi-Cal. Lost his ID. Last address in Santa Ana.</span>
+        </div>
+        <div style="background: #facc0a; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px;">
+          <span style="font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Ask on the referral call</span>
+          <span style="font-size: 15px; line-height: 1.45;"><b>Is there a bed he can reach with a walker?</b> No listing says.</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px; border-top: 1px solid #122640; padding-top: 12px;">
+          <span style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;"><span>Guardrails</span><span>3 passed</span></span>
+          <span style="font-size: 13.5px; line-height: 1.55; color: #33373d;">No danger words · No medicine question · Every phone, hour and address comes from a checked listing</span>
+        </div>
+      </div>
+
+      <div style="flex: 999 1 480px; min-width: 0; display: flex; flex-direction: column; gap: 28px;">
+        <sc-for list="{{needs}}" as="n" hint-placeholder-count="2">
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; border-bottom: 2px solid #122640; padding-bottom: 8px;">
+              <h2 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 24px;">{{n.label}}</h2>
+              <span style="font-size: 13px; color: #33373d;">{{n.count}} · best fit first</span>
+            </div>
+            <sc-for list="{{n.items}}" as="r" hint-placeholder-count="2">
+              <div style="{{r.boxStyle}}">
+                <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 14px;">
+                  <span style="display: flex; flex-direction: column; gap: 3px; min-width: 0;">
+                    <sc-if value="{{r.picked}}" hint-placeholder-val="{{false}}"><span style="font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Next door</span></sc-if>
+                    <b style="{{r.nameStyle}}">{{r.name}}</b>
+                  </span>
+                  <sc-if value="{{r.notPicked}}" hint-placeholder-val="{{true}}">
+                    <button type="button" onClick="{{r.pick}}" style="min-height: 44px; padding: 0 18px; background: #ffffff; color: #122640; border: 2px solid #122640; border-radius: 0; font-family: Archivo, system-ui, sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; cursor: pointer;">Use this instead</button>
+                  </sc-if>
+                </div>
+                <span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; font-size: 12.5px; font-weight: 600;">
+                  <span style="display: flex; align-items: center; gap: 7px;"><span style="{{r.markStyle}}"></span>{{r.conf}}</span>
+                  <sc-if value="{{r.referral}}" hint-placeholder-val="{{false}}"><span>Referral needed</span></sc-if>
+                  <span style="font-weight: 400; color: #33373d;">{{r.src}}</span>
+                </span>
+                <span style="{{r.whyStyle}}">{{r.why}}</span>
+                <sc-if value="{{r.picked}}" hint-placeholder-val="{{false}}">
+                  <div style="display: grid; grid-template-columns: 110px minmax(0, 1fr); column-gap: 12px; row-gap: 4px; font-size: 13.5px; line-height: 1.45; border-top: 1px solid #ede5de; padding-top: 10px;">
+                    <sc-for list="{{r.fields}}" as="f" hint-placeholder-count="4">
+                      <span style="color: #33373d;">{{f.label}}</span><span style="{{f.style}}">{{f.value}}</span>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </sc-for>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 12.5px; color: #33373d;">
+          <span style="display: flex; align-items: center; gap: 7px;"><span style="width: 10px; height: 10px; background: #122640;"></span>Checked, high confidence</span>
+          <span style="display: flex; align-items: center; gap: 7px;"><span style="width: 10px; height: 10px; border: 1.5px solid #122640; box-sizing: border-box; display: flex;"><span style="width: 50%; background: #122640;"></span></span>Call to confirm</span>
+          <span style="display: flex; align-items: center; gap: 7px;"><span style="width: 10px; height: 10px; border: 1.5px dashed #122640; box-sizing: border-box;"></span>Unsure</span>
+          <span style="font-style: italic; border-bottom: 1px dashed #122640;">Not stated by source</span>
+        </div>
+      </div>
+
+      <div style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 14px;">
+        <span style="font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: #33373d;">What Ray will see</span>
+        <div style="border: 2px solid #122640; display: flex; flex-direction: column;">
+          <div style="background: #facc0a; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px;">
+            <span style="font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Your next door · a place to sleep</span>
+            <b style="font-family: 'Playfair Display', Georgia, serif; font-size: 22px; line-height: 1.2;">{{door.name}}</b>
+          </div>
+          <div style="padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; font-size: 14.5px; line-height: 1.5;">
+            <span style="font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums;">{{door.phone}}</span>
+            <span>{{door.hours}}</span>
+            <span><b>You need a referral first.</b> Your care manager makes this call with you.</span>
+            <span style="background: #ede5de; padding: 8px 10px;">“Hi, my name is Ray. I am leaving recuperative care at Illumination on Friday. I need a place to sleep. I use a walker. I lost my ID.”</span>
+            <span><b>After that:</b> {{idDoor}}</span>
+          </div>
+        </div>
+        <details style="border-top: 1px solid #122640; padding-top: 10px;">
+          <summary style="cursor: pointer; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Text draft · not sent</summary>
+          <span style="display: block; margin-top: 8px; font-size: 14px; line-height: 1.55; white-space: pre-line; background: #ede5de; padding: 10px 12px;">{{sms}}</span>
+        </details>
+        <div style="display: flex; flex-wrap: wrap; gap: 16px; font-size: 14px; font-weight: 600;">
+          <button type="button" style="min-height: 40px; padding: 0; background: transparent; color: #122640; border: 0; border-bottom: 1px solid #122640; border-radius: 0; font-family: Archivo, system-ui, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;">Copy text</button>
+          <button type="button" style="min-height: 40px; padding: 0; background: transparent; color: #122640; border: 0; border-bottom: 1px solid #122640; border-radius: 0; font-family: Archivo, system-ui, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;">Open printout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1500}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { shelter: "yale", id: "dmv", approved: false };
+  }
+  renderVals() {
+    const S = this.state;
+    const NS = "Not stated by source";
+    const shelters = [
+      { id: "yale", name: "Yale Navigation Center", c: "high", phone: "(800) 364-2221", hours: null, address: "2229 S. Yale St., Santa Ana", who: "Adults and couples in the Central Service Planning Area. Referral only, through a Central SPA access point or 2-1-1.", why: "Serves the Central SPA, which includes Santa Ana, Ray’s last address. The phone is the County referral line, not a front desk.", referral: true, src: "ceo.oc.gov" },
+      { id: "costa", name: "Costa Mesa Bridge Shelter", c: "high", phone: "(714) 754-5346", hours: "24-hour NHS Hotline", address: null, who: "Referral only. The City helps people with Costa Mesa ties: lived or worked there for the past 36 months.", why: "Lower: needs Costa Mesa ties, and Ray’s last address was Santa Ana. Sources disagree on beds, 70 or 100.", referral: true, src: "costamesaca.gov" },
+      { id: "central", name: "Central Cities Navigation Center", c: "high", phone: null, hours: "24/7 including city holidays", address: "13871 West Street, Garden Grove", who: "18+, no children. Referred by Garden Grove, Fountain Valley or Westminster police or outreach, or the bed reservation system.", why: "Lower: referrals come from three other cities. No public phone.", referral: true, src: "ggcity.org" }
+    ];
+    const ids = [
+      { id: "dmv", name: "California DMV no-fee ID card", c: "high", phone: null, hours: null, address: null, who: "No fee for people who are homeless under the McKinney-Vento Act.", why: "Removes the ID fee for people who are homeless.", referral: false, src: "dmv.ca.gov" },
+      { id: "birth", name: "Free certified birth certificate", c: "medium", phone: "(714) 834-2500", hours: "8:00 a.m. – 4:30 p.m. Monday – Friday", address: "601 N. Ross St., Santa Ana", who: "Must verify homeless status. A homeless services provider and the person both sign the affidavit.", why: "Backup, if the DMV asks for proof of birth. Call to confirm first.", referral: true, src: "cdph.ca.gov" }
+    ];
+    const confText = { high: "Checked Oct 13", medium: "Call to confirm · Oct 13", low: "Unsure, call first · Oct 13" };
+    const mark = { high: "width: 11px; height: 11px; background: #122640;", medium: "width: 11px; height: 11px; border: 1.5px solid #122640; box-sizing: border-box; background: #ffffff; box-shadow: inset 5px 0 0 #122640;", low: "width: 11px; height: 11px; border: 1.5px dashed #122640; box-sizing: border-box;" };
+    const fv = (v) => v ? { value: v, style: "" } : { value: NS, style: "font-style: italic; color: #33373d; border-bottom: 1px dashed #122640; justify-self: start;" };
+    const build = (list, key) => {
+      const pickedFirst = list.slice().sort((a, b) => (S[key] === b.id) - (S[key] === a.id));
+      return pickedFirst.map(r => {
+        const picked = S[key] === r.id;
+        return {
+          name: r.name, referral: r.referral, conf: confText[r.c], markStyle: mark[r.c], why: r.why, src: r.src,
+          picked, notPicked: !picked,
+          fields: [Object.assign({ label: "Phone" }, fv(r.phone)), Object.assign({ label: "Hours" }, fv(r.hours)), Object.assign({ label: "Address" }, fv(r.address)), Object.assign({ label: "Who qualifies" }, fv(r.who))],
+          boxStyle: picked
+            ? "background: #ffffff; border: 3px solid #122640; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px;"
+            : "background: #ffffff; border: 1px solid #122640; padding: 12px 16px; display: flex; flex-direction: column; gap: 6px;",
+          nameStyle: picked ? "font-family: 'Playfair Display', Georgia, serif; font-size: 22px; line-height: 1.2;" : "font-size: 15px;",
+          whyStyle: picked ? "font-size: 15px; line-height: 1.5;" : "font-size: 13.5px; line-height: 1.45; color: #33373d;",
+          pick: () => this.setState({ [key]: r.id, approved: false })
+        };
+      });
+    };
+    const door = shelters.find(r => r.id === S.shelter);
+    const idDoor = ids.find(r => r.id === S.id);
+    return {
+      needs: [
+        { label: "1 · A place to sleep", count: "3 checked listings", items: build(shelters, "shelter") },
+        { label: "2 · A new ID", count: "2 checked listings", items: build(ids, "id") }
+      ],
+      door: { name: door.name, phone: door.phone || "No public phone. You make the referral.", hours: door.hours || "Ask about hours when you call." },
+      idDoor: idDoor.name,
+      sms: "Plan for Ray\n1. " + door.name + (door.phone ? " · " + door.phone : "") + "\nYou need a referral first. Maria will make this call with you.\n2. Say: “I use a walker. I lost my ID.”\n3. After that: " + idDoor.name + "\nChecked Oct 13 · " + door.src,
+      approved: S.approved,
+      approveText: S.approved ? "Approved ✓" : "Approve plan",
+      approveStyle: "min-height: 64px; padding: 0 44px; border-radius: 0; font-family: Archivo, system-ui, sans-serif; font-size: 18px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; cursor: pointer; border: 2px solid #122640; " + (S.approved ? "background: #122640; color: #ffffff;" : "background: #facc0a; color: #122640;"),
+      approve: () => this.setState({ approved: true })
+    };
+  }
+}
+</script>
+</body>
+</html>

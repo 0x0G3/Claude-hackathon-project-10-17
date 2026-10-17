@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Staff framework</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&amp;family=Playfair+Display:wght@700;900&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#122640}a:hover{color:#1a2187}
+</style>
+</helmet>
+<div style="width: 1440px; height: 820px; box-sizing: border-box; background: #ffffff; color: #122640; font-family: Archivo, system-ui, sans-serif; display: flex; flex-direction: column;">
+  <div style="background: #122640; color: #ffffff; padding: 20px 48px; display: flex; align-items: center; gap: 20px;">
+    <img src="/_blob/7f10f9ff3819bb379e8b4c7308ae4c02" alt="Illumination Health + Home" style="height: 24px; width: auto;">
+    <span style="border-left: 1px solid #ffffff; padding-left: 20px; font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Next Door · staff framework · draft Oct 17</span>
+  </div>
+  <div style="padding: 32px 48px 40px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 30px; flex-grow: 1;">
+
+    <div style="grid-column: span 5; display: flex; flex-direction: column; gap: 10px;">
+      <p style="margin: 0; font-size: 13px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: #33373d;">Who and when</p>
+      <h1 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 34px; line-height: 1.2;">A case manager with eight people, five minutes before rounds.</h1>
+      <p style="margin: 0; font-size: 15px; line-height: 1.65; color: #33373d;">Desktop at the station, tablet on the floor. Opens Today, sees who needs them first, acts, and gets back to people.</p>
+    </div>
+
+    <div style="grid-column: span 7; display: flex; flex-direction: column; gap: 12px;">
+      <p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; border-bottom: 2px solid #122640; padding-bottom: 8px;">Four jobs, one screen each</p>
+      <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px;">
+        <div style="border: 1px solid #122640; padding: 14px; display: flex; flex-direction: column; gap: 6px;"><b style="font-family: 'Playfair Display', Georgia, serif; font-size: 20px;">Spot</b><span style="font-size: 13.5px; line-height: 1.45;">Today. Needs you now, numbers, the board.</span></div>
+        <div style="background: #facc0a; padding: 14px; display: flex; flex-direction: column; gap: 6px;"><b style="font-family: 'Playfair Display', Georgia, serif; font-size: 20px;">Review</b><span style="font-size: 13.5px; line-height: 1.45;">Pick the door, see why it ranked, approve.</span></div>
+        <div style="background: #122640; color: #ffffff; padding: 14px; display: flex; flex-direction: column; gap: 6px;"><b style="font-family: 'Playfair Display', Georgia, serif; font-size: 20px;">Keep safe</b><span style="font-size: 13.5px; line-height: 1.45;">Safety steps. Search stays off.</span></div>
+        <div style="border: 1px dashed #122640; padding: 14px; display: flex; flex-direction: column; gap: 6px;"><b style="font-family: 'Playfair Display', Georgia, serif; font-size: 20px;">Follow up</b><span style="font-size: 13.5px; line-height: 1.45;">Did the door work? Feeds the gaps view. Next.</span></div>
+      </div>
+    </div>
+
+    <div style="grid-column: span 4; display: flex; flex-direction: column; gap: 10px;">
+      <p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; border-bottom: 2px solid #122640; padding-bottom: 8px;">Who comes first</p>
+      <ol style="margin: 0; padding-left: 20px; font-size: 14.5px; line-height: 1.55; display: flex; flex-direction: column; gap: 6px;">
+        <li><b>Safety flags,</b> always on top, navy.</li>
+        <li><b>Leaving in 5 days or less without a plan,</b> soonest first.</li>
+        <li><b>No sure door,</b> because they need your time, not a listing.</li>
+        <li><b>Plans ready to review.</b></li>
+        <li>Everyone else, on the board.</li>
+      </ol>
+    </div>
+
+    <div style="grid-column: span 4; display: flex; flex-direction: column; gap: 10px;">
+      <p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; border-bottom: 2px solid #122640; padding-bottom: 8px;">Review rules</p>
+      <ul style="margin: 0; padding-left: 18px; font-size: 14.5px; line-height: 1.55; display: flex; flex-direction: column; gap: 6px;">
+        <li>Every match says why it ranked where it did.</li>
+        <li>Unknown fields read “Not stated by source”, never blank.</li>
+        <li>Staff can swap the door. The preview and text update with it.</li>
+        <li>Nothing reaches the person until Approve. Nothing ever sends.</li>
+        <li>Anything the listings can’t answer becomes a “Check” to ask on the call.</li>
+      </ul>
+    </div>
+
+    <div style="grid-column: span 4; display: flex; flex-direction: column; gap: 10px;">
+      <p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; border-bottom: 2px solid #122640; padding-bottom: 8px;">Layout and type</p>
+      <div style="display: grid; grid-template-columns: 104px minmax(0, 1fr); column-gap: 12px; row-gap: 7px; font-size: 13.5px; line-height: 1.45;">
+        <span style="color: #33373d;">Frames</span><span>1440 desktop, 1024 tablet; content max 1360</span>
+        <span style="color: #33373d;">Columns</span><span>Person · matches · preview. Stacks under 1080.</span>
+        <span style="color: #33373d;">Names</span><span style="font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 17px;">Playfair 700 · 18–22</span>
+        <span style="color: #33373d;">Body</span><span>Archivo 14–15. Denser than the client side.</span>
+        <span style="color: #33373d;">Numbers</span><span>Playfair 44 yellow on navy, tabular</span>
+        <span style="color: #33373d;">Days left</span><span><b style="background: #facc0a; padding: 2px 6px;">5 days</b> yellow at 5 or less</span>
+      </div>
+    </div>
+
+    <div style="grid-column: span 12; background: #ede5de; padding: 16px 20px; display: flex; gap: 28px; align-items: center;">
+      <b style="font-family: 'Playfair Display', Georgia, serif; font-size: 20px; flex-shrink: 0;">Same system as the client side</b>
+      <span style="font-size: 14px; line-height: 1.5;">Square corners, no shadows. Yellow means act. Navy means safety. Indigo means medicine. Sand is for the person’s own words and resting blocks. How sure a fact is shows as a filled, half or dashed square.</span>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":820}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

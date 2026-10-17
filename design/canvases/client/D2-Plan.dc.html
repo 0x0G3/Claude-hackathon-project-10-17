@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Desktop plan for Ray</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&amp;family=Playfair+Display:wght@700;900&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#122640}a:hover{color:#1a2187}
+</style>
+</helmet>
+<div style="box-sizing: border-box; min-height: 960px; background: #ffffff; color: #122640; font-family: Archivo, system-ui, sans-serif; display: flex; flex-direction: column;">
+  <div style="background: #facc0a;"><div style="max-width: 1200px; margin: 0 auto; padding: 9px 20px; font-size: 15px; line-height: 1.4;">In danger? Call <b>9-1-1</b> · Questions? Dial <b>2-1-1</b>, day or night</div></div>
+  <div style="background: #122640; color: #ffffff;">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 12px 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px;">
+      <img src="/_blob/f19eb12f87a9b6bc202ac10f5bad41fb" alt="Illumination Health + Home" style="height: 24px; width: auto;">
+      <span style="font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; flex-grow: 1;">Next Door</span>
+      <a href="D1-Start.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 18px; border: 2px solid #ffffff; color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 600; text-transform: uppercase;">Start over</a>
+    </div>
+  </div>
+
+  <div style="max-width: 1200px; width: 100%; box-sizing: border-box; margin: 0 auto; padding: 20px 20px 40px; display: flex; flex-direction: column; gap: 20px;">
+    <a href="D1-Start.dc.html" style="align-self: flex-start; display: flex; align-items: center; min-height: 44px; font-size: 16px; font-weight: 600;">← Change what I said</a>
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px 32px;">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <span style="font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Your plan, Ray</span>
+        <h1 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 40px; line-height: 1.15;">Here is what you can do today.</h1>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px;">
+        <button type="button" onClick="{{print}}" style="{{printStyle}}">{{printText}}</button>
+        <span style="font-size: 14px;">{{printNote}}</span>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start;">
+      <div style="flex: 999 1 600px; min-width: 0; border: 2px solid #122640; display: flex; flex-direction: column;">
+        <div style="background: #facc0a; padding: 22px 26px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 10px 24px;">
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <span style="font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Your next door · a place to sleep</span>
+            <b style="font-family: 'Playfair Display', Georgia, serif; font-size: 36px; line-height: 1.1;">Yale Navigation Center</b>
+          </div>
+          <span style="display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600;"><span style="width: 12px; height: 12px; background: #122640;"></span>Checked Oct 13 · ceo.oc.gov</span>
+        </div>
+        <div style="padding: 24px 26px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px;">
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <span style="display: flex; align-items: baseline; gap: 10px;"><b style="font-family: 'Playfair Display', Georgia, serif; font-size: 30px; line-height: 1;">1</b><span style="font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Reach them</span></span>
+            <span style="font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums;">(800) 364-2221</span>
+            <span style="font-size: 18px; line-height: 1.5;">Ask about hours when you call.</span>
+            <span style="font-size: 18px; line-height: 1.5;"><b>You need a referral first.</b> Your care manager makes this call with you.</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <span style="display: flex; align-items: baseline; gap: 10px;"><b style="font-family: 'Playfair Display', Georgia, serif; font-size: 30px; line-height: 1;">2</b><span style="font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">What to say</span></span>
+            <span style="font-size: 18px; line-height: 1.55; background: #ede5de; padding: 12px 14px;">“Hi, my name is Ray. I am leaving recuperative care at Illumination on Friday. I need a place to sleep. I use a walker. I need a bed with no stairs. I lost my ID.”</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <span style="display: flex; align-items: baseline; gap: 10px;"><b style="font-family: 'Playfair Display', Georgia, serif; font-size: 30px; line-height: 1;">3</b><span style="font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">What to bring</span></span>
+            <span style="font-size: 18px; line-height: 1.5;">Any papers you have, and this plan. Ask on the call what else they need.</span>
+          </div>
+        </div>
+        <div style="border-top: 1px solid #122640; padding: 18px 26px; display: flex; flex-wrap: wrap; gap: 8px 28px; align-items: baseline;">
+          <span style="font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">After that · a new ID</span>
+          <b style="font-size: 19px;">California DMV no-fee ID card</b>
+          <span style="display: flex; align-items: center; gap: 8px; font-size: 15px;"><span style="width: 11px; height: 11px; background: #122640;"></span>Checked Oct 13 · ask your care manager how to start</span>
+        </div>
+        <div style="border-top: 1px solid #122640; padding: 14px 26px; font-size: 15px; line-height: 1.5;">Made with your care manager, Maria G. Nothing was sent. This plan is yours.</div>
+      </div>
+
+      <aside style="flex: 1 1 320px; min-width: 0; background: #ede5de; padding: 24px 26px; display: flex; flex-direction: column; gap: 20px;">
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <b style="font-family: 'Playfair Display', Georgia, serif; font-size: 22px;">Why it may fit you</b>
+          <ul style="margin: 0; padding-left: 0; list-style-position: outside; font-size: 17px; line-height: 1.55;">
+            <li>It serves people from Santa Ana.</li>
+            <li>It serves adults.</li>
+            <li>Couples can stay together.</li>
+          </ul>
+          <span style="font-size: 15px; color: #33373d;">Likely a fit. Not a promise.</span>
+        </div>
+        <div style="border-top: 1px solid #122640; padding-top: 16px; display: flex; flex-direction: column; gap: 10px;">
+          <b style="font-family: 'Playfair Display', Georgia, serif; font-size: 22px;">If that doesn’t work</b>
+          <div style="display: flex; flex-direction: column; gap: 2px; font-size: 16px; line-height: 1.45;"><b>211 Orange County</b><span>Dial 2-1-1, day or night.</span><span style="font-size: 13px; color: #33373d;">Checked Oct 13 · 211oc.org</span></div>
+          <div style="display: flex; flex-direction: column; gap: 2px; font-size: 16px; line-height: 1.45;"><b>Coordinated Entry</b><span>Through 2-1-1. It is not a waitlist.</span><span style="font-size: 13px; color: #33373d;">Checked Oct 13 · ceo.oc.gov</span></div>
+        </div>
+        <div style="border-top: 1px solid #122640; padding-top: 16px; display: flex; flex-direction: column; gap: 6px;">
+          <b style="font-size: 17px;">No printer here?</b>
+          <span style="font-size: 16px; line-height: 1.5;">Ask a staff member to print it or write it down for you. They can also text it to a phone you trust.</span>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":960}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { printed: false };
+  }
+  renderVals() {
+    const p = this.state.printed;
+    return {
+      printText: p ? "Printing ✓" : "Print my plan",
+      printNote: p ? "Pick it up at the front desk. Then click Start over." : "Large type. Phone numbers set big.",
+      printStyle: "min-height: 64px; padding: 0 48px; border: 2px solid #122640; border-radius: 0; font-family: Archivo, system-ui, sans-serif; font-size: 18px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; cursor: pointer; " + (p ? "background: #122640; color: #ffffff;" : "background: #facc0a; color: #122640;"),
+      print: () => this.setState({ printed: true })
+    };
+  }
+}
+</script>
+</body>
+</html>

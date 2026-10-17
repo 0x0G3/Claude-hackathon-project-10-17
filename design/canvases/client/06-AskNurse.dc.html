@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Ask your nurse</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&amp;family=Playfair+Display:wght@700;900&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#122640}a:hover{color:#1a2187}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #ffffff; color: #122640; font-family: Archivo, system-ui, sans-serif; display: flex; flex-direction: column;">
+  <div style="background: #facc0a; padding: 8px 20px; font-size: 13px; line-height: 1.4;">In danger? Call <b>9-1-1</b> · Questions? Dial <b>2-1-1</b></div>
+  <div style="background: #122640; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between;">
+    <img src="/_blob/f19eb12f87a9b6bc202ac10f5bad41fb" alt="Illumination Health + Home" style="height: 18px; width: auto;">
+    <span style="color: #ffffff; font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Next Door</span>
+  </div>
+  <div style="background: #1a2187; color: #ffffff; padding: 14px 20px 24px; display: flex; flex-direction: column; gap: 10px;">
+    <a href="02-SayIt.dc.html" style="align-self: flex-start; display: flex; align-items: center; min-height: 40px; color: #ffffff; font-size: 14px; font-weight: 600;">← Back</a>
+    <span style="font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Medicine question</span>
+    <h1 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 32px; line-height: 1.2;">Ask your nurse first.</h1>
+  </div>
+  <div style="flex-grow: 1; padding: 22px 20px 20px; display: flex; flex-direction: column; gap: 16px;">
+    <p style="margin: 0; font-size: 18px; line-height: 1.5;">This app does not answer questions about medicine.</p>
+    <p style="margin: 0; font-size: 18px; line-height: 1.5;"><b>Do not stop or change a medicine on your own.</b> Your nurse can help you today.</p>
+    <div style="border: 2px solid #122640; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px;">
+      <span style="font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Your next step</span>
+      <span style="font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 22px; line-height: 1.25;">Show this screen to your nurse or care manager.</span>
+    </div>
+    <div style="background: #ede5de; padding: 12px 14px; font-size: 15px; line-height: 1.5;">You asked: “These water pills make me dizzy. Can I just stop taking them?”</div>
+    <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+      <a href="02-SayIt.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 58px; background: #facc0a; color: #122640; border: 2px solid #122640; text-decoration: none; font-size: 17px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">I need other help too <span aria-hidden="true">→</span></a>
+      <span style="font-size: 13px; color: #33373d;">Nothing was sent. Your question stays on this screen.</span>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

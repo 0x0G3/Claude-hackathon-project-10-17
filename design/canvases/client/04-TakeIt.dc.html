@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Take it with you</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&amp;family=Playfair+Display:wght@700;900&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#122640}a:hover{color:#1a2187}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #ffffff; color: #122640; font-family: Archivo, system-ui, sans-serif; display: flex; flex-direction: column;">
+  <div style="background: #facc0a; padding: 8px 20px; font-size: 13px; line-height: 1.4;">In danger? Call <b>9-1-1</b> · Questions? Dial <b>2-1-1</b></div>
+  <div style="background: #122640; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between;">
+    <img src="/_blob/f19eb12f87a9b6bc202ac10f5bad41fb" alt="Illumination Health + Home" style="height: 18px; width: auto;">
+    <span style="color: #ffffff; font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Next Door</span>
+  </div>
+  <div style="flex-grow: 1; padding: 14px 20px 20px; display: flex; flex-direction: column; gap: 14px;">
+    <a href="03-PlanCard.dc.html" style="align-self: flex-start; display: flex; align-items: center; min-height: 40px; font-size: 14px; font-weight: 600;">← My plan</a>
+    <h1 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 28px; line-height: 1.2;">How do you want to keep it?</h1>
+    <div role="radiogroup" aria-label="How to keep your plan" style="display: flex; flex-direction: column; gap: 10px;">
+      <sc-for list="{{ways}}" as="w" hint-placeholder-count="3">
+        <button type="button" role="radio" aria-checked="{{w.checked}}" onClick="{{w.pick}}" style="{{w.style}}">
+          <span style="display: flex; flex-direction: column; gap: 3px; text-align: left;">
+            <b style="font-size: 18px;">{{w.title}}</b>
+            <span style="font-size: 15px; line-height: 1.45;">{{w.body}}</span>
+          </span>
+          <span style="{{w.dot}}" aria-hidden="true"></span>
+        </button>
+      </sc-for>
+    </div>
+    <div style="background: #ede5de; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px;">
+      <span style="font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">What happens next</span>
+      <div style="display: grid; grid-template-columns: 74px minmax(0, 1fr); row-gap: 6px; column-gap: 10px; font-size: 15px; line-height: 1.4;">
+        <b>Today</b><span>Maria G. calls the referral line with you.</span>
+        <b>Friday</b><span>You leave care with your plan.</span>
+        <b>After</b><span>We ask if the door worked for you.</span>
+      </div>
+    </div>
+    <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+      <a href="08-Printout.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 58px; background: #facc0a; color: #122640; border: 2px solid #122640; text-decoration: none; font-size: 17px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">{{cta}} <span aria-hidden="true">→</span></a>
+      <span style="font-size: 13px; color: #33373d;">The app never sends anything on its own.</span>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { way: "print" };
+  }
+  renderVals() {
+    const ways = [
+      ["print", "On paper", "Your care manager prints it. Big type, phone numbers set large.", "Ask for a printout"],
+      ["text", "As a text", "Your care manager copies it to your phone. You read it first.", "Ask for the text"],
+      ["screen", "On this screen", "Take a photo of your plan. It stays here until you leave.", "Done"]
+    ];
+    const cur = this.state.way;
+    const base = "display: flex; justify-content: space-between; align-items: center; gap: 12px; width: 100%; min-height: 76px; padding: 12px 16px; border-radius: 0; cursor: pointer; font-family: Archivo, system-ui, sans-serif; color: #122640;";
+    return {
+      ways: ways.map(([id, title, body]) => ({
+        title, body,
+        checked: cur === id ? "true" : "false",
+        style: base + (cur === id ? " border: 3px solid #122640; background: #ffffff;" : " border: 1px solid #122640; background: #ffffff;"),
+        dot: "width: 18px; height: 18px; flex-shrink: 0; border: 2px solid #122640;" + (cur === id ? " background: #122640;" : ""),
+        pick: () => this.setState({ way: id })
+      })),
+      cta: ways.find(w => w[0] === cur)[3]
+    };
+  }
+}
+</script>
+</body>
+</html>
