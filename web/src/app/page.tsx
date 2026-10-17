@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ClientProfile, MatchResult, ActionPlan, Resource } from '@/types';
+import { Button, ConfidenceMark, Eyebrow, NotStated, SectionLabel, TopBar, formatCheckedDate, toConfidence } from '@/components/ui';
 
 const CATEGORIES = [
   { id: 'shelter', label: '1. Shelter', desc: 'Emergency beds, navigation centers & recuperative exit' },
@@ -146,345 +147,316 @@ export default function DashboardPage() {
     }
   };
 
+  const engineOk = systemHealth?.status === 'ok';
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      {/* Header Banner */}
-      <header className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Resource Navigator</h1>
-            <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-              Challenge 2 MVP
-            </span>
-          </div>
-          <p className="text-sm text-slate-600 mt-1">
-            Illumination Health + Home (IHH) Client Navigation System • Orange County Claude Impact Lab
-          </p>
-        </div>
-        <div className="flex items-center gap-4 text-xs text-slate-500">
-          <div className="flex items-center gap-1.5">
-            <span className={`inline-block w-2.5 h-2.5 rounded-full ${systemHealth?.status === 'ok' ? 'bg-emerald-500' : 'bg-amber-500'}`} />
-            <span>Engine: {systemHealth?.status === 'ok' ? 'Active' : 'Offline'} (v{systemHealth?.version})</span>
-          </div>
-          <div className="px-2.5 py-1 bg-slate-100 rounded text-slate-700 font-mono">
-            Ground Truth: oc-resources.seed.json
-          </div>
-        </div>
-      </header>
+    <>
+      <TopBar label="Next Door · case manager">
+        <span className="inline-flex items-center gap-2 text-[13px]">
+          <span className={`mark ${engineOk ? 'mark-high' : 'mark-low'}`} aria-hidden="true" />
+          Engine {engineOk ? 'active' : 'offline'} (v{systemHealth?.version})
+        </span>
+        <span className="text-[13px]">Ground truth: oc-resources.seed.json</span>
+      </TopBar>
 
-      {/* 4 Workflow Categories */}
-      <section className="space-y-3">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500">
-          Core Resource Pathways
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {CATEGORIES.map(cat => {
-            const isSelected = selectedCategory === cat.id;
-            return (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
-                className={`text-left p-4 rounded-xl border transition-all ${
-                  isSelected
-                    ? 'border-blue-600 bg-blue-50/50 shadow-sm ring-1 ring-blue-600'
-                    : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
-                }`}
-              >
-                <div className={`font-semibold text-sm ${isSelected ? 'text-blue-900' : 'text-slate-800'}`}>
-                  {cat.label}
-                </div>
-                <div className="text-xs text-slate-500 mt-1 leading-relaxed">
-                  {cat.desc}
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </section>
+      <main className="mx-auto max-w-content space-y-10 px-gutter py-8">
+        {/* Page heading */}
+        <header className="space-y-2">
+          <Eyebrow>Challenge 2 MVP · Orange County Claude Impact Lab</Eyebrow>
+          <h1 className="m-0 text-[32px] leading-[1.15] sm:text-[40px]">Resource Navigator</h1>
+          <p className="m-0 max-w-text text-muted">Illumination Health + Home (IHH) client navigation system.</p>
+        </header>
 
-      {/* Client Scenario Selection & Profile */}
-      <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-1 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-slate-900">Select Fictional Scenario</h3>
-            <span className="text-xs text-slate-400">12 Seed Cases</span>
-          </div>
-          <div className="space-y-2">
-            {scenarios.map(s => (
-              <button
-                key={s.id}
-                onClick={() => handleSelectClient(s.id)}
-                className={`w-full text-left p-3 rounded-lg border text-sm transition-all ${
-                  selectedClientId === s.id
-                    ? 'border-indigo-600 bg-indigo-50/40 font-medium text-indigo-950'
-                    : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-bold">{s.id}: {s.title}</span>
-                  {s.id === 'C01' && (
-                    <span className="text-[10px] px-1.5 py-0.5 bg-indigo-100 text-indigo-800 rounded font-semibold">
-                      Primary Demo
-                    </span>
-                  )}
-                </div>
-                <p className="text-xs text-slate-500 mt-1 line-clamp-2">{s.client}</p>
-              </button>
-            ))}
-          </div>
-
-          <button
-            onClick={runMatching}
-            disabled={loadingMatch}
-            className="w-full mt-4 py-2.5 px-4 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-lg font-medium text-sm transition-colors shadow-sm flex items-center justify-center gap-2"
-          >
-            {loadingMatch ? 'Evaluating Eligibility...' : `Run Deterministic Match for ${selectedClientId}`}
-          </button>
-        </div>
-
-        {/* Selected Client Card */}
-        <div className="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-          {activeProfile ? (
-            <>
-              <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-                <div>
-                  <div className="text-xs font-semibold text-indigo-600 uppercase tracking-wider">
-                    Client File: {activeProfile.id}
-                  </div>
-                  <h3 className="text-lg font-bold text-slate-900">{activeProfile.title}</h3>
-                </div>
-                <div className="text-right">
-                  <span className="inline-block px-2.5 py-1 text-xs font-semibold rounded-md bg-amber-100 text-amber-800">
-                    Exit Date: Friday (5 Days)
-                  </span>
-                </div>
-              </div>
-
-              <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
-                <div className="text-xs font-semibold text-slate-500 uppercase">In Their Words</div>
-                <blockquote className="text-sm italic text-slate-800 mt-1">
-                  &ldquo;{activeProfile.in_their_words}&rdquo;
-                </blockquote>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                <div>
-                  <div className="font-semibold text-slate-600 uppercase mb-1">Stated Needs</div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {activeProfile.needs.map(n => (
-                      <span key={n} className="px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 font-medium">
-                        {n}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <div className="font-semibold text-slate-600 uppercase mb-1">Physical & System Constraints</div>
-                  <ul className="list-disc list-inside space-y-0.5 text-slate-700">
-                    {activeProfile.constraints.map((c, i) => (
-                      <li key={i}>{c}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-
-              {matchResult && matchResult.access_barriers.length > 0 && (
-                <div className="mt-4 p-3 bg-red-50/60 border border-red-200 rounded-lg">
-                  <div className="text-xs font-bold text-red-900 uppercase">Identified Access Barriers</div>
-                  <ul className="text-xs text-red-800 mt-1 space-y-1 list-disc list-inside">
-                    {matchResult.access_barriers.map((b, i) => (
-                      <li key={i}>{b}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="text-center py-12 text-slate-400 text-sm">Select a fictional client to begin</div>
-          )}
-        </div>
-      </section>
-
-      {/* Match Results Panel */}
-      {matchResult && (
-        <section className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-slate-900">
-              Matched Resources for {matchResult.client_id} ({matchResult.matched_resources.length} verified options)
-            </h2>
-            <button
-              onClick={runActionPlan}
-              disabled={loadingPlan}
-              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-lg text-xs font-semibold shadow-sm transition-colors"
-            >
-              {loadingPlan ? 'Synthesizing...' : 'Generate Staff Action Plan'}
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {matchResult.matched_resources.map(item => {
-              const r = item.resource;
+        {/* 4 Workflow Categories */}
+        <section className="space-y-3">
+          <SectionLabel>Core resource pathways</SectionLabel>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {CATEGORIES.map(cat => {
+              const isSelected = selectedCategory === cat.id;
               return (
-                <div key={r.id} className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <h4 className="font-bold text-slate-900 text-base">{r.name}</h4>
-                      <p className="text-xs text-slate-500">{r.organization} • {r.city || 'Countywide'}</p>
-                    </div>
-                    <span className="px-2 py-0.5 text-[11px] font-bold rounded bg-emerald-100 text-emerald-800">
-                      Score: {item.confidence_score}
-                    </span>
-                  </div>
-
-                  <p className="text-xs text-slate-600 leading-relaxed line-clamp-2">{r.description}</p>
-
-                  <div className="space-y-1 bg-slate-50 p-2.5 rounded-lg border border-slate-100 text-xs">
-                    <div className="font-semibold text-slate-700">Match Rationale:</div>
-                    <ul className="list-disc list-inside text-slate-600 space-y-0.5">
-                      {item.match_reasons.map((mr, i) => (
-                        <li key={i}>{mr}</li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {r.is_confidential_address && (
-                    <div className="p-2 bg-amber-50 border border-amber-200 rounded text-[11px] text-amber-800">
-                      🛡️ Confidential Location: Address disclosed only upon confirmed referral.
-                    </div>
-                  )}
-
-                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
-                    <div>Phone: <span className="font-mono text-slate-700">{r.phone || '2-1-1 / Referral only'}</span></div>
-                    {r.source_url && (
-                      <a
-                        href={r.source_url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-blue-600 hover:underline"
-                      >
-                        Source Citation ↗
-                      </a>
-                    )}
-                  </div>
-                </div>
+                <button
+                  key={cat.id}
+                  type="button"
+                  aria-pressed={isSelected}
+                  onClick={() => setSelectedCategory(cat.id)}
+                  className={`border-2 border-navy p-4 text-left ${isSelected ? 'on-dark bg-dark' : 'bg-white hover:bg-sand'}`}
+                >
+                  <div className="text-[15px] font-bold">{cat.label}</div>
+                  <div className="mt-1 text-[13px] leading-relaxed">{cat.desc}</div>
+                </button>
               );
             })}
           </div>
-
-          {/* Unknown Eligibility & Exclusions */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-            <div className="bg-amber-50/50 border border-amber-200 rounded-xl p-4">
-              <h4 className="font-bold text-amber-900 uppercase mb-2">Unverified Eligibility Questions</h4>
-              <ul className="space-y-2 text-amber-800">
-                {matchResult.unknown_eligibility.map((u, i) => (
-                  <li key={i} className="border-b border-amber-200/50 pb-1.5 last:border-0">
-                    <span className="font-semibold">{u.resource_name}:</span> {u.question}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-              <h4 className="font-bold text-slate-700 uppercase mb-2">Excluded Resources ({matchResult.excluded_resources.length})</h4>
-              <ul className="space-y-1.5 text-slate-600 max-h-40 overflow-y-auto">
-                {matchResult.excluded_resources.slice(0, 5).map((ex, i) => (
-                  <li key={i}>
-                    <span className="font-medium text-slate-800">{ex.resource_name}:</span> {ex.exclusion_reasons.join(', ')}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
         </section>
-      )}
 
-      {/* Action Plan Output */}
-      {actionPlan && (
-        <section className="bg-white rounded-2xl border-2 border-emerald-500/30 p-6 shadow-sm space-y-6">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-            <div>
-              <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider">
-                Action Plan & Staff Directives
-              </span>
-              <h3 className="text-lg font-bold text-slate-900">
-                Coordinated Care Plan for {actionPlan.client_id}
-              </h3>
+        {/* Client Scenario Selection & Profile */}
+        <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <div className="space-y-4 lg:col-span-1">
+            <div className="rule flex items-baseline justify-between">
+              <h2 className="eyebrow m-0 font-sans">Select fictional scenario</h2>
+              <span className="text-[12px]">12 seed cases</span>
             </div>
-            <div className="text-xs px-2.5 py-1 bg-amber-100 text-amber-900 font-semibold rounded">
-              Human Review Required Before Dispatch
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
-            <div className="space-y-3">
-              <h4 className="font-bold text-slate-900 flex items-center gap-2">
-                <span>👤</span> Client-Facing Next Steps
-              </h4>
-              <ol className="list-decimal list-inside space-y-2 text-slate-700 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                {actionPlan.client_next_steps.map((step, i) => (
-                  <li key={i} className="leading-relaxed">{step}</li>
-                ))}
-              </ol>
-            </div>
-
-            <div className="space-y-3">
-              <h4 className="font-bold text-slate-900 flex items-center gap-2">
-                <span>📋</span> Staff Intake & Coordination Checklist
-              </h4>
-              <ul className="space-y-2 text-slate-700 bg-blue-50/40 p-4 rounded-xl border border-blue-100">
-                {actionPlan.staff_checklist.map((task, i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <input type="checkbox" className="mt-1 rounded text-blue-600" />
-                    <span className="text-xs leading-relaxed">{task}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          {actionPlan.source_references.length > 0 && (
-            <div className="pt-4 border-t border-slate-100 text-xs">
-              <span className="font-bold text-slate-600 uppercase tracking-wider">Cited Ground-Truth Sources:</span>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {actionPlan.source_references.map((ref, i) => (
-                  <a
-                    key={i}
-                    href={ref.source_url || '#'}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="px-2.5 py-1 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded font-medium truncate max-w-xs"
+            <div className="space-y-2">
+              {scenarios.map(s => {
+                const isSelected = selectedClientId === s.id;
+                return (
+                  <button
+                    key={s.id}
+                    type="button"
+                    aria-pressed={isSelected}
+                    onClick={() => handleSelectClient(s.id)}
+                    className={`w-full border-2 border-navy p-3 text-left text-[14px] ${isSelected ? 'on-dark bg-dark' : 'bg-white hover:bg-sand'}`}
                   >
-                    {ref.resource_name} ({ref.verified_date || '2026-10-13'}) ↗
-                  </a>
-                ))}
-              </div>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-bold">
+                        {s.id}: {s.title}
+                      </span>
+                      {s.id === 'C01' && <span className="tag tag-accent shrink-0">Primary demo</span>}
+                    </div>
+                    <p className="m-0 mt-1 line-clamp-2 text-[13px]">{s.client}</p>
+                  </button>
+                );
+              })}
             </div>
-          )}
-        </section>
-      )}
 
-      {/* Resource Catalog Browser for current category */}
-      <section className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="font-bold text-slate-900">
-            Resource Catalog Explorer: {selectedCategory.toUpperCase()} ({categoryResources.length} records)
-          </h3>
-          <span className="text-xs text-slate-400">Read-Only Ground Truth Catalog</span>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-          {categoryResources.slice(0, 6).map(res => (
-            <div key={res.id} className="p-3 border border-slate-100 rounded-lg bg-slate-50/50 space-y-1.5">
-              <div className="font-semibold text-slate-900 truncate">{res.name}</div>
-              <div className="text-slate-500">{res.organization}</div>
-              <div className="text-slate-600 line-clamp-2">{res.description}</div>
-              <div className="text-[10px] text-blue-600 font-mono pt-1">
-                {res.phone || 'Call 2-1-1'}
+            <Button block onClick={runMatching} disabled={loadingMatch} arrow={!loadingMatch}>
+              {loadingMatch ? 'Evaluating eligibility…' : `Run match for ${selectedClientId}`}
+            </Button>
+          </div>
+
+          {/* Selected Client Card */}
+          <div className="panel space-y-5 p-6 lg:col-span-2">
+            {activeProfile ? (
+              <>
+                <div className="rule flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <Eyebrow>Client file: {activeProfile.id}</Eyebrow>
+                    <h3 className="m-0 text-[26px] leading-tight">{activeProfile.title}</h3>
+                  </div>
+                  <span className="tag tag-accent">Exit date: Friday (5 days)</span>
+                </div>
+
+                <div className="panel-soft p-4">
+                  <Eyebrow>In their words</Eyebrow>
+                  <blockquote className="m-0 mt-1 font-quote text-[20px] font-black leading-snug">
+                    &ldquo;{activeProfile.in_their_words}&rdquo;
+                  </blockquote>
+                </div>
+
+                <div className="grid grid-cols-1 gap-5 text-[14px] md:grid-cols-2">
+                  <div>
+                    <div className="eyebrow mb-2">Stated needs</div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {activeProfile.needs.map(n => (
+                        <span key={n} className="tag">
+                          {n}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="eyebrow mb-2">Physical &amp; system constraints</div>
+                    <ul className="m-0 list-outside list-disc space-y-0.5 pl-5">
+                      {activeProfile.constraints.map((c, i) => (
+                        <li key={i}>{c}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                {matchResult && matchResult.access_barriers.length > 0 && (
+                  <div className="on-dark bg-dark p-4">
+                    <div className="eyebrow text-yellow">Identified access barriers</div>
+                    <ul className="m-0 mt-2 list-outside list-disc space-y-1 pl-5 text-[14px]">
+                      {matchResult.access_barriers.map((b, i) => (
+                        <li key={i}>{b}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="py-12 text-center text-[14px] text-muted">Select a fictional client to begin</div>
+            )}
+          </div>
+        </section>
+
+        {/* Match Results Panel */}
+        {matchResult && (
+          <section className="space-y-6">
+            <div className="rule flex flex-wrap items-end justify-between gap-4">
+              <h2 className="m-0 text-[28px] leading-tight">
+                Matched resources for {matchResult.client_id}{' '}
+                <span className="font-sans text-[16px] font-semibold">({matchResult.matched_resources.length} verified options)</span>
+              </h2>
+              <Button onClick={runActionPlan} disabled={loadingPlan} arrow={!loadingPlan}>
+                {loadingPlan ? 'Writing plan…' : 'Generate staff action plan'}
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {matchResult.matched_resources.map(item => {
+                const r = item.resource;
+                return (
+                  <article key={r.id} className="panel flex flex-col gap-3 p-5">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <h3 className="m-0 font-sans text-[18px] font-bold leading-snug">{r.name}</h3>
+                        <p className="m-0 text-[13px] text-muted">
+                          {r.organization} · {r.city || 'Countywide'}
+                        </p>
+                      </div>
+                      <span className="tag shrink-0">Score {item.confidence_score}</span>
+                    </div>
+
+                    <ConfidenceMark level={item.confidence} checkedOn={formatCheckedDate(r.verified_date)} />
+
+                    <p className="m-0 line-clamp-2 text-[14px] leading-relaxed">{r.description}</p>
+
+                    <div className="panel-soft space-y-1 p-3 text-[13px]">
+                      <div className="font-bold">Why it may fit</div>
+                      <ul className="m-0 list-outside list-disc space-y-0.5 pl-5">
+                        {item.match_reasons.map((mr, i) => (
+                          <li key={i}>{mr}</li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {r.is_confidential_address && (
+                      <div className="on-dark bg-dark p-3 text-[13px]">
+                        Confidential location: the address is shared only after a confirmed referral.
+                      </div>
+                    )}
+
+                    <div className="mt-auto flex flex-wrap items-center justify-between gap-2 border-t-2 border-navy pt-3 text-[13px]">
+                      <div>
+                        Phone: <span className="font-bold tabular-nums">{r.phone || <NotStated>2-1-1 / referral only</NotStated>}</span>
+                      </div>
+                      {r.source_url && (
+                        <a href={r.source_url} target="_blank" rel="noreferrer" className="font-semibold underline">
+                          Source ↗
+                        </a>
+                      )}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+
+            {/* Unknown Eligibility & Exclusions */}
+            <div className="grid grid-cols-1 gap-4 text-[13px] md:grid-cols-2">
+              <div className="panel p-4">
+                <h4 className="eyebrow m-0 mb-2 flex items-center gap-2 font-sans">
+                  <span className="mark mark-medium" aria-hidden="true" />
+                  Unverified eligibility questions
+                </h4>
+                <ul className="m-0 list-none space-y-2 p-0">
+                  {matchResult.unknown_eligibility.map((u, i) => (
+                    <li key={i} className="border-b border-navy pb-1.5 last:border-0">
+                      <span className="font-bold">{u.resource_name}:</span> {u.question}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="panel-soft self-start p-4">
+                <h4 className="eyebrow m-0 mb-2 font-sans">Excluded resources ({matchResult.excluded_resources.length})</h4>
+                <ul className="m-0 max-h-40 list-none space-y-1.5 overflow-y-auto p-0">
+                  {matchResult.excluded_resources.slice(0, 5).map((ex, i) => (
+                    <li key={i}>
+                      <span className="font-bold">{ex.resource_name}:</span> {ex.exclusion_reasons.join(', ')}
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
-          ))}
-        </div>
-      </section>
-    </div>
+          </section>
+        )}
+
+        {/* Action Plan Output */}
+        {actionPlan && (
+          <section className="border-2 border-navy">
+            <div className="flex flex-wrap items-center justify-between gap-3 bg-accent px-6 py-4 text-on-accent">
+              <div>
+                <Eyebrow>Action plan &amp; staff directives</Eyebrow>
+                <h3 className="m-0 text-[26px] leading-tight">Coordinated care plan for {actionPlan.client_id}</h3>
+              </div>
+              <span className="tag tag-dark">Human review required before hand-over</span>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 p-6 text-[15px] md:grid-cols-2">
+              <div className="space-y-3">
+                <h4 className="eyebrow rule m-0 font-sans">Client-facing next steps</h4>
+                <ol className="m-0 list-outside list-decimal space-y-2 pl-6">
+                  {actionPlan.client_next_steps.map((step, i) => (
+                    <li key={i} className="leading-relaxed">
+                      {step}
+                    </li>
+                  ))}
+                </ol>
+              </div>
+
+              <div className="space-y-3">
+                <h4 className="eyebrow rule m-0 font-sans">Staff intake &amp; coordination checklist</h4>
+                <ul className="m-0 list-none space-y-2 p-0">
+                  {actionPlan.staff_checklist.map((task, i) => (
+                    <li key={i}>
+                      <label className="flex items-start gap-3">
+                        <input type="checkbox" className="mt-0.5 h-5 w-5 shrink-0 accent-navy" />
+                        <span className="text-[14px] leading-relaxed">{task}</span>
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {actionPlan.source_references.length > 0 && (
+              <div className="border-t-2 border-navy px-6 py-4 text-[13px]">
+                <span className="eyebrow">Cited ground-truth sources</span>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {actionPlan.source_references.map((ref, i) => (
+                    <a
+                      key={i}
+                      href={ref.source_url || '#'}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="tag max-w-xs no-underline hover:bg-sand"
+                    >
+                      <span className="min-w-0 truncate">
+                        {ref.resource_name} ({ref.verified_date || '2026-10-13'})
+                      </span>
+                      <span aria-hidden="true">↗</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* Resource Catalog Browser for current category */}
+        <section className="panel-soft space-y-4 p-6">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h3 className="m-0 font-sans text-[18px] font-bold">
+              Resource catalog: {selectedCategory} ({categoryResources.length} records)
+            </h3>
+            <span className="text-[12px]">Read-only ground-truth catalog</span>
+          </div>
+          <div className="grid grid-cols-1 gap-3 text-[13px] md:grid-cols-3">
+            {categoryResources.slice(0, 6).map(res => (
+              <div key={res.id} className="space-y-1.5 border-2 border-navy bg-white p-3">
+                <div className="truncate font-bold">{res.name}</div>
+                <ConfidenceMark level={toConfidence(res.confidence)} checkedOn={formatCheckedDate(res.verified_date)} />
+                <div className="text-muted">{res.organization}</div>
+                <div className="line-clamp-2">{res.description}</div>
+                <div className="pt-1 font-bold tabular-nums">{res.phone || 'Call 2-1-1'}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </main>
+    </>
   );
 }
