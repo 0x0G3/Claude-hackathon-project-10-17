@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Say it your way</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&amp;family=Playfair+Display:wght@700;900&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#122640}a:hover{color:#1a2187}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #ffffff; color: #122640; font-family: Archivo, system-ui, sans-serif; display: flex; flex-direction: column;">
+  <div style="background: #facc0a; padding: 8px 20px; font-size: 13px; line-height: 1.4;">In danger? Call <b>9-1-1</b> · Questions? Dial <b>2-1-1</b></div>
+  <div style="background: #122640; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between;">
+    <img src="/_blob/f19eb12f87a9b6bc202ac10f5bad41fb" alt="Illumination Health + Home" style="height: 18px; width: auto;">
+    <span style="color: #ffffff; font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Next Door</span>
+  </div>
+  <div style="flex-grow: 1; padding: 14px 20px 18px; display: flex; flex-direction: column; gap: 14px;">
+    <a href="01-Language.dc.html" style="align-self: flex-start; display: flex; align-items: center; min-height: 40px; font-size: 14px; font-weight: 600;">← English</a>
+    <h1 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 28px; line-height: 1.2;">What do you need today?</h1>
+    <label for="words" style="font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Say it in your own words</label>
+    <textarea id="words" style="font-family: Archivo, system-ui, sans-serif; font-size: 18px; line-height: 1.5; color: #122640; padding: 12px; border: 2px solid #122640; border-radius: 0; height: 132px; box-sizing: border-box; resize: none;">They say I’m done here Friday. I can’t go back under the bridge with this leg. Where do I go?</textarea>
+    <span style="font-size: 13px; color: #33373d;">Any language is fine. Spelling doesn’t matter.</span>
+    <p style="margin: 6px 0 0; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Tap any that fit you</p>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+      <sc-for list="{{taps}}" as="t" hint-placeholder-count="5">
+        <button type="button" onClick="{{t.toggle}}" aria-pressed="{{t.pressed}}" style="{{t.style}}">{{t.label}}</button>
+      </sc-for>
+    </div>
+    <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+      <a href="03-PlanCard.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 58px; background: #facc0a; color: #122640; border: 2px solid #122640; text-decoration: none; font-size: 17px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">Make my plan <span aria-hidden="true">→</span></a>
+      <a href="04-TakeIt.dc.html" style="align-self: flex-start; font-size: 15px; font-weight: 600;">Talk to a person instead</a>
+      <div style="border-top: 1px dashed #122640; padding-top: 8px; display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px;">
+        <span style="letter-spacing: 1px; text-transform: uppercase; color: #33373d;">Demo paths</span>
+        <a href="05-SafetyExit.dc.html">Lena</a><a href="06-AskNurse.dc.html">Bob</a><a href="07-NoSureDoor.dc.html">Devon</a>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { on: { walker: true, noid: true } };
+  }
+  renderVals() {
+    const list = [["walker", "Walker or wheelchair"], ["noid", "No ID"], ["nophone", "No phone"], ["hearing", "Calls are hard"], ["inperson", "I’d rather go in person"]];
+    const on = this.state.on;
+    const base = "font-family: Archivo, system-ui, sans-serif; font-size: 16px; min-height: 48px; padding: 0 14px; border: 2px solid #122640; border-radius: 0; cursor: pointer;";
+    return {
+      taps: list.map(([k, label]) => ({
+        label,
+        pressed: on[k] ? "true" : "false",
+        style: base + (on[k] ? " background: #122640; color: #ffffff;" : " background: #ffffff; color: #122640;"),
+        toggle: () => this.setState({ on: Object.assign({}, on, { [k]: !on[k] }) })
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

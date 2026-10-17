@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Pick a language</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&amp;family=Playfair+Display:wght@700;900&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#122640}a:hover{color:#1a2187}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #ffffff; color: #122640; font-family: Archivo, system-ui, sans-serif; display: flex; flex-direction: column;">
+  <div style="background: #facc0a; padding: 8px 20px; font-size: 13px; line-height: 1.4;">In danger? Call <b>9-1-1</b> · Questions? Dial <b>2-1-1</b></div>
+  <div style="background: #122640; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between;">
+    <img src="/_blob/f19eb12f87a9b6bc202ac10f5bad41fb" alt="Illumination Health + Home" style="height: 18px; width: auto;">
+    <span style="color: #ffffff; font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Next Door</span>
+  </div>
+  <div style="flex-grow: 1; min-height: 0; padding: 22px 20px 20px; display: flex; flex-direction: column; gap: 14px;">
+    <h1 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 30px; line-height: 1.15;">Let’s find your next step.</h1>
+
+    <a href="A1-Start.dc.html" style="display: flex; align-items: center; gap: 14px; min-height: 72px; padding: 10px 16px; box-sizing: border-box; background: #ffffff; color: #122640; border: 3px solid #122640; text-decoration: none;">
+      <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; background: #122640; color: #ffffff; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 22px;">Aa</span>
+      <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1;">
+        <b style="font-size: 20px;">Make it easier</b>
+        <span style="font-size: 14px; line-height: 1.35;">Bigger text · read aloud · words instead of sound</span>
+      </span>
+      <span aria-hidden="true" style="font-size: 22px; font-weight: 700;">→</span>
+    </a>
+
+    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 4px;">
+      <b style="font-size: 17px;">Pick your language</b>
+      <span style="font-size: 13px;">{{count}} languages</span>
+    </div>
+    <div role="list" aria-label="Languages" style="flex: 1 1 0; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; border-top: 2px solid #122640; border-bottom: 2px solid #122640; padding: 10px 0;">
+      <sc-for list="{{langs}}" as="l" hint-placeholder-count="8">
+        <a role="listitem" href="02-SayIt.dc.html" lang="{{l.code}}" style="display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 58px; padding: 6px 16px; box-sizing: border-box; border: 2px solid #122640; text-decoration: none; color: #122640; flex-shrink: 0;">
+          <span style="display: flex; flex-direction: column; gap: 1px;">
+            <b style="font-size: 19px;">{{l.native}}</b>
+            <span style="font-size: 13px;">{{l.english}}</span>
+          </span>
+          <span aria-hidden="true" style="font-size: 20px;">→</span>
+        </a>
+      </sc-for>
+    </div>
+    <span style="font-size: 13px; line-height: 1.4;">Scroll for more languages. We don’t ask your name or ID. Nothing is sent.</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const langs = [
+      ["en", "English", "English"],
+      ["es", "Español", "Spanish"],
+      ["vi", "Tiếng Việt", "Vietnamese"],
+      ["ko", "한국어", "Korean"],
+      ["zh", "中文", "Chinese"],
+      ["tl", "Tagalog", "Tagalog"],
+      ["fa", "فارسی", "Farsi"],
+      ["ar", "العربية", "Arabic"],
+      ["ru", "Русский", "Russian"],
+      ["km", "ខ្មែរ", "Khmer"]
+    ].map(([code, native, english]) => ({ code, native, english }));
+    return { langs, count: String(langs.length) };
+  }
+}
+</script>
+</body>
+</html>

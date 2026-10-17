@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { filterResources, getResourceById, getAllResources } from '@/lib/resources/loader';
 
-export const dynamic = 'force-dynamic';
-
 
 export async function GET(request: NextRequest) {
+  // Read request data outside try/catch so Next's prerender bail-out isn't caught and logged as an error
+  const searchParams = request.nextUrl.searchParams;
   try {
-    const searchParams = request.nextUrl.searchParams;
     const id = searchParams.get('id') || undefined;
     const category = searchParams.get('category') || undefined;
     const city = searchParams.get('city') || undefined;

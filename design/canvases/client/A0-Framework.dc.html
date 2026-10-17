@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Accessible phone framework</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&amp;family=Playfair+Display:wght@700;900&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#122640}a:hover{color:#1a2187}
+</style>
+</helmet>
+<div style="width: 1280px; height: 1000px; box-sizing: border-box; background: #ffffff; color: #122640; font-family: Archivo, system-ui, sans-serif; display: flex; flex-direction: column;">
+  <div style="background: #122640; color: #ffffff; padding: 20px 48px; display: flex; align-items: center; gap: 20px;">
+    <img src="/_blob/f19eb12f87a9b6bc202ac10f5bad41fb" alt="Illumination Health + Home" style="height: 24px; width: auto;">
+    <span style="border-left: 1px solid #ffffff; padding-left: 20px; font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Next Door · accessible phone · draft Oct 17</span>
+  </div>
+  <div style="padding: 32px 48px 36px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 28px; flex-grow: 1;">
+
+    <div style="grid-column: span 5; display: flex; flex-direction: column; gap: 12px;">
+      <p style="margin: 0; font-size: 13px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: #33373d;">The promise</p>
+      <h1 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 36px; line-height: 1.15;">The same plan, easier to see, hear and tap.</h1>
+      <p style="margin: 0; font-size: 16px; line-height: 1.65;">Same flow, same safety rules, same checked facts. Turned on from the first screen, by the person or their care manager. It stays on for every screen and the printout.</p>
+    </div>
+
+    <div style="grid-column: span 7; display: flex; flex-direction: column; gap: 10px;">
+      <p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; border-bottom: 2px solid #122640; padding-bottom: 8px;">Who it helps, and what changes</p>
+      <div style="display: grid; grid-template-columns: 170px minmax(0, 1fr); column-gap: 16px; row-gap: 9px; align-items: baseline; font-size: 14.5px; line-height: 1.45;">
+        <b>Low vision</b><span>Body text 22 px, questions 34 px. Navy on white. Meaning never by color alone.</span>
+        <b>Reading is hard</b><span>One short sentence per line. Every icon has a word. “Read it to me” on every screen.</span>
+        <b>Shaky hands, a walker</b><span>Buttons 68 px tall, 16 px apart. No swipes, no double taps, no long press.</span>
+        <b>Hard of hearing</b><span>Nothing is sound-only. “Calls are hard” leads to going in person or staff calling with them.</span>
+        <b>Stress, memory</b><span>One thing per screen. “Step 1 of 3”. No timers. Nothing disappears on its own.</span>
+      </div>
+    </div>
+
+    <div style="grid-column: span 12; background: #122640; color: #ffffff; padding: 20px 26px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px;">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <b style="font-family: 'Playfair Display', Georgia, serif; font-size: 21px; color: #facc0a;">Bigger text</b>
+        <span style="font-size: 14.5px; line-height: 1.5;">Opened from the “Make it easier” button on the normal start screen. Grows with the phone’s own text setting, up to 200%.</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <b style="font-family: 'Playfair Display', Georgia, serif; font-size: 21px; color: #facc0a;">Read it to me</b>
+        <span style="font-size: 14.5px; line-height: 1.5;">A speaker button at the top of every screen reads it out slowly, in the chosen language.</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <b style="font-family: 'Playfair Display', Georgia, serif; font-size: 21px; color: #facc0a;">Simple steps</b>
+        <span style="font-size: 14.5px; line-height: 1.5;">The plan comes one step per screen, with Back and Next always in the same place.</span>
+      </div>
+    </div>
+
+    <div style="grid-column: span 4; display: flex; flex-direction: column; gap: 10px;">
+      <p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; border-bottom: 2px solid #122640; padding-bottom: 8px;">Type and size</p>
+      <div style="display: grid; grid-template-columns: 112px minmax(0, 1fr); column-gap: 12px; row-gap: 7px; align-items: baseline; font-size: 14px; line-height: 1.45;">
+        <span style="color: #33373d;">Question</span><span style="font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 20px;">Playfair 700 · 34</span>
+        <span style="color: #33373d;">Body</span><span style="font-size: 17px;">Archivo 400 · 22 / 1.5</span>
+        <span style="color: #33373d;">Labels</span><span style="font-weight: 700;">Archivo 700 · 17, sentence case</span>
+        <span style="color: #33373d;">Phone number</span><span style="font-weight: 700; font-size: 18px;">Archivo 700 · 32</span>
+        <span style="color: #33373d;">Buttons</span><span>20 px bold, 68 px tall, full width</span>
+      </div>
+    </div>
+
+    <div style="grid-column: span 4; display: flex; flex-direction: column; gap: 10px;">
+      <p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; border-bottom: 2px solid #122640; padding-bottom: 8px;">Rules that change</p>
+      <ul style="margin: 0; padding-left: 0; list-style-position: outside; font-size: 14px; line-height: 1.5; display: flex; flex-direction: column; gap: 5px;">
+        <li>No all-caps text. Caps are harder to read.</li>
+        <li>No grey text for anything that matters.</li>
+        <li>Small text never sits on sand or yellow.</li>
+        <li>Selected things say so in words: “Selected ✓”.</li>
+        <li>Focus ring: 3 px navy on white, yellow on navy.</li>
+      </ul>
+    </div>
+
+    <div style="grid-column: span 4; display: flex; flex-direction: column; gap: 10px;">
+      <p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; border-bottom: 2px solid #122640; padding-bottom: 8px;">Screen readers</p>
+      <ul style="margin: 0; padding-left: 0; list-style-position: outside; font-size: 14px; line-height: 1.5; display: flex; flex-direction: column; gap: 5px;">
+        <li>One heading per screen; reading order matches what you see.</li>
+        <li>Buttons say what they do: “Call Yale Navigation Center”.</li>
+        <li>Icons are hidden from readers; the word next to them is read.</li>
+        <li>Each screen sets its language for the voice.</li>
+      </ul>
+    </div>
+
+    <div style="grid-column: span 12; background: #ede5de; padding: 20px 24px; display: grid; grid-template-columns: 260px repeat(4, minmax(0, 1fr)); gap: 24px; align-items: start;">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <b style="font-family: 'Playfair Display', Georgia, serif; font-size: 22px; line-height: 1.2;">If they can’t hear the sound</b>
+        <span style="font-size: 14px; line-height: 1.5;">Turned on with “I can’t hear well” in Make it easier.</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 4px;"><b style="font-size: 15px;">Words for every sound</b><span style="font-size: 14px; line-height: 1.5;">Read aloud always shows a “Now reading” caption. No beeps or alerts that are sound only.</span></div>
+      <div style="display: flex; flex-direction: column; gap: 4px;"><b style="font-size: 15px;">No call required</b><span style="font-size: 14px; line-height: 1.5;">Every plan offers “your care manager calls for you” or “go in person” before a phone number.</span></div>
+      <div style="display: flex; flex-direction: column; gap: 4px;"><b style="font-size: 15px;">Relay and interpreters</b><span style="font-size: 14px; line-height: 1.5;">Show 7-1-1 relay next to every phone number. Offer to ask staff for a sign language interpreter.</span></div>
+      <div style="display: flex; flex-direction: column; gap: 4px;"><b style="font-size: 15px;">Show, don’t say</b><span style="font-size: 14px; line-height: 1.5;">“What to say” becomes a card to show or type. Safety screens never rely on sound.</span></div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

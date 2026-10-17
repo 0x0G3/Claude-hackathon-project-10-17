@@ -4,7 +4,7 @@
 > (*Where do I sleep? Who can help me find work? Can I get a small loan? Can anyone help me get
 > home to family?*) and produces a plain-language, take-home plan in the client's language.
 
-Built on the files in this folder: `data/oc-resources.seed.json` (40 sourced entries),
+Built on the files in [`../2-finding-the-right-resource/`](../2-finding-the-right-resource/): `data/oc-resources.seed.json` (40 sourced entries),
 `data/DATA-SOURCES.md`, and `scenarios/client-scenarios.json` (12 made-up clients).
 
 ---

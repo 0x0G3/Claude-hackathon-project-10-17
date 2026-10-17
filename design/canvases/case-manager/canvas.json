@@ -1,0 +1,23 @@
+{
+  "v": 3,
+  "createdOnFiles": {"v": 1, "at": "2026-10-17T19:05:00Z"},
+  "title": "Next Door Case Manager",
+  "launch": {"view": "canvas"},
+  "pages": [{"id": "case-manager", "name": "Case manager"}, {"id": "leadership", "name": "Leadership"}],
+  "boards": {
+    "Main.dc.html": {"x": 0, "y": 0, "w": 1440, "h": 1560, "title": "Today · Maria’s dashboard", "expand": "fill", "is_interactive": true, "page": "case-manager"},
+    "Review.dc.html": {"x": 1520, "y": 0, "w": 1440, "h": 1500, "title": "Review a plan · Ray", "expand": "fill", "is_interactive": true, "page": "case-manager"},
+    "Safety.dc.html": {"x": 3040, "y": 0, "w": 1440, "h": 980, "title": "Safety steps · Lena", "expand": "fill", "is_interactive": true, "page": "case-manager"},
+    "Framework.dc.html": {"x": 0, "y": 1940, "w": 1440, "h": 820, "title": "Staff framework · rules", "page": "case-manager"},
+    "Leadership.dc.html": {"x": 0, "y": 0, "w": 1440, "h": 1900, "title": "Gaps report · IHH leadership", "expand": "fill", "page": "leadership"}
+  },
+  "order": ["Main.dc.html", "Review.dc.html", "Safety.dc.html", "Framework.dc.html", "Leadership.dc.html"],
+  "notes": {
+    "t-daily": {"x": 0, "y": -300, "text": "Case manager · a day with Next Door", "kind": "title1", "maxW": 4480, "page": "case-manager"},
+    "t-rules": {"x": 0, "y": 1680, "text": "Rules the staff side keeps", "kind": "title1", "maxW": 1440, "page": "case-manager"},
+    "t-lead": {"x": 0, "y": -300, "text": "Leadership · what the plans tell us", "kind": "title1", "maxW": 1440, "page": "leadership"}
+  },
+  "designSystems": [
+    {"title": "Illumination Health + Home", "namespace": "ihh", "artifact": "https://claude.ai/artifact/3Cumbrc9HGPghRQJECv1HX", "version": "1792260622-7244", "copiedAt": "2026-10-17T19:05:00Z"}
+  ]
+}

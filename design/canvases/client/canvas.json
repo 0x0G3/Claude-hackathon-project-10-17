@@ -1,0 +1,49 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "01-Language.dc.html": {"h": 844, "is_interactive": true, "title": "1 · Start: language + Make it easier", "w": 390, "x": 0, "y": 1620},
+    "02-SayIt.dc.html": {"h": 844, "is_interactive": true, "title": "2 · Say it your way", "w": 390, "x": 470, "y": 1620},
+    "03-PlanCard.dc.html": {"h": 1180, "is_interactive": true, "title": "3 · Plan card (Ray)", "w": 390, "x": 940, "y": 1620},
+    "04-TakeIt.dc.html": {"h": 844, "is_interactive": true, "title": "4 · Take it with you", "w": 390, "x": 1410, "y": 1620},
+    "05-SafetyExit.dc.html": {"h": 844, "is_interactive": true, "title": "Safety exit (Lena)", "w": 390, "x": 0, "y": 3260},
+    "06-AskNurse.dc.html": {"h": 844, "is_interactive": true, "title": "Medicine route (Bob)", "w": 390, "x": 470, "y": 3260},
+    "07-NoSureDoor.dc.html": {"h": 844, "is_interactive": true, "title": "No sure door (Devon)", "w": 390, "x": 940, "y": 3260},
+    "08-Printout.dc.html": {"h": 1056, "paper": "letter", "title": "Printout · letter", "w": 816, "x": 1880, "y": 1620},
+    "Main.dc.html": {"h": 1240, "title": "Framework · flow, anatomy, rules", "w": 1280, "x": 0, "y": 0},
+    "D0-Framework.dc.html": {"h": 800, "title": "Desktop framework · shared computer rules", "w": 1280, "x": 0, "y": 0, "page": "desktop"},
+    "D1-Start.dc.html": {"h": 800, "is_interactive": true, "title": "D1 · Start: language and say it", "w": 1280, "x": 0, "y": 1180, "page": "desktop", "expand": "fill"},
+    "D2-Plan.dc.html": {"h": 960, "is_interactive": true, "title": "D2 · Plan (Ray), print first", "w": 1280, "x": 1360, "y": 1180, "page": "desktop", "expand": "fill"},
+    "D3-SafetyExit.dc.html": {"h": 800, "is_interactive": true, "title": "D3 · Safety exit (Lena)", "w": 1280, "x": 0, "y": 2620, "page": "desktop", "expand": "fill"},
+    "D4-NoSureDoor.dc.html": {"h": 800, "is_interactive": true, "title": "D4 · No sure door (Devon)", "w": 1280, "x": 1360, "y": 2620, "page": "desktop", "expand": "fill"},
+    "D5-AskNurse.dc.html": {"h": 800, "is_interactive": true, "title": "D5 · Medicine route (Bob)", "w": 1280, "x": 2720, "y": 2620, "page": "desktop", "expand": "fill"},
+    "A0-Framework.dc.html": {"h": 1000, "title": "Accessible framework · who it helps and the rules", "w": 1280, "x": 0, "y": 0, "page": "accessible"},
+    "A1-Start.dc.html": {"h": 1180, "is_interactive": true, "title": "A1 · Make it easier (from the start screen)", "w": 390, "x": 0, "y": 1400, "page": "accessible"},
+    "A2-SayIt.dc.html": {"h": 1060, "is_interactive": true, "title": "A2 · What do you need, tap to pick", "w": 390, "x": 470, "y": 1400, "page": "accessible"},
+    "A3-Plan.dc.html": {"h": 960, "is_interactive": true, "title": "A3 · Plan, one step per screen (Ray)", "w": 390, "x": 940, "y": 1400, "page": "accessible"},
+    "A4-SafetyExit.dc.html": {"h": 900, "is_interactive": true, "title": "A4 · Safety exit (Lena)", "w": 390, "x": 1410, "y": 1400, "page": "accessible"},
+    "A5-NoSureDoor.dc.html": {"h": 900, "is_interactive": true, "title": "A5 · No sure door (Devon)", "w": 390, "x": 1880, "y": 1400, "page": "accessible"}
+  },
+  "createdOnFiles": {"at": "2026-10-17T18:45:00Z", "v": 1},
+  "designSystems": [
+    {"artifact": "https://claude.ai/artifact/3Cumbrc9HGPghRQJECv1HX", "copiedAt": "2026-10-17T18:45:00Z", "namespace": "ihh", "title": "Illumination Health + Home", "version": "1792260622-7244"}
+  ],
+  "launch": {"view": "canvas"},
+  "notes": {
+    "t-exits": {"kind": "title1", "maxW": 1330, "text": "When the answer is not a door", "w": 240, "x": 0, "y": 3000},
+    "t-framework": {"kind": "title1", "maxW": 1280, "text": "Next Door · client framework", "w": 240, "x": 0, "y": -300},
+    "t-main": {"kind": "title1", "maxW": 2696, "text": "Main path · Ray needs a bed by Friday", "w": 240, "x": 0, "y": 1360},
+    "t-d-framework": {"kind": "title1", "maxW": 1280, "text": "Desktop · for people without a smartphone", "x": 0, "y": -300, "page": "desktop"},
+    "t-d-main": {"kind": "title1", "maxW": 2640, "text": "Desktop main path · Ray", "x": 0, "y": 920, "page": "desktop"},
+    "t-d-exits": {"kind": "title1", "maxW": 4000, "text": "Desktop · when the answer is not a door", "x": 0, "y": 2360, "page": "desktop"},
+    "t-a-framework": {"kind": "title1", "maxW": 1280, "text": "Accessible phone · bigger, slower, read aloud", "x": 0, "y": -300, "page": "accessible"},
+    "t-a-main": {"kind": "title1", "maxW": 2270, "text": "Accessible path · Ray, Lena, Devon", "x": 0, "y": 1140, "page": "accessible"}
+  },
+  "order": [
+    "Main.dc.html", "01-Language.dc.html", "02-SayIt.dc.html", "03-PlanCard.dc.html", "04-TakeIt.dc.html", "08-Printout.dc.html", "05-SafetyExit.dc.html", "06-AskNurse.dc.html", "07-NoSureDoor.dc.html",
+    "D0-Framework.dc.html", "D1-Start.dc.html", "D2-Plan.dc.html", "D3-SafetyExit.dc.html", "D4-NoSureDoor.dc.html", "D5-AskNurse.dc.html",
+    "A0-Framework.dc.html", "A1-Start.dc.html", "A2-SayIt.dc.html", "A3-Plan.dc.html", "A4-SafetyExit.dc.html", "A5-NoSureDoor.dc.html"
+  ],
+  "pages": [{"id": "phone", "name": "Phone"}, {"id": "desktop", "name": "Desktop"}, {"id": "accessible", "name": "Phone · Accessible"}],
+  "title": "Next Door Client Framework"
+}
